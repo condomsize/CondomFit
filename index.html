@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CondomFit — Accueil / Home</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f14; --surface:#161a23; --surface2:#1e2330; --border:#2a3045;
+  --accent:#4fffb0; --accent2:#74c0fc; --warn:#ffd166; --pink:#f783ac;
+  --text:#e8ecf4; --muted:#7a8299;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Lora',serif; line-height:1.75;
+  min-height:100vh; overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 8% 6%,   rgba(79,255,176,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse at 92% 92%, rgba(116,192,252,0.06) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(247,131,172,0.03) 0%,transparent 70%);
+}
+
+/* ── Layout ── */
+.page{max-width:900px;margin:0 auto;padding:60px 24px 80px;}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:20px 0 64px;position:relative;}
+.logo-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:28px;
+  background:rgba(79,255,176,.06);border:1px solid rgba(79,255,176,.2);
+  border-radius:100px;padding:6px 18px;
+}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 8px var(--accent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.8rem,8vw,5.5rem);
+  font-weight:800;letter-spacing:-.03em;line-height:1;
+  margin-bottom:8px;
+}
+h1 .brand{color:var(--accent);}
+.tagline-wrap{
+  display:flex;align-items:center;justify-content:center;gap:0;
+  margin:20px 0 36px;
+}
+.tagline{
+  font-size:clamp(.85rem,2.5vw,1.1rem);
+  color:var(--muted);max-width:640px;line-height:1.6;
+}
+.tagline .fr{display:block;}
+.tagline .sep{display:block;width:40px;height:1px;background:var(--border);margin:10px auto;}
+.tagline .en{display:block;font-style:italic;}
+
+/* ── Lang divider ── */
+.lang-section{margin-bottom:56px;}
+.lang-header{
+  display:flex;align-items:center;gap:16px;margin-bottom:28px;
+}
+.lang-flag{
+  font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;
+  color:var(--text);letter-spacing:-.02em;
+}
+.lang-line{flex:1;height:1px;background:var(--border);}
+.lang-sub{
+  font-family:'DM Mono',monospace;font-size:.72rem;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:20px;padding-left:2px;line-height:1.8;
+}
+
+/* ── Card grid ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:14px;}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:22px 24px;text-decoration:none;color:var(--text);
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--card-color,var(--accent));opacity:0;
+  transition:opacity .2s;
+}
+.card:hover{transform:translateY(-3px);border-color:var(--card-color,var(--accent));
+  box-shadow:0 12px 32px rgba(0,0,0,.3);}
+.card:hover::before{opacity:1;}
+
+.card-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;
+  color:var(--card-color,var(--accent));letter-spacing:.01em;}
+.card-desc{font-size:.82rem;color:var(--muted);line-height:1.55;flex:1;}
+.card-arrow{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--card-color,var(--accent));
+  margin-top:6px;opacity:.7;}
+
+/* Card colour variants */
+.c-green{--card-color:#4fffb0;}
+.c-blue {--card-color:#74c0fc;}
+.c-warn {--card-color:#ffd166;}
+.c-pink {--card-color:#f783ac;}
+
+/* ── Wide cards (1 col) ── */
+.card-wide{grid-column:1/-1;}
+
+/* ── Section label ── */
+.section-label{
+  font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-left:2px;
+}
+
+/* ── Separator ── */
+.divider{
+  display:flex;align-items:center;gap:20px;margin:52px 0;
+}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);opacity:.5;
+}
+
+/* ── Info box ── */
+.info-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:24px 28px;margin-bottom:20px;
+}
+.info-box p{color:var(--muted);font-size:.88rem;margin-bottom:10px;}
+.info-box p:last-child{margin-bottom:0;}
+.info-box strong{color:var(--text);}
+
+/* ── Footer ── */
+footer{
+  text-align:center;font-family:'DM Mono',monospace;font-size:.68rem;
+  color:var(--muted);line-height:2;margin-top:64px;
+  border-top:1px solid var(--border);padding-top:28px;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp .6s ease both;}
+.lang-section:nth-child(1){animation:fadeUp .6s .1s ease both;}
+.lang-section:nth-child(2){animation:fadeUp .6s .2s ease both;}
+.info-box{animation:fadeUp .6s .3s ease both;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="logo-badge">
+      <span class="logo-dot"></span>
+      Biomécanique · Néo-hookéen · Laplace &nbsp;·&nbsp; Biomechanics · Neo-Hookean · Laplace
+    </div>
+    <h1><span class="brand">Condom</span>Fit</h1>
+    <div class="tagline-wrap">
+      <div class="tagline">
+        <span class="fr">Calcul de la pression exercée par un préservatif sur un pénis en érection — validation biomécanique du choix d'une taille.</span>
+        <span class="sep"></span>
+        <span class="en">Computes the pressure exerted by a condom on an erect penis — biomechanical validation of condom size selection.</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- FRANÇAIS                                                               -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="lang-section">
+    <div class="lang-header">
+      <span class="lang-flag">🇫🇷 Français</span>
+      <div class="lang-line"></div>
+    </div>
+    <p class="lang-sub">
+      Modèle néo-hookéen incompressible · Loi de Laplace (cylindre) · Données TheyFit (n&gt;20 000) · Gerofi et al.
+    </p>
+
+    <div class="section-label">🧮 Calculateurs — choisissez votre modèle</div>
+    <div class="card-grid">
+      <a href="condomfit_v1_libre_fr.html" class="card c-green">
+        <div class="card-icon">🔓</div>
+        <div class="card-title">Calculateur · Modèle libre</div>
+        <div class="card-desc">Le préservatif est libre de glisser axialement (σ_z = 0). Résultat : λ_z = λ_θ<sup>−½</sup>, t = t₀/√λ_θ.<br>Recommandé comme point de départ.</div>
+        <div class="card-arrow">Ouvrir →</div>
+      </a>
+      <a href="condomfit_v1_bloque_fr.html" class="card c-blue">
+        <div class="card-icon">🔒</div>
+        <div class="card-title">Calculateur · Modèle bloqué</div>
+        <div class="card-desc">Le préservatif est maintenu axialement (λ_z = 1). Résultat : σ_z &gt; 0, t = t₀/λ_θ.<br>Pression légèrement supérieure (~18 %).</div>
+        <div class="card-arrow">Ouvrir →</div>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📐 Démonstrations mathématiques pas-à-pas</div>
+    <div class="card-grid">
+      <a href="demo_libre_fr.html" class="card c-green" style="--card-color:rgba(79,255,176,.7)">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Démonstration · Modèle libre</div>
+        <div class="card-desc">Hypothèses, tenseur de Cauchy, condition σ_z = 0, back-calculation sur Hankook &amp; Sultan (Gerofi), graphique comparatif des deux modèles.</div>
+        <div class="card-arrow">Lire →</div>
+      </a>
+      <a href="demo_bloque_fr.html" class="card c-blue" style="--card-color:rgba(116,192,252,.7)">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Démonstration · Modèle bloqué</div>
+        <div class="card-desc">Même démarche avec λ_z = 1 imposé — la contrainte axiale σ_z résultante est calculée et interprétée physiquement.</div>
+        <div class="card-arrow">Lire →</div>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📊 Contexte statistique &amp; historique</div>
+    <div class="card-grid">
+      <a href="context_w52_fr.html" class="card c-warn card-wide">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Pourquoi w = 52 mm ne suffit pas</div>
+        <div class="card-desc">Origine du standard ISO 4074 · Distribution cumulative TheyFit (CDF) · Zone de compatibilité du 52 mm (~27 % de la population) · Pourquoi l'étirement ±10–20 % n'est valide que pour ce format · Le calcul de pression comme seul critère universel.</div>
+        <div class="card-arrow">Lire →</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- ENGLISH                                                                -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="lang-section">
+    <div class="lang-header">
+      <span class="lang-flag">🇬🇧 English</span>
+      <div class="lang-line"></div>
+    </div>
+    <p class="lang-sub">
+      Incompressible neo-Hookean model · Laplace's Law (cylinder) · TheyFit data (n&gt;20,000) · Gerofi et al.
+    </p>
+
+    <div class="section-label">🧮 Calculators — choose your model</div>
+    <div class="card-grid">
+      <a href="condomfit_v1_free_en.html" class="card c-green">
+        <div class="card-icon">🔓</div>
+        <div class="card-title">Calculator · Free model</div>
+        <div class="card-desc">The condom can slide axially (σ_z = 0). Result: λ_z = λ_θ<sup>−½</sup>, t = t₀/√λ_θ.<br>Recommended as a starting point.</div>
+        <div class="card-arrow">Open →</div>
+      </a>
+      <a href="condomfit_v1_blocked_en.html" class="card c-blue">
+        <div class="card-icon">🔒</div>
+        <div class="card-title">Calculator · Blocked model</div>
+        <div class="card-desc">The condom is held axially (λ_z = 1). Result: σ_z &gt; 0, t = t₀/λ_θ.<br>Slightly higher pressure (~18%).</div>
+        <div class="card-arrow">Open →</div>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📐 Step-by-step mathematical derivations</div>
+    <div class="card-grid">
+      <a href="demo_free_en.html" class="card c-green" style="--card-color:rgba(79,255,176,.7)">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Derivation · Free model</div>
+        <div class="card-desc">Hypotheses, Cauchy stress tensor, σ_z = 0 condition, back-calculation on Hankook &amp; Sultan (Gerofi), comparative chart of both models.</div>
+        <div class="card-arrow">Read →</div>
+      </a>
+      <a href="demo_blocked_en.html" class="card c-blue" style="--card-color:rgba(116,192,252,.7)">
+        <div class="card-icon">📐</div>
+        <div class="card-title">Derivation · Blocked model</div>
+        <div class="card-desc">Same approach with λ_z = 1 imposed — the resulting axial stress σ_z is computed and physically interpreted.</div>
+        <div class="card-arrow">Read →</div>
+      </a>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📊 Statistical &amp; historical context</div>
+    <div class="card-grid">
+      <a href="context_w52_en.html" class="card c-warn card-wide">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Why w = 52 mm is not enough</div>
+        <div class="card-desc">Origin of ISO 4074 standard · TheyFit cumulative distribution (CDF) · Compatibility zone of 52mm (~27% of population) · Why the ±10–20% stretch criterion only applies to this format · Pressure calculation as the only universal criterion.</div>
+        <div class="card-arrow">Read →</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Info box ───────────────────────────────────────────────────────── -->
+  <div class="info-box">
+    <p><strong>À propos · About</strong></p>
+    <p>CondomFit calcule la pression ΔP exercée par un préservatif sur un pénis en érection à partir d'un modèle mécanique néo-hookéen incompressible couplé à la loi de Laplace pour membrane cylindrique mince. La pression calculée est comparée aux pressions de référence mesurées par Gerofi et al. sur deux préservatifs (WHO-Hankook et USAID-Sultan) afin de valider la compatibilité taille-préservatif.</p>
+    <p>CondomFit computes the pressure ΔP exerted by a condom on an erect penis using an incompressible neo-Hookean mechanical model coupled with Laplace's Law for thin cylindrical membranes. The computed pressure is compared to reference pressures measured by Gerofi et al. on two condoms (WHO-Hankook and USAID-Sultan) to validate size-condom compatibility.</p>
+  </div>
+
+  <footer>
+    CondomFit · Modèle néo-hookéen · Neo-Hookean model<br>
+    Sources : TheyFit FitKit (n &gt; 20 000) · ISO 4074 · Gerofi, Deniaud, Friel — <em>Interaction of Condom Design and User Techniques and Condom Acceptability</em><br>
+    Outil informatif uniquement · For informational purposes only
+  </footer>
+
+</div>
+</body>
+</html>

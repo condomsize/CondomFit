@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CondomFit — Pourquoi w = 52 mm est insuffisant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f14; --surface:#161a23; --surface2:#1e2330; --border:#2a3045;
+  --accent:#4fffb0; --accent2:#74c0fc; --warn:#ffd166; --err:#ff6b6b;
+  --pink:#f783ac; --text:#e8ecf4; --muted:#7a8299;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Lora',serif;line-height:1.8;
+  padding:40px 20px 80px;
+  background-image:
+    radial-gradient(ellipse at 10% 5%,  rgba(79,255,176,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(116,192,252,0.05) 0%,transparent 50%);}
+.page{max-width:800px;margin:0 auto;}
+
+header{text-align:center;margin-bottom:52px;}
+.tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:14px;display:block;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,5vw,2.8rem);font-weight:800;
+  letter-spacing:-.02em;line-height:1.15;margin-bottom:16px;}
+h1 span{color:var(--accent);}
+.subtitle{color:var(--muted);font-size:.95rem;max-width:580px;margin:0 auto 24px;}
+.nav-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px;}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:10px 20px;
+  font-family:'Syne',sans-serif;font-weight:600;font-size:.85rem;text-decoration:none;
+  transition:transform .15s,box-shadow .15s;}
+.btn:hover{transform:translateY(-2px);}
+.btn-primary{background:var(--accent);color:#0d0f14;}
+.btn-primary:hover{box-shadow:0 8px 24px rgba(79,255,176,.3);}
+.btn-outline{border:1px solid var(--accent);color:var(--accent);}
+.btn-outline:hover{background:rgba(79,255,176,.08);}
+.btn-blue{border:1px solid var(--accent2);color:var(--accent2);}
+.btn-blue:hover{background:rgba(116,192,252,.08);}
+
+section{margin-bottom:52px;}
+h2{font-family:'Syne',sans-serif;font-size:1.12rem;font-weight:700;color:var(--accent);
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;}
+h2::before{content:'';display:inline-block;width:4px;height:20px;
+  background:var(--accent);border-radius:2px;flex-shrink:0;}
+h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--text);margin:20px 0 10px;}
+p{margin-bottom:14px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;margin-bottom:20px;}
+.card.highlight{border-color:rgba(79,255,176,.3);background:rgba(79,255,176,.04);}
+.card.warn{border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.04);}
+
+.eq{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;
+  padding:12px 18px;margin:12px 0;font-family:'DM Mono',monospace;font-size:.88rem;line-height:2;overflow-x:auto;}
+.eq.warn{border-color:var(--warn);}
+.eq.result{border-color:var(--pink);background:rgba(247,131,172,.05);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:20px 0;}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+.stat-val{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--accent);}
+.stat-label{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-top:4px;letter-spacing:.05em;}
+
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;}
+.chart-title{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:600;color:var(--muted);
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px;}
+canvas{display:block;width:100%!important;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);}
+.leg-item{display:flex;align-items:center;gap:6px;}
+.leg-line{width:22px;height:2px;flex-shrink:0;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.82rem;}
+th{text-align:left;color:var(--muted);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:0 12px 12px;border-bottom:1px solid var(--border);}
+td{padding:9px 12px;border-bottom:1px solid rgba(42,48,69,.5);}
+tr:last-child td{border-bottom:none;}
+.td-acc{color:var(--accent);font-weight:500;}
+.td-w{color:var(--warn);}
+.td-ok{color:var(--ok, #4fffb0);}
+
+.callout{background:var(--surface2);border-left:4px solid var(--warn);border-radius:0 10px 10px 0;
+  padding:16px 20px;margin:20px 0;font-size:.9rem;}
+.callout strong{color:var(--warn);}
+
+footer{margin-top:56px;text-align:center;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);line-height:2;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+section{animation:fadeUp .45s ease both;}
+section:nth-child(2){animation-delay:.05s} section:nth-child(3){animation-delay:.1s}
+section:nth-child(4){animation-delay:.15s} section:nth-child(5){animation-delay:.2s}
+section:nth-child(6){animation-delay:.25s}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <span class="tag">Statistiques · Biomécanique · Standardisation</span>
+  <h1>Pourquoi w&nbsp;=&nbsp;52&nbsp;mm ne suffit pas — <span>le contexte</span></h1>
+  <p class="subtitle">Origine historique de la taille standard, distribution anatomique de la population, et pourquoi l'étirement seul ne peut pas servir de critère de compatibilité.</p>
+  <div class="nav-links">
+    <a href="condomfit_v1_libre_fr.html"  class="btn btn-outline">Calculateur (libre)</a>
+    <a href="condomfit_v1_bloque_fr.html" class="btn btn-outline">Calculateur (bloqué)</a>
+    <a href="demo_libre_fr.html"          class="btn btn-blue">Démonstration (libre)</a>
+    <a href="demo_bloque_fr.html"         class="btn btn-blue">Démonstration (bloqué)</a>
+  </div>
+</header>
+
+<!-- 1. ORIGINE HISTORIQUE -->
+<section>
+  <h2>1 · Origine du standard w = 52 mm</h2>
+  <div class="card highlight">
+    <p>La largeur nominale de 52 mm a été retenue comme taille standard dans la norme ISO 4074 parce que la circonférence non étirée du préservatif (C₀ = 2 × 52 = 104 mm) était censée correspondre, après un étirement modéré de 10 à 20 %, à la circonférence érectile moyenne observée dans les populations occidentales.</p>
+    <div class="eq">C₀ = 2 × w = 2 × 52 = 104 mm<br>
+C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></div>
+    <p>Ce raisonnement est confirmé par les données TheyFit FitKit (n &gt; 20 000) : la moyenne de la distribution des circonférences érectiles dans les pays occidentaux est précisément <strong>119,6 mm</strong>, avec un écart-type de <strong>15,1 mm</strong>.</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-val">119,6 mm</div><div class="stat-label">Circonférence moyenne C̄</div></div>
+    <div class="stat-box"><div class="stat-val">15,1 mm</div><div class="stat-label">Écart-type σ</div></div>
+    <div class="stat-box"><div class="stat-val">&gt; 20 000</div><div class="stat-label">Participants TheyFit</div></div>
+    <div class="stat-box"><div class="stat-val">52 mm</div><div class="stat-label">Largeur nominale standard</div></div>
+  </div>
+</section>
+
+<!-- 2. GRAPHIQUE CDF -->
+<section>
+  <h2>2 · Distribution cumulative de la population</h2>
+  <div class="chart-card">
+    <div class="chart-title">Probabilité cumulée P(C ≤ x) — TheyFit FitKit (n &gt; 20 000)</div>
+    <canvas id="cdfChart"></canvas>
+    <div class="chart-legend">
+      <div class="leg-item"><div class="leg-line" style="background:#4fffb0;height:2.5px"></div><span>CDF normale (μ=119,6 mm, σ=15,1 mm)</span></div>
+      <div class="leg-item"><div class="leg-line" style="background:rgba(160,180,255,0.8)"></div><span>μ et μ ± 1,2,3 σ</span></div>
+      <div class="leg-item"><div class="leg-line" style="background:rgba(255,209,102,0.9)"></div><span>C_min = 114,4 mm et C_max = 124,8 mm (préservatif 52mm)</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f783ac"></div><span>Zone de compatibilité ≈ 27 % de la population</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p>Les bornes de compatibilité du préservatif de 52 mm (C_min = 114,4 mm et C_max = 124,8 mm, correspondant à ±10–20 % d'étirement) couvrent seulement <strong id="pct-val">~27 %</strong> de la population. Cette proportion illustre que la grande majorité des utilisateurs ne se trouve pas dans la plage d'étirement optimale pour ce seul format.</p>
+  </div>
+</section>
+
+<!-- 3. POURQUOI L'ÉTIREMENT NE SUFFIT PAS -->
+<section>
+  <h2>3 · Pourquoi l'étirement ±10–20 % n'est valide que pour w = 52 mm</h2>
+  <div class="card warn">
+    <p>Il est tentant de généraliser : « un préservatif est compatible si l'étirement est entre 10 et 20 % ». Ce raisonnement est <strong>incorrect</strong> dès que l'on change de largeur nominale.</p>
+    <p>En effet, la pression ΔP n'est <strong>pas une fonction linéaire</strong> (ni proportionnelle) de l'élongation λ. Dans le modèle néo-hookéen libre :</p>
+    <div class="eq warn">ΔP = [2C₁ t₀ / R] · (λ<sup>3/2</sup> − λ<sup>−3/2</sup>)</div>
+    <p>Cette expression est fortement <strong>non-linéaire</strong> en λ, et elle dépend simultanément de t₀ (épaisseur), w (largeur nominale) et R (rayon courant). Deux préservatifs avec le même étirement λ mais des épaisseurs ou des largeurs différentes exerceront des pressions <strong>différentes</strong>.</p>
+  </div>
+
+  <h3>Exemple numérique</h3>
+  <div class="card">
+    <p>Pour un pénis de <strong>C = 119,6 mm</strong> (moyenne), calculons ΔP à λ = 1,15 pour différentes largeurs nominales (t₀ = 0,065 mm, E = 1,8 MPa) :</p>
+    <table style="margin-top:14px;">
+      <thead><tr><th>w (mm)</th><th>C₀ (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Verdict</th></tr></thead>
+      <tbody id="pressure-table"></tbody>
+    </table>
+    <p style="margin-top:14px;color:var(--muted);font-size:.85rem;">À étirement égal de 15 %, la pression varie significativement avec w — ce qui illustre qu'un critère d'étirement fixe ne peut pas être universel.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Conclusion :</strong> Le critère « 10–20 % d'étirement » a été calibré empiriquement pour le préservatif de 52 mm avec les propriétés mécaniques et l'épaisseur de ce modèle spécifique. Pour tout autre préservatif, il faut <strong>calculer la pression</strong>, pas l'étirement, afin de déterminer la compatibilité avec un pénis de taille donnée.
+  </div>
+</section>
+
+<!-- 4. GRAPHIQUE PRESSION vs ETIREMENT pour différents w -->
+<section>
+  <h2>4 · ΔP en fonction de λ — comparaison de largeurs nominales</h2>
+  <div class="chart-card">
+    <div class="chart-title">ΔP(λ) pour différentes largeurs w — modèle libre, t₀ = 0,065 mm, E = 1,8 MPa</div>
+    <canvas id="pressureChart"></canvas>
+    <div class="chart-legend" id="pressure-legend"></div>
+  </div>
+  <p style="color:var(--muted);font-size:.87rem;">Les courbes sont <strong>distinctes et non parallèles</strong> : à même étirement λ, des préservatifs de largeur différente exercent des pressions différentes. La zone verte (P_min à P_max du 52mm) montre que seules certaines courbes s'y inscrivent à λ = 1,15.</p>
+</section>
+
+<!-- 5. IMPLICATION PRATIQUE -->
+
+<!-- 4b. EFFETS t₀ ET E -->
+<section>
+  <h2>4b · Effets de t₀ et E sur la courbe ΔP</h2>
+  <p style="color:var(--muted);margin-bottom:20px;font-size:.9rem;">La largeur nominale w n'est pas le seul levier : l'épaisseur t₀ et le module de Young E modifient eux aussi la courbe de pression, chacun selon une logique distincte. Les graphiques ci-dessous maintiennent les deux autres paramètres à leurs valeurs de référence (w = 52 mm, t₀ = 0,065 mm, E = 1,8 MPa).</p>
+
+  <h3>Effet de l'épaisseur t₀ <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted)">(w = 52 mm, E = 1,8 MPa fixés)</span></h3>
+  <div class="chart-card">
+    <div class="chart-title">ΔP(C_pénis) — variation de t₀ · Modèle libre (σ_z = 0)</div>
+    <canvas id="chartT4b"></canvas>
+    <div class="chart-legend" id="legendT4b"></div>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <p><strong>Effet :</strong> l'épaisseur agit comme un <strong>facteur d'échelle vertical pur</strong>. La forme de la courbe ne change pas : doubler t₀ double ΔP à tout λ. C'est une conséquence directe de T = σ_θ · t — la tension membranaire est proportionnelle à l'épaisseur. <strong>La plage de compatibilité se rétrécit légèrement et se décale vers les petites circonférences</strong> (car une paroi plus épaisse atteint la pression minimale pour un étirement plus faible).</p>
+    <div class="eq">T = σ_θ · t   ⟹   ΔP = T/R = σ_θ · <strong>t₀</strong> / (R · √λ)   ⟹   ΔP ∝ t₀</div>
+  </div>
+
+  <h3 style="margin-top:28px;">Effet du module de Young E <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted)">(w = 52 mm, t₀ = 0,065 mm fixés)</span></h3>
+  <div class="chart-card">
+    <div class="chart-title">ΔP(C_pénis) — variation de E · Modèle libre (σ_z = 0)</div>
+    <canvas id="chartE4b"></canvas>
+    <div class="chart-legend" id="legendE4b"></div>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <p><strong>Effet :</strong> E agit comme t₀ en première approximation (ΔP ∝ C₁ = E/6), mais avec un effet supplémentaire : <strong>la courbe est aussi plus raide</strong>. En raison de la non-linéarité néo-hookéenne (σ_θ = 2C₁(λ² − λ⁻¹)), l'augmentation de E amplifie davantage la pression aux grandes élongations qu'aux petites. La borne inférieure de compatibilité descend significativement — c'est le levier privilégié des fabricants pour repositionner une grande taille en taille standard.</p>
+    <div class="eq">σ_θ = 2C₁(λ² − λ⁻¹) = (<strong>E</strong>/3)(λ² − λ⁻¹)   ⟹   ΔP ∝ E   ET   pente ↑ E</div>
+  </div>
+
+  <h3 style="margin-top:28px;">Récapitulatif des trois leviers</h3>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>Paramètre</th><th>↑ valeur → effet sur ΔP</th><th>Forme de la courbe</th><th>Plage compatible</th><th>Nature</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="td-acc">w (largeur)</td><td>↓ ΔP à C donné</td><td>Translation horizontale →</td><td>Décalée vers grandes C</td><td>Géométrique</td></tr>
+        <tr><td class="td-acc">t₀ (épaisseur)</td><td>↑ ΔP proportionnel</td><td>Mise à l'échelle verticale ↑</td><td>Rétrécit, ↓ vers petites C</td><td>Linéaire</td></tr>
+        <tr><td class="td-acc">E (module)</td><td>↑ ΔP + pente ↑</td><td>Amplification + raidissement</td><td>Rétrécit fortement, ↓ vers petites C</td><td>Non-linéaire</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>5 · Implication pratique</h2>
+  <div class="card">
+    <p>Le calculateur CondomFit utilise précisément ce raisonnement : plutôt que de vérifier si l'étirement est dans une plage fixe, il calcule la <strong>pression mécanique</strong> exercée par le préservatif choisi sur le pénis de l'utilisateur, et compare cette pression aux pressions de référence obtenues à partir des préservatifs Hankook et Sultan mesurés par Gerofi.</p>
+    <p>Cette approche est valide <strong>indépendamment</strong> de la largeur nominale, de l'épaisseur, ou du module de Young du préservatif — à condition que ces paramètres soient connus ou estimés.</p>
+  </div>
+
+  <div class="card warn" style="margin-top:0;">
+    <h3 style="color:var(--warn);margin-top:0;">Le levier du module de Young chez les fabricants</h3>
+    <p>Les fabricants exploitent précisément cette non-linéarité pour ajuster la plage d'utilisation de chaque référence. Lorsqu'un fabricant passe d'un préservatif standard de 52 mm à un préservatif de <strong>54 mm</strong>, l'augmentation de largeur nominale élargit mécaniquement la plage de compatibilité vers les grandes circonférences — mais elle déplace aussi la borne inférieure vers le haut, excluant les pénis plus fins.</p>
+    <p>Pour compenser, le fabricant peut <strong>augmenter le module de Young E</strong> du latex via une recette de vulcanisation spécifique. Un E plus élevé signifie une courbe ΔP(λ) plus raide : la pression minimale de compatibilité est atteinte pour une circonférence de pénis plus faible, ce qui abaisse effectivement la borne inférieure et resserre l'intervalle d'utilisation.</p>
+    <div class="eq" style="border-color:var(--warn);">ΔP = [2C₁ t₀ / R] · (λ<sup>3/2</sup> − λ<sup>−3/2</sup>)   avec   C₁ = <strong>E</strong>/6<br>
+↑ E &nbsp;⟹&nbsp; ↑ ΔP à λ donné &nbsp;⟹&nbsp; borne inférieure atteinte à λ plus petit &nbsp;⟹&nbsp; pénis plus fin compatible</div>
+    <p><strong>L'exemple Durex</strong> illustre parfaitement cette logique industrielle. La gamme est rationalisée à seulement trois largeurs nominales — <strong>52,5 mm · 56 mm · 60 mm</strong> — au lieu des multiples références habituelles. Le modèle à 52,5 mm, pourtant légèrement plus large que le standard historique de 52 mm, est positionné comme la <em>petite taille</em> de la gamme. Pour rendre ce positionnement cohérent, Durex augmente le module de Young de ce modèle via une recette de vulcanisation spécifique, ce qui rehausse la courbe ΔP(λ) et abaisse la circonférence minimale compatible — transformant un préservatif objectivement large en une référence à port ajusté.</p>
+    <p style="color:var(--muted);font-size:.87rem;">Ce mécanisme confirme qu'un critère basé uniquement sur la largeur nominale est insuffisant : deux préservatifs de même w mais de modules différents ne sont pas interchangeables. Seul le calcul de la pression — en intégrant E, t₀ et w — permet une comparaison objective.</p>
+  </div>
+</section>
+
+
+</section>
+
+<footer>
+  CondomFit · Contexte statistique et biomécanique<br>
+  Sources : TheyFit FitKit (n &gt; 20 000, pays occidentaux) · ISO 4074 · Gerofi et al. — Interaction of Condom Design and User Techniques and Condom Acceptability
+</footer>
+</div>
+
+<script>
+// ── Maths utilitaires ────────────────────────────────────────────────────────
+function erf(x) {
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign = x<0?-1:1; x=Math.abs(x);
+  const t=1/(1+p*x);
+  const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return sign*y;
+}
+function normalCDF(x, mu, sigma) { return 0.5*(1+erf((x-mu)/(sigma*Math.sqrt(2)))); }
+
+const MU=119.6, SD=15.1;
+const PMIN=114.4, PMAX=124.8;
+
+// ── CDF Chart ────────────────────────────────────────────────────────────────
+function drawCDF() {
+  const canvas=document.getElementById('cdfChart');
+  const dpr=window.devicePixelRatio||1;
+  const Wc=canvas.parentElement.clientWidth-48;
+  const Hc=Math.round(Wc*0.52);
+  canvas.style.width=Wc+'px'; canvas.style.height=Hc+'px';
+  canvas.width=Wc*dpr; canvas.height=Hc*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const W=Wc,H=Hc,ml=52,mr=20,mt=20,mb=44;
+  const pw=W-ml-mr, ph=H-mt-mb;
+
+  const xMin=90, xMax=165;
+  function xp(v){return ml+(v-xMin)/(xMax-xMin)*pw;}
+  function yp(v){return mt+ph-(v)*ph;}
+
+  // BG
+  ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
+
+  // Grid H
+  [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0].forEach(v=>{
+    const y=yp(v);
+    ctx.strokeStyle='#2a3045'; ctx.lineWidth=0.7;
+    ctx.beginPath(); ctx.moveTo(ml,y); ctx.lineTo(ml+pw,y); ctx.stroke();
+    ctx.fillStyle='#7a8299'; ctx.font='9px DM Mono,monospace';
+    ctx.textAlign='right'; ctx.fillText((v*100).toFixed(0)+'%',ml-6,y+3);
+  });
+
+  // Grid V (ticks every 10mm)
+  for(let x=90;x<=165;x+=10){
+    const xv=xp(x);
+    ctx.strokeStyle='#2a3045'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(xv,mt); ctx.lineTo(xv,mt+ph); ctx.stroke();
+    ctx.fillStyle='#7a8299'; ctx.font='9px DM Mono,monospace';
+    ctx.textAlign='center'; ctx.fillText(x,xv,mt+ph+14);
+  }
+
+  // Axis labels
+  ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('Circonférence érectile (mm)',ml+pw/2,H-2);
+  ctx.save(); ctx.translate(11,mt+ph/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('P(C ≤ x)',0,0); ctx.restore();
+
+  // Shaded area between PMIN and PMAX
+  const p1=normalCDF(PMIN,MU,SD), p2=normalCDF(PMAX,MU,SD);
+  const pct=(p2-p1)*100;
+  document.getElementById('pct-val').textContent=pct.toFixed(1)+' %';
+
+  ctx.fillStyle='rgba(247,131,172,0.12)';
+  ctx.beginPath();
+  ctx.moveTo(xp(PMIN),yp(p1));
+  const steps=120;
+  for(let i=0;i<=steps;i++){
+    const cv=PMIN+(PMAX-PMIN)*i/steps;
+    ctx.lineTo(xp(cv),yp(normalCDF(cv,MU,SD)));
+  }
+  ctx.lineTo(xp(PMAX),yp(p1));
+  ctx.closePath(); ctx.fill();
+
+  // SD vertical lines
+  const sdCols=['rgba(160,180,255,0.4)','rgba(160,180,255,0.65)','rgba(160,180,255,0.9)','rgba(160,180,255,0.65)','rgba(160,180,255,0.4)','rgba(160,180,255,0.25)'];
+  const sdLabels=['-3σ','-2σ','-1σ','μ','+1σ','+2σ','+3σ'];
+  for(let k=-3;k<=3;k++){
+    const xv=MU+k*SD;
+    const col=k===0?'rgba(160,180,255,1.0)':sdCols[k+3];
+    const lw=k===0?2:1;
+    ctx.strokeStyle=col; ctx.lineWidth=lw;
+    ctx.setLineDash(k===0?[]:[4,3]);
+    ctx.beginPath(); ctx.moveTo(xp(xv),mt); ctx.lineTo(xp(xv),mt+ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=col; ctx.font=(k===0?'bold ':'')+'9px DM Mono,monospace';
+    ctx.textAlign='center'; ctx.fillText(sdLabels[k+3],xp(xv),mt+9);
+  }
+
+  // PMIN / PMAX lines
+  [PMIN,PMAX].forEach((xv,i)=>{
+    ctx.strokeStyle='rgba(255,209,102,0.9)'; ctx.lineWidth=1.5;
+    ctx.setLineDash([5,3]);
+    ctx.beginPath(); ctx.moveTo(xp(xv),mt); ctx.lineTo(xp(xv),mt+ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,209,102,0.9)'; ctx.font='9px DM Mono,monospace';
+    const lbl=i===0?'C_min\n114.4':'C_max\n124.8';
+    const align=i===0?'right':'left';
+    ctx.textAlign=align;
+    ctx.fillText(i===0?'C_min':'C_max', xp(xv)+(i===0?-4:4), mt+20);
+    ctx.fillText(xv+' mm',             xp(xv)+(i===0?-4:4), mt+30);
+  });
+
+  // Label area
+  const xMid=xp((PMIN+PMAX)/2);
+  const yMid=yp((normalCDF(PMIN,MU,SD)+normalCDF(PMAX,MU,SD))/2+0.03);
+  ctx.fillStyle='rgba(247,131,172,0.9)'; ctx.font='bold 10px DM Mono,monospace';
+  ctx.textAlign='center';
+  ctx.fillText(pct.toFixed(1)+'%',xMid,yMid);
+
+  // CDF curve
+  ctx.strokeStyle='#4fffb0'; ctx.lineWidth=2.5;
+  ctx.shadowColor='rgba(79,255,176,0.4)'; ctx.shadowBlur=6;
+  ctx.beginPath();
+  const N=400;
+  for(let i=0;i<=N;i++){
+    const cv=xMin+(xMax-xMin)*i/N;
+    const y2=yp(normalCDF(cv,MU,SD));
+    i===0?ctx.moveTo(xp(cv),y2):ctx.lineTo(xp(cv),y2);
+  }
+  ctx.stroke(); ctx.shadowBlur=0;
+
+  ctx.strokeStyle='#2a3045'; ctx.lineWidth=1; ctx.strokeRect(ml,mt,pw,ph);
+}
+
+// ── Pressure table ────────────────────────────────────────────────────────────
+function computeDP(C_mm, w_mm, t0_mm, E_MPa) {
+  const C1=E_MPa/6, lam=C_mm/(2*w_mm);
+  const R=C_mm*1e-3/(2*Math.PI);
+  const sigma=2*C1*(lam**2-1/lam);
+  const t=t0_mm*1e-3/Math.sqrt(lam);
+  return {lam, dP: sigma*1e6*t/R};
+}
+
+const refMin = computeDP(114.4,52,0.065,1.8).dP;
+const refMax = computeDP(124.8,52,0.065,1.8).dP;
+
+const wList=[45,47,49,52,53,54,56,57,58,60,64,69];
+const C_test=119.6;
+const tbody=document.getElementById('pressure-table');
+wList.forEach(w=>{
+  const {lam,dP}=computeDP(C_test,w,0.065,1.8);
+  const ok=dP>=refMin&&dP<=refMax;
+  const color=dP<refMin?'var(--warn)':dP>refMax?'var(--err)':'var(--accent)';
+  const verdict=dP<refMin?'Trop large':dP>refMax?'Trop étroit':'Compatible';
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td style="color:var(--accent2)">${w}</td>
+    <td>${(2*w).toFixed(0)}</td>
+    <td>${lam.toFixed(3)}</td>
+    <td style="color:${color}">${(dP/1000).toFixed(3)}</td>
+    <td style="color:${color}">${verdict}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ── Pressure chart ────────────────────────────────────────────────────────────
+function drawPressure() {
+  const canvas=document.getElementById('pressureChart');
+  const dpr=window.devicePixelRatio||1;
+  const Wc=canvas.parentElement.clientWidth-48;
+  const Hc=Math.round(Wc*0.52);
+  canvas.style.width=Wc+'px'; canvas.style.height=Hc+'px';
+  canvas.width=Wc*dpr; canvas.height=Hc*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const W=Wc,H=Hc,ml=60,mr=20,mt=20,mb=46;
+  const pw=W-ml-mr, ph=H-mt-mb;
+
+  const lMin=1.0,lMax=1.5,nPts=300;
+  const wSel=[49,52,54,56,60,64];
+  const colors=['#74c0fc','#4fffb0','#ffd166','#f783ac','#ff6b6b','#a9e34b'];
+
+  // Compute all curves
+  const curves=wSel.map(w=>{
+    const pts=[];
+    for(let i=0;i<=nPts;i++){
+      const lam=lMin+(lMax-lMin)*i/nPts;
+      const C0=2*w*1e-3, Cv=lam*C0, R=Cv/(2*Math.PI);
+      const C1=1.8/6, t0=0.065e-3;
+      const sigma=2*C1*(lam**2-1/lam);
+      const t=t0/Math.sqrt(lam);
+      pts.push({lam, dP:sigma*1e6*t/R/1000});
+    }
+    return {w, pts};
+  });
+
+  const maxDP=Math.max(...curves.map(c=>Math.max(...c.pts.map(p=>p.dP))))*1.05;
+
+  function xp(l){return ml+(l-lMin)/(lMax-lMin)*pw;}
+  function yp(v){return mt+ph-v/maxDP*ph;}
+
+  ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  for(let i=0;i<=5;i++){
+    const v=maxDP*i/5;
+    const y=yp(v);
+    ctx.strokeStyle='#2a3045'; ctx.lineWidth=0.7;
+    ctx.beginPath(); ctx.moveTo(ml,y); ctx.lineTo(ml+pw,y); ctx.stroke();
+    ctx.fillStyle='#7a8299'; ctx.font='9px DM Mono,monospace';
+    ctx.textAlign='right'; ctx.fillText(v.toFixed(2),ml-6,y+3);
+  }
+  [1.0,1.1,1.2,1.3,1.4,1.5].forEach(l=>{
+    const x=xp(l);
+    ctx.strokeStyle='#2a3045'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(x,mt); ctx.lineTo(x,mt+ph); ctx.stroke();
+    ctx.fillStyle='#7a8299'; ctx.font='9px DM Mono,monospace';
+    ctx.textAlign='center'; ctx.fillText(l.toFixed(1),x,mt+ph+14);
+  });
+
+  // Ref zone [refMin, refMax]
+  ctx.fillStyle='rgba(79,255,176,0.07)';
+  ctx.fillRect(ml, yp(refMax/1000), pw, yp(refMin/1000)-yp(refMax/1000));
+  ctx.strokeStyle='rgba(79,255,176,0.4)'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(ml,yp(refMin/1000)); ctx.lineTo(ml+pw,yp(refMin/1000)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ml,yp(refMax/1000)); ctx.lineTo(ml+pw,yp(refMax/1000)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Vertical λ=1.15
+  ctx.strokeStyle='rgba(255,209,102,0.5)'; ctx.lineWidth=1; ctx.setLineDash([5,3]);
+  ctx.beginPath(); ctx.moveTo(xp(1.15),mt); ctx.lineTo(xp(1.15),mt+ph); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Curves
+  curves.forEach(({w,pts},i)=>{
+    ctx.strokeStyle=colors[i]; ctx.lineWidth=2;
+    ctx.shadowColor=colors[i]; ctx.shadowBlur=4;
+    ctx.beginPath();
+    pts.forEach((p,j)=>{j===0?ctx.moveTo(xp(p.lam),yp(p.dP)):ctx.lineTo(xp(p.lam),yp(p.dP));});
+    ctx.stroke(); ctx.shadowBlur=0;
+  });
+
+  ctx.fillStyle='rgba(255,209,102,0.8)'; ctx.font='9px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('λ=1,15',xp(1.15),mt+10);
+
+  // Axes labels
+  ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('λ_θ (élongation)',ml+pw/2,H-2);
+  ctx.save(); ctx.translate(11,mt+ph/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('ΔP (kPa)',0,0); ctx.restore();
+
+  ctx.strokeStyle='#2a3045'; ctx.lineWidth=1; ctx.strokeRect(ml,mt,pw,ph);
+
+  // Legend
+  const leg=document.getElementById('pressure-legend');
+  leg.innerHTML='';
+  wSel.forEach((w,i)=>{
+    leg.innerHTML+=`<div class="leg-item"><div class="leg-line" style="background:${colors[i]};height:2px"></div><span>w = ${w} mm</span></div>`;
+  });
+  leg.innerHTML+=`<div class="leg-item"><div class="leg-line" style="background:rgba(79,255,176,0.4);height:8px;border-radius:2px"></div><span>Zone P_min–P_max (52mm)</span></div>`;
+}
+
+drawCDF();
+drawPressure();
+
+window.addEventListener('resize',()=>{ drawCDF(); drawPressure(); });
+
+// ── Param chart utility (4b) ─────────────────────────────────────────────────
+function dpCalc(C_mm, w_mm, t0_mm, E_MPa) {
+  const C1 = E_MPa / 6, lam = C_mm / (2 * w_mm);
+  if (lam <= 1.0) return 0;
+  const R = C_mm * 1e-3 / (2 * Math.PI);
+  const sigma = 2 * C1 * (lam ** 2 - 1 / lam);
+  const t = t0_mm * 1e-3 / Math.sqrt(lam);
+  return sigma * 1e6 * t / R / 1000; // kPa
+}
+
+function makePts2(w, t0, E, xMin, xMax) {
+  const pts = [];
+  for (let c = xMin; c <= xMax; c += 0.5)
+    pts.push({ c, dp: dpCalc(c, w, t0, E) });
+  return pts;
+}
+
+function makeParamChart2(canvasId, legendId, curves, xMin, xMax, xLabel, refMin, refMax) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const Wc  = canvas.parentElement.clientWidth - 48;
+  const Hc  = Math.round(Wc * 0.46);
+  canvas.style.width = Wc + 'px'; canvas.style.height = Hc + 'px';
+  canvas.width = Wc * dpr; canvas.height = Hc * dpr;
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+  const W = Wc, H = Hc, ml = 60, mr = 20, mt = 18, mb = 46;
+  const pw = W - ml - mr, ph = H - mt - mb;
+
+  // Dynamic Y scale: max across all curves + 10%
+  const allDP = curves.flatMap(c => c.pts.map(p => p.dp));
+  const maxDP = Math.max(...allDP, refMax) * 1.12;
+
+  function xp(v) { return ml + (v - xMin) / (xMax - xMin) * pw; }
+  function yp(v) { return mt + ph - v / maxDP * ph; }
+
+  ctx.fillStyle = '#161a23'; ctx.fillRect(0, 0, W, H);
+
+  // Horizontal grid
+  const nY = 5;
+  for (let i = 0; i <= nY; i++) {
+    const v = maxDP * i / nY, y = yp(v);
+    ctx.strokeStyle = '#2a3045'; ctx.lineWidth = 0.7;
+    ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(ml + pw, y); ctx.stroke();
+    ctx.fillStyle = '#7a8299'; ctx.font = '9px DM Mono,monospace';
+    ctx.textAlign = 'right'; ctx.fillText(v.toFixed(2), ml - 6, y + 3);
+  }
+
+  // Vertical grid — ticks every 5mm
+  for (let x = Math.ceil(xMin / 5) * 5; x <= xMax; x += 5) {
+    const xv = xp(x);
+    ctx.strokeStyle = x % 10 === 0 ? '#2a3045' : '#1e2330'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(xv, mt); ctx.lineTo(xv, mt + ph); ctx.stroke();
+    if (x % 10 === 0) {
+      ctx.fillStyle = '#7a8299'; ctx.font = '9px DM Mono,monospace';
+      ctx.textAlign = 'center'; ctx.fillText(x, xv, mt + ph + 14);
+    }
+  }
+
+  // Reference zone P_min / P_max
+  if (refMin > 0 && refMax > 0) {
+    ctx.fillStyle = 'rgba(79,255,176,0.07)';
+    ctx.fillRect(ml, yp(refMax), pw, yp(refMin) - yp(refMax));
+    [refMin, refMax].forEach(v => {
+      ctx.strokeStyle = 'rgba(79,255,176,0.45)'; ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(ml, yp(v)); ctx.lineTo(ml + pw, yp(v)); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // Curves
+  curves.forEach(({ pts, color, dash, lw }) => {
+    ctx.strokeStyle = color; ctx.lineWidth = lw || 2;
+    ctx.shadowColor = color; ctx.shadowBlur = 4;
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    pts.forEach((p, i) => { i === 0 ? ctx.moveTo(xp(p.c), yp(p.dp)) : ctx.lineTo(xp(p.c), yp(p.dp)); });
+    ctx.stroke(); ctx.shadowBlur = 0; ctx.setLineDash([]);
+  });
+
+  // Axis labels
+  ctx.fillStyle = '#4fffb0'; ctx.font = '10px DM Mono,monospace';
+  ctx.textAlign = 'center'; ctx.fillText(xLabel, ml + pw / 2, H - 2);
+  ctx.save(); ctx.translate(11, mt + ph / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('\u0394P (kPa)', 0, 0); ctx.restore();
+
+  ctx.strokeStyle = '#2a3045'; ctx.lineWidth = 1; ctx.strokeRect(ml, mt, pw, ph);
+
+  // Legend
+  const leg = document.getElementById(legendId);
+  if (leg) {
+    leg.innerHTML = curves.map(c =>
+      `<div class="leg-item"><div class="leg-line" style="background:${c.color};height:${c.lw||2}px"></div><span>${c.label}</span></div>`
+    ).join('') +
+    `<div class="leg-item"><div class="leg-line" style="background:rgba(79,255,176,0.4);height:8px;border-radius:2px"></div><span>REF_LABEL</span></div>`;
+    leg.innerHTML = leg.innerHTML.replace('REF_LABEL', 'Zone P_min–P_max · w=52mm, E=1,8MPa, t₀=0,065mm');
+  }
+}
+
+const COLORS6 = ['#74c0fc','#4fffb0','#ffd166','#f783ac','#ff6b6b','#a9e34b'];
+const REF_W = 52, REF_T = 0.065, REF_E = 1.8;
+const DP_REFMIN = dpCalc(114.4, 52, 0.065, 1.8);
+const DP_REFMAX = dpCalc(124.8, 52, 0.065, 1.8);
+
+function drawParamCharts4b() {
+  // Chart t0 — x: 104 to 150mm (all start at 2*52=104 for λ>1)
+  const tVals = [0.050, 0.055, 0.060, 0.065, 0.070, 0.080];
+  makeParamChart2('chartT4b', 'legendT4b',
+    tVals.map((t, i) => ({
+      pts: makePts2(52, t, 1.8, 104, 150),
+      color: COLORS6[i],
+      label: 't\u2080 = ' + (t * 1000).toFixed(0) + ' \u00b5m' + (t === 0.065 ? ' \u2605' : ''),
+      dash: t === 0.065 ? [] : [5, 3], lw: t === 0.065 ? 2.5 : 1.5,
+    })),
+    104, 150, 'Circonférence érectile (mm)', DP_REFMIN, DP_REFMAX
+  );
+
+  // Chart E — x: 104 to 145mm
+  const eVals = [1.0, 1.4, 1.8, 2.2, 2.6, 3.2];
+  makeParamChart2('chartE4b', 'legendE4b',
+    eVals.map((e, i) => ({
+      pts: makePts2(52, 0.065, e, 104, 145),
+      color: COLORS6[i],
+      label: 'E = ' + e.toFixed(1) + ' MPa' + (e === 1.8 ? ' \u2605' : ''),
+      dash: e === 1.8 ? [] : [5, 3], lw: e === 1.8 ? 2.5 : 1.5,
+    })),
+    104, 145, 'Circonférence érectile (mm)', DP_REFMIN, DP_REFMAX
+  );
+}
+
+drawParamCharts4b();
+window.addEventListener('resize', drawParamCharts4b);
+
+</script>
+</body>
+</html>

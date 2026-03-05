@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CondomFit — Pressure Calculator (blocked)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a23;
+    --surface2: #1e2330;
+    --border: #2a3045;
+    --accent: #4fffb0;
+    --text: #e8ecf4;
+    --text-muted: #7a8299;
+    --ok: #4fffb0;
+    --warn: #ffd166;
+    --err: #ff6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(79,255,176,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,107,107,0.05) 0%, transparent 50%);
+  }
+  header { text-align: center; margin-bottom: 48px; animation: fadeDown 0.6s ease both; }
+  header .tag {
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: block;
+  }
+  h1 { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+  h1 span { color: var(--accent); }
+  header p { margin-top: 14px; color: var(--text-muted); font-size: 0.95rem; max-width: 480px; line-height: 1.6; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px; width: 100%; max-width: 620px; margin-bottom: 20px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .card-title {
+    font-size: 0.75rem; font-family: 'DM Mono', monospace; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: ''; display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent);
+  }
+  .field { margin-bottom: 20px; }
+  label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; font-family: 'DM Mono', monospace; }
+  label strong { color: var(--text); font-weight: 500; }
+  input[type="number"] {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 52px 12px 16px; color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 1rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,255,176,0.12); }
+  .input-unit { position: relative; }
+  .input-unit .unit {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-muted); pointer-events: none;
+  }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .preset-btn {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    padding: 6px 12px; cursor: pointer; transition: all 0.15s;
+  }
+  .preset-btn:hover, .preset-btn.active {
+    border-color: var(--accent); color: var(--accent); background: rgba(79,255,176,0.08);
+  }
+  button.calc-btn {
+    width: 100%; background: var(--accent); color: #0d0f14; border: none; border-radius: 12px;
+    padding: 16px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    letter-spacing: 0.03em; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; margin-top: 8px;
+  }
+  button.calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,255,176,0.3); }
+  button.calc-btn:active { transform: translateY(0); }
+
+  /* Results */
+  #results { display: none; width: 100%; max-width: 620px; animation: fadeUp 0.4s ease both; }
+  .verdict {
+    border-radius: 16px; padding: 28px 32px; margin-bottom: 20px; border: 2px solid;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .verdict::before { content: ''; position: absolute; inset: 0; opacity: 0.06; border-radius: 14px; }
+  .verdict.ok      { border-color: var(--ok); }      .verdict.ok::before      { background: var(--ok); }
+  .verdict.low     { border-color: var(--warn); }    .verdict.low::before     { background: var(--warn); }
+  .verdict.high    { border-color: var(--err); }     .verdict.high::before    { background: var(--err); }
+  .verdict.comfort { border-color: #74c0fc; }        .verdict.comfort::before { background: #74c0fc; }
+  .verdict.snug    { border-color: #f783ac; }        .verdict.snug::before    { background: #f783ac; }
+  .verdict.comfort .verdict-title { color: #74c0fc; }
+  .verdict.snug    .verdict-title { color: #f783ac; }
+  .verdict-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .verdict-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+  .verdict.ok .verdict-title  { color: var(--ok); }
+  .verdict.low .verdict-title { color: var(--warn); }
+  .verdict.high .verdict-title{ color: var(--err); }
+  .verdict-sub { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; max-width: 420px; margin: 0 auto; }
+
+  /* Chart */
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 28px 24px 20px; margin-bottom: 20px;
+  }
+  .chart-card .card-title { margin-bottom: 16px; }
+  #pressureCanvas { width: 100% !important; display: block; cursor: crosshair; }
+
+  .chart-legend {
+    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-line { width: 20px; height: 2px; flex-shrink: 0; }
+  .legend-dashed { background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 8px); }
+
+  /* Data grid */
+  .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .data-cell { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .data-cell .dc-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .data-cell .dc-value { font-size: 1.3rem; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .dc-value.green   { color: var(--ok); }
+  .dc-value.yellow  { color: var(--warn); }
+  .dc-value.red     { color: var(--err); }
+  .dc-value.comfort { color: #74c0fc; }
+  .dc-value.snug    { color: #f783ac; }
+
+  .formula-box {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    color: var(--text-muted); line-height: 1.9; margin-bottom: 20px;
+  }
+  .formula-box .formula-title { color: var(--accent); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+
+  footer { margin-top: 48px; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-muted); line-height: 1.8; max-width: 520px; }
+  .error-msg { color: var(--err); font-family: 'DM Mono', monospace; font-size: 0.78rem; margin-top: 6px; display: none; }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:translateY(0); } }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } .data-grid { grid-template-columns: 1fr; } }
+
+  .demo-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--accent); color: var(--accent);
+    border-radius: 10px; padding: 9px 18px; font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: .85rem; text-decoration: none;
+    transition: background .15s, transform .15s;
+    margin-top: 10px;
+  }
+  .demo-link:hover { background: rgba(79,255,176,.08); transform: translateY(-1px); }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="tag">Biomechanics · Neo-Hookean Model · Blocked Membrane · Laplace's Law</span>
+  <h1>Condom<span>Fit</span></h1>
+  <p>Calculates the pressure exerted by a condom on an erect penis and checks whether the condom is suited to your anatomy.</p>
+  <a href="demo_blocked_en.html" class="demo-link" target="_blank">📐 View mathematical derivation</a>
+  <a href="context_w52_en.html" class="demo-link" target="_blank">📊 📊 Context & statistics</a>
+</header>
+
+<div class="card">
+  <div class="card-title">Your anatomy</div>
+  <div class="field">
+    <label><strong>Erect penis circumference</strong><br>Measured at the widest point, in mm</label>
+    <div class="input-unit">
+      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="e.g. 119.6">
+      <span class="unit">mm</span>
+    </div>
+    <div class="error-msg" id="err-circ">Value out of range (80–180 mm)</div>
+  </div>
+</div>
+
+<div class="card" style="animation-delay:0.1s">
+  <div class="card-title">Your condom</div>
+  <div class="presets" id="presets">
+    <div class="preset-btn" onclick="applyPreset(45,0.065,1.8,this)">45mm</div>
+    <div class="preset-btn" onclick="applyPreset(47,0.065,1.8,this)">47mm</div>
+    <div class="preset-btn" onclick="applyPreset(49,0.065,1.8,this)">49mm</div>
+    <div class="preset-btn active" onclick="applyPreset(52,0.065,1.8,this)">52mm ★</div>
+    <div class="preset-btn" onclick="applyPreset(53,0.065,1.8,this)">53mm</div>
+    <div class="preset-btn" onclick="applyPreset(54,0.065,1.8,this)">54mm</div>
+    <div class="preset-btn" onclick="applyPreset(56,0.065,1.8,this)">56mm</div>
+    <div class="preset-btn" onclick="applyPreset(57,0.065,1.8,this)">57mm</div>
+    <div class="preset-btn" onclick="applyPreset(58,0.065,1.8,this)">58mm</div>
+    <div class="preset-btn" onclick="applyPreset(60,0.065,1.8,this)">60mm</div>
+    <div class="preset-btn" onclick="applyPreset(64,0.065,1.8,this)">64mm</div>
+    <div class="preset-btn" onclick="applyPreset(69,0.065,1.8,this)">69mm</div>
+  </div>
+  <div class="row-2">
+    <div class="field">
+      <label><strong>Nominal width w</strong></label>
+      <div class="input-unit">
+        <input type="number" id="width" min="30" max="80" step="0.1" value="52">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+    <div class="field">
+      <label><strong>Wall thickness t₀</strong></label>
+      <div class="input-unit">
+        <input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <label><strong>Young's modulus E</strong> — 1.8 MPa = reference value for latex condom</label>
+    <div class="input-unit">
+      <input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.8">
+      <span class="unit">MPa</span>
+    </div>
+  </div>
+  <div class="error-msg" id="err-inputs">Please check the entered values.</div>
+  <button class="calc-btn" onclick="calculate()">Calculate pressure →</button>
+</div>
+
+<div id="results">
+
+  <div class="verdict" id="verdict-box">
+    <div class="verdict-icon" id="verdict-icon"></div>
+    <div class="verdict-title" id="verdict-title"></div>
+    <div class="verdict-sub" id="verdict-sub"></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-card">
+    <div class="card-title">Pressure curve ΔP as a function of circumference</div>
+    <canvas id="pressureCanvas"></canvas>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>Curve &#916;P(C) &mdash; selected condom</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b; width:12px; height:12px; border:2px solid #fff;"></div><span>Your position</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:#4fffb0; opacity:0.45;"></div><span>P_min t&#8320;=0.060 mm — lower bound Comfort fit</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:#4fffb0; opacity:0.85;"></div><span>P_min t&#8320;=0.065 mm — lower bound Perfect fit</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:#4fffb0;"></div><span>P_moy t&#8320;=0.065 mm — reference pressure</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:#ffd166; opacity:0.75;"></div><span>P_max t&#8320;=0.065 mm — upper bound Perfect fit</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:#ffd166;"></div><span>P_max t&#8320;=0.070 mm — upper bound Snug fit</span></div>
+      <div class="legend-item"><div class="legend-line" style="background:rgba(160,180,255,0.75);"></div><span>C&#772; / &plusmn;1SD / &plusmn;2SD &mdash; TheyFit (n&gt;20&#8239;000)</span></div>
+    </div>
+  </div>
+
+  <div class="data-grid">
+    <div class="data-cell">
+      <div class="dc-label">Calculated pressure ΔP</div>
+      <div class="dc-value" id="res-p">—</div>
+    </div>
+    <div class="data-cell">
+      <div class="dc-label">Elongation λ_θ</div>
+      <div class="dc-value" id="res-lambda">—</div>
+    </div>
+    <div class="data-cell">
+      <div class="dc-label">Membrane tension T</div>
+      <div class="dc-value" id="res-T">—</div>
+    </div>
+    <div class="data-cell">
+      <div class="dc-label">Stress σ_θ</div>
+      <div class="dc-value" id="res-sigma">—</div>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="formula-title">Physical model used</div>
+    Neo-Hookean model · C₁ = E/6  (G = E/3, ν = 0.5)<br>
+    Axially blocked · λ_z = 1 → λ_r = λ_θ<sup>−1</sup><br>
+    σ_θ = 2C₁(λ_θ² − λ_θ<sup>−2</sup>)  ·  σ_z = 2C₁(1 − λ_θ<sup>−2</sup>) &gt; 0<br>
+    t = t₀/λ_θ  ·  T = σ_θ · t  ·  ΔP = T / R   [Laplace's Law — cylinder]<br>
+    References: P_min/P_max computed for w=52mm, t₀=0.065mm, E=1.8MPa, C=[114.4 ; 124.8 mm]
+  </div>
+
+</div>
+
+<footer>
+  For informational purposes only · Neo-Hookean biomechanical model + Laplace's Law<br>
+  Sources: ISO 4074 · Gerofi et al. (Condom Design and Acceptability) · TheyFit FitKit · natural latex literature
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  MODÈLE NÉO-HOOKÉEN ÉQUIBIAXIAL + LOI DE LAPLACE
+// ═══════════════════════════════════════════════════════════
+function computePressure(C_mm, w_mm, t0_mm, E_MPa) {
+  // Neo-Hookean, lambda_z = 1 (axially blocked: no axial displacement)
+  // => lambda_r = 1/lambda_theta        [incompressibility]
+  // => sigma_theta = 2*C1*(lambda^2 - lambda^(-2))
+  // => sigma_z     = 2*C1*(1 - lambda^(-2))  > 0 [axial tension]
+  // => t_current   = t0 / lambda
+  // => T = sigma_theta * t_current
+  // => dP = T / R  [Laplace, cylinder]
+  const C1     = E_MPa / 6.0;
+  const C0     = 2.0 * w_mm;
+  const lambda = C_mm / C0;
+  const R_m    = (C_mm * 1e-3) / (2 * Math.PI);
+  const t0_m   = t0_mm * 1e-3;
+  const sigma  = 2 * C1 * (lambda**2 - 1/lambda**2);   // MPa  [blocked: lambda_z=1]
+  const t_cur  = t0_m / lambda;                         // m    [lambda_r = 1/lambda]
+  const T      = sigma * 1e6 * t_cur;                   // N/m
+  const dP     = T / R_m;                               // Pa
+  return { lambda, sigma, T, dP };
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PRESSIONS DE RÉFÉRENCE — 3 épaisseurs (w=52mm, E=1.8MPa)
+//  C_min=114.4mm (+10%), C_moy=119.6mm (+15%), C_max=124.8mm (+20%)
+// ═══════════════════════════════════════════════════════════
+const REF_W = 52, REF_E = 1.8;
+// t0 = 0.060 mm
+const Pmin_060 = computePressure(114.4, REF_W, 0.060, REF_E).dP;
+const Pmax_060 = computePressure(124.8, REF_W, 0.060, REF_E).dP;
+// t0 = 0.065 mm  (référence centrale)
+const Pmin_065 = computePressure(114.4, REF_W, 0.065, REF_E).dP;
+const Pmoy_065 = computePressure(119.6, REF_W, 0.065, REF_E).dP;
+const Pmax_065 = computePressure(124.8, REF_W, 0.065, REF_E).dP;
+// t0 = 0.070 mm
+const Pmin_070 = computePressure(114.4, REF_W, 0.070, REF_E).dP;
+const Pmax_070 = computePressure(124.8, REF_W, 0.070, REF_E).dP;
+// Aliases pour le graphique (zones horizontales)
+const refPmin = Pmin_065, refPmoy = Pmoy_065, refPmax = Pmax_065;
+
+// ═══════════════════════════════════════════════════════════
+//  PRESETS
+// ═══════════════════════════════════════════════════════════
+function applyPreset(w, t, e, btn) {
+  document.getElementById('width').value = w;
+  document.getElementById('thick').value = t;
+  document.getElementById('emod').value  = e;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DESSIN DU GRAPHIQUE (Canvas 2D pur)
+// ═══════════════════════════════════════════════════════════
+function drawChart(userCirc, userDP, w_mm, t0_mm, E_MPa) {
+  const canvas = document.getElementById('pressureCanvas');
+  const dpr    = window.devicePixelRatio || 1;
+  const W_css  = canvas.parentElement.clientWidth - 48;
+  const H_css  = Math.round(W_css * 0.55);
+  canvas.style.width  = W_css + 'px';
+  canvas.style.height = H_css + 'px';
+  canvas.width  = W_css * dpr;
+  canvas.height = H_css * dpr;
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = W_css, H = H_css;
+
+  // Marges
+  const ml = 62, mr = 24, mt = 20, mb = 46;
+  const pw = W - ml - mr;   // plot width
+  const ph = H - mt - mb;   // plot height
+
+  // Plage de circonférences
+  const C_min = 85, C_max = 160;
+  const nPts = 200;
+
+  // Calcul de la courbe
+  const pts = [];
+  for (let i = 0; i <= nPts; i++) {
+    const C = C_min + (C_max - C_min) * i / nPts;
+    const r = computePressure(C, w_mm, t0_mm, E_MPa);
+    if (r.lambda > 0.5) pts.push({ C, dP: r.dP / 1000 }); // kPa
+  }
+
+  // Échelle Y : 0 → max(courbe, refPmax*1.3)
+  const maxDP = Math.max(...pts.map(p => p.dP), refPmax / 1000 * 1.35, userDP / 1000 * 1.25);
+  const minDP = 0;
+
+  function xPos(C)  { return ml + (C - C_min) / (C_max - C_min) * pw; }
+  function yPos(dp) { return mt + ph - (dp - minDP) / (maxDP - minDP) * ph; }
+
+  // ── Fond ──
+  ctx.fillStyle = '#161a23';
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Green zone between Pmin and Pmax ──
+  const yTop  = yPos(refPmax / 1000);
+  const yBot  = yPos(refPmin / 1000);
+  ctx.fillStyle = 'rgba(79,255,176,0.07)';
+  ctx.fillRect(ml, yTop, pw, yBot - yTop);
+
+  // ── Grille horizontale ──
+  ctx.strokeStyle = '#2a3045';
+  ctx.lineWidth = 1;
+  const nGridY = 5;
+  for (let i = 0; i <= nGridY; i++) {
+    const dp = minDP + (maxDP - minDP) * i / nGridY;
+    const y = yPos(dp);
+    ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(ml + pw, y); ctx.stroke();
+    ctx.fillStyle = '#7a8299';
+    ctx.font = `${10 * dpr / dpr}px DM Mono, monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText(dp.toFixed(2), ml - 8, y + 4);
+  }
+
+  // ── Axe X : ticks ──
+  ctx.fillStyle = '#7a8299';
+  ctx.font = '10px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  const xTicks = [90, 100, 110, 114.4, 119.6, 124.8, 130, 140, 150, 160];
+  xTicks.forEach(C => {
+    const x = xPos(C);
+    ctx.strokeStyle = '#2a3045'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, mt); ctx.lineTo(x, mt + ph); ctx.stroke();
+    ctx.fillStyle = '#7a8299';
+    ctx.fillText(C % 1 === 0 ? C : C.toFixed(1), x, mt + ph + 16);
+  });
+
+  // ── Labels axes ──
+  ctx.fillStyle = '#4fffb0';
+  ctx.font = '10px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Circumference (mm)', ml + pw / 2, H - 4);
+
+  ctx.save();
+  ctx.translate(12, mt + ph / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('ΔP (kPa)', 0, 0);
+  ctx.restore();
+
+  // ── Lignes horizontales de référence ──
+  function drawHLine(dp_kPa, color, label, dash) {
+    const y = yPos(dp_kPa);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash(dash || []);
+    ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(ml + pw, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = color;
+    ctx.font = '9px DM Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(label + ' ' + dp_kPa.toFixed(3) + ' kPa', ml + 4, y - 5);
+  }
+  drawHLine(Pmin_060/1000, 'rgba(79,255,176,0.45)', 'P_min 0.060', [5,4]);
+  drawHLine(Pmin_065/1000, 'rgba(79,255,176,0.85)', 'P_min 0.065', [6,3]);
+  drawHLine(Pmoy_065/1000, 'rgba(79,255,176,1.0)',  'P_moy 0.065', [4,2]);
+  drawHLine(Pmax_065/1000, 'rgba(255,209,102,0.75)','P_max 0.065', [6,3]);
+  drawHLine(Pmax_070/1000, 'rgba(255,209,102,1.0)', 'P_max 0.070', [5,4]);
+
+  // ── Courbe ΔP(C) ──
+  ctx.strokeStyle = '#4fffb0';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(79,255,176,0.4)';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const x = xPos(p.C), y = yPos(p.dP);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // ── Lignes verticales statistiques (Cmoy +/- 1ET, 2ET) ──
+  // Source: TheyFit FitKit — C_mean = 119.6 mm, SD = 15.1 mm
+  const C_MOY = 119.6, C_ET = 15.1;
+  const VCOL = 'rgba(160,180,255,0.60)';
+  const statLines = [
+    { C: C_MOY - 2*C_ET, label: '-2SD', dash: [3, 5] },
+    { C: C_MOY -   C_ET, label: '-1SD', dash: [5, 3] },
+    { C: C_MOY,          label: 'Cmean', dash: [6, 2] },
+    { C: C_MOY +   C_ET, label: '+1SD', dash: [5, 3] },
+    { C: C_MOY + 2*C_ET, label: '+2SD', dash: [3, 5] },
+  ];
+  statLines.forEach(sl => {
+    const sx = xPos(sl.C);
+    if (sx < ml || sx > ml + pw) return;
+    ctx.strokeStyle = VCOL;
+    ctx.lineWidth = sl.label === 'Cmoy' ? 1.5 : 1;
+    ctx.setLineDash(sl.dash);
+    ctx.beginPath(); ctx.moveTo(sx, mt); ctx.lineTo(sx, mt + ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = VCOL;
+    ctx.font = (sl.label === 'Cmoy' ? 'bold ' : '') + '9px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(sl.label, sx, mt + 12);
+    ctx.font = '8px DM Mono, monospace';
+    ctx.fillText(sl.C.toFixed(1), sx, mt + ph - 5);
+  });
+
+  // ── Ligne verticale a la position utilisateur ──
+  const ux = xPos(userCirc);
+  ctx.strokeStyle = 'rgba(255,107,107,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(ux, mt); ctx.lineTo(ux, mt + ph); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Point utilisateur ──
+  const uy = yPos(userDP / 1000);
+  // Halo
+  ctx.beginPath();
+  ctx.arc(ux, uy, 10, 0, 2 * Math.PI);
+  ctx.fillStyle = 'rgba(255,107,107,0.2)';
+  ctx.fill();
+  // Point
+  ctx.beginPath();
+  ctx.arc(ux, uy, 5.5, 0, 2 * Math.PI);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.shadowColor = '#ff6b6b';
+  ctx.shadowBlur = 10;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  // Contour blanc
+  ctx.beginPath();
+  ctx.arc(ux, uy, 5.5, 0, 2 * Math.PI);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // ── Étiquette utilisateur ──
+  const labelX = ux + (ux > ml + pw * 0.7 ? -10 : 10);
+  const labelAlign = ux > ml + pw * 0.7 ? 'right' : 'left';
+  ctx.fillStyle = '#ff6b6b';
+  ctx.font = 'bold 10px DM Mono, monospace';
+  ctx.textAlign = labelAlign;
+  ctx.fillText(`You: ${(userDP/1000).toFixed(3)} kPa`, labelX, uy - 12);
+  ctx.fillStyle = '#7a8299';
+  ctx.font = '9px DM Mono, monospace';
+  ctx.fillText(`C = ${userCirc} mm`, labelX, uy + 20);
+
+  // ── Bordure du graphe ──
+  ctx.strokeStyle = '#2a3045';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(ml, mt, pw, ph);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CALCUL PRINCIPAL
+// ═══════════════════════════════════════════════════════════
+function calculate() {
+  const circ = parseFloat(document.getElementById('circ').value);
+  const w    = parseFloat(document.getElementById('width').value);
+  const t0   = parseFloat(document.getElementById('thick').value);
+  const E    = parseFloat(document.getElementById('emod').value);
+
+  let valid = true;
+  if (isNaN(circ) || circ < 80 || circ > 180) {
+    document.getElementById('err-circ').style.display = 'block'; valid = false;
+  } else { document.getElementById('err-circ').style.display = 'none'; }
+  if (isNaN(w) || w < 30 || w > 80 || isNaN(t0) || t0 <= 0 || isNaN(E) || E <= 0) {
+    document.getElementById('err-inputs').style.display = 'block'; valid = false;
+  } else { document.getElementById('err-inputs').style.display = 'none'; }
+  if (!valid) return;
+
+  // Pre-check: condom larger than penis
+  const C0 = 2.0 * w;
+  if (circ <= C0) {
+    const vBox  = document.getElementById('verdict-box');
+    const vIcon = document.getElementById('verdict-icon');
+    const vTitle= document.getElementById('verdict-title');
+    const vSub  = document.getElementById('verdict-sub');
+    vBox.className = 'verdict low';
+    vIcon.textContent  = '📏';
+    vTitle.textContent = 'Condom larger than penis';
+    vSub.textContent   = `The condom circumference (${C0} mm) is greater than your penis circumference (${circ} mm). No pressure calculation performed.`;
+    document.getElementById('res-p').className   = 'dc-value yellow';
+    document.getElementById('res-p').textContent = '—';
+    document.getElementById('res-lambda').textContent = '< 1';
+    document.getElementById('res-T').textContent      = '—';
+    document.getElementById('res-sigma').textContent  = '—';
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.style.display = 'block';
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
+  const res     = computePressure(circ, w, t0, E);
+  const dP_kPa  = res.dP / 1000;
+
+  // ── Verdict: 5 zones ──
+  // Zone 1: too large     → P < Pmin(0.060)
+  // Zone 2: comfort fit   → Pmin(0.060) ≤ P < Pmin(0.065)
+  // Zone 3: perfect fit   → Pmin(0.065) ≤ P ≤ Pmax(0.065)
+  // Zone 4: snug fit      → Pmax(0.065) < P ≤ Pmax(0.070)
+  // Zone 5: too tight     → P > Pmax(0.070)
+  const vBox  = document.getElementById('verdict-box');
+  const vIcon = document.getElementById('verdict-icon');
+  const vTitle= document.getElementById('verdict-title');
+  const vSub  = document.getElementById('verdict-sub');
+  vBox.className = 'verdict';
+  let colorClass = 'green';
+
+  if (res.dP < Pmin_060) {
+    vBox.classList.add('low'); colorClass = 'yellow';
+    vIcon.textContent  = '⚠️';
+    vTitle.textContent = 'Too large';
+    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa < P_min (${(Pmin_060/1000).toFixed(3)} kPa). Insufficient grip — risk of slippage.`;
+  } else if (res.dP < Pmin_065) {
+    vBox.classList.add('comfort'); colorClass = 'comfort';
+    vIcon.textContent  = '😌';
+    vTitle.textContent = 'Comfort fit';
+    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa. Slightly large — comfortable, relaxed fit.`;
+  } else if (res.dP <= Pmax_065) {
+    vBox.classList.add('ok'); colorClass = 'green';
+    vIcon.textContent  = '✅';
+    vTitle.textContent = 'Perfect fit';
+    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa ∈ [${(Pmin_065/1000).toFixed(3)} ; ${(Pmax_065/1000).toFixed(3)}] kPa. Optimal size — balanced grip and comfort.`;
+  } else if (res.dP <= Pmax_070) {
+    vBox.classList.add('snug'); colorClass = 'snug';
+    vIcon.textContent  = '🤏';
+    vTitle.textContent = 'Snug fit';
+    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa. Slightly tight — good grip, close fit.`;
+  } else {
+    vBox.classList.add('high'); colorClass = 'red';
+    vIcon.textContent  = '❌';
+    vTitle.textContent = 'Too tight';
+    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa > P_max (${(Pmax_070/1000).toFixed(3)} kPa). Excessive constriction — likely discomfort, increased risk of breakage.`;
+  }
+
+  // ── Data cells ──
+  const cssColor = {green:'green', yellow:'yellow', red:'red', comfort:'comfort', snug:'snug'}[colorClass] || 'green';
+  document.getElementById('res-p').className     = `dc-value ${cssColor}`;
+  document.getElementById('res-p').textContent   = dP_kPa.toFixed(3) + ' kPa';
+  document.getElementById('res-lambda').textContent = res.lambda.toFixed(4);
+  document.getElementById('res-T').textContent   = res.T.toFixed(3) + ' N/m';
+  document.getElementById('res-sigma').textContent  = (res.sigma * 1e3).toFixed(2) + ' kPa';
+
+  // ── Affichage & graphique ──
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.style.display = 'block';
+
+  // Laisser le DOM se mettre à jour avant de dessiner
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      drawChart(circ, res.dP, w, t0, E);
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+// Redessiner si la fenêtre est redimensionnée
+let _lastParams = null;
+window.addEventListener('resize', () => {
+  if (_lastParams) drawChart(..._lastParams);
+});
+
+const _origDraw = drawChart;
+window.drawChart = function(...args) { _lastParams = args; _origDraw(...args); };
+</script>
+</body>
+</html>
