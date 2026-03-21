@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CondomFit — Pourquoi w = 52 mm est insuffisant</title>
+<title>CondomFit — Choix historique de la largeur nominale 52 mm et implications pour le standard ISO 4074</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -93,12 +93,13 @@ section:nth-child(6){animation-delay:.25s}
 </style>
 </head>
 <body>
+<div style="text-align:center;padding:20px 0 0;"><a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:.75rem;color:#7a8299;text-decoration:none;padding:6px 14px;border:1px solid #2a3045;border-radius:100px;background:#161a23;transition:color .2s;" onmouseover="this.style.color='#4fffb0';this.style.borderColor='#4fffb0'" onmouseout="this.style.color='#7a8299';this.style.borderColor='#2a3045'">← Retour à l'accueil</a></div>
 <div class="page">
 
 <header>
   <span class="tag">Statistiques · Biomécanique · Standardisation</span>
-  <h1>Pourquoi w&nbsp;=&nbsp;52&nbsp;mm ne suffit pas — <span>le contexte</span></h1>
-  <p class="subtitle">Origine historique de la taille standard, distribution anatomique de la population, et pourquoi l'étirement seul ne peut pas servir de critère de compatibilité.</p>
+  <h1>Choix historique de la <span>largeur nominale 52 mm</span> et implications pour le standard ISO 4074</h1>
+  <p class="subtitle">Le w&nbsp;=&nbsp;52&nbsp;mm est un choix historique adapté à la moyenne — mais l'écart-type de la population exige une gamme complète de tailles, et l'étirement seul ne suffit pas comme critère universel.</p>
   <div class="nav-links">
     <a href="condomfit_v1_libre_fr.html"  class="btn btn-outline">Calculateur (libre)</a>
     <a href="condomfit_v1_bloque_fr.html" class="btn btn-outline">Calculateur (bloqué)</a>
@@ -107,14 +108,13 @@ section:nth-child(6){animation-delay:.25s}
   </div>
 </header>
 
-<!-- 1. ORIGINE HISTORIQUE -->
+<!-- 1. ORIGINE HISTORIQUE + DISTRIBUTION -->
 <section>
-  <h2>1 · Origine du standard w = 52 mm</h2>
+  <h2>1 · Origine du standard w = 52 mm et distribution anatomique</h2>
   <div class="card highlight">
-    <p>La largeur nominale de 52 mm a été retenue comme taille standard dans la norme ISO 4074 parce que la circonférence non étirée du préservatif (C₀ = 2 × 52 = 104 mm) était censée correspondre, après un étirement modéré de 10 à 20 %, à la circonférence érectile moyenne observée dans les populations occidentales.</p>
-    <div class="eq">C₀ = 2 × w = 2 × 52 = 104 mm<br>
-C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></div>
-    <p>Ce raisonnement est confirmé par les données TheyFit FitKit (n &gt; 20 000) : la moyenne de la distribution des circonférences érectiles dans les pays occidentaux est précisément <strong>119,6 mm</strong>, avec un écart-type de <strong>15,1 mm</strong>.</p>
+    <p>La largeur nominale de 52 mm a été retenue comme taille standard dans la norme ISO 4074 parce que la circonférence non étirée du préservatif (C₀ = 2 × 52 = 104 mm) correspond, après un étirement de ~15 %, à la circonférence érectile <strong>moyenne</strong> observée dans les populations occidentales.</p>
+    <div class="eq">C₀ = 2 × w = 2 × 52 = 104 mm &nbsp;·&nbsp; C_pénis ≈ C₀ × 1,15 = <strong>119,6 mm</strong></div>
+    <p>Ce choix est confirmé par les données TheyFit FitKit (n &gt; 20 000) : la moyenne de la distribution est précisément <strong>119,6 mm</strong>. Le w = 52 mm est donc bien centré sur la population — mais centré sur la <em>moyenne</em> ne signifie pas adapté à <em>tous</em>.</p>
   </div>
 
   <div class="stat-grid">
@@ -122,6 +122,29 @@ C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></d
     <div class="stat-box"><div class="stat-val">15,1 mm</div><div class="stat-label">Écart-type σ</div></div>
     <div class="stat-box"><div class="stat-val">&gt; 20 000</div><div class="stat-label">Participants TheyFit</div></div>
     <div class="stat-box"><div class="stat-val">52 mm</div><div class="stat-label">Largeur nominale standard</div></div>
+  </div>
+
+  <div class="card warn" style="margin-top:0;">
+    <h3 style="color:var(--warn);margin-top:0;">Ce que l'écart-type implique</h3>
+    <p>Avec σ = 15,1 mm, la distribution est large. La plage de compatibilité du préservatif de 52 mm — C ∈ [114,4 ; 124,8 mm], soit ±10–20 % d'étirement — ne couvre que <strong>27 % de la population</strong>. Les 73 % restants ont besoin d'une taille différente pour bénéficier d'une pression membranaire optimale.</p>
+    <div class="eq" style="border-color:var(--warn);">
+      µ − 2σ = 89,4 mm &nbsp;→&nbsp; w ≈ 39 mm optimal<br>
+      µ + 2σ = 149,8 mm &nbsp;→&nbsp; w ≈ 65 mm optimal<br>
+      <strong>Une gamme w = [39–65 mm] est nécessaire pour couvrir 95 % de la population</strong>
+    </div>
+    <p style="margin-top:12px;">Le tableau ci-dessous montre la couverture de population par gamme de tailles :</p>
+    <table style="margin-top:12px;">
+      <thead><tr><th>Gamme disponible</th><th>Population couverte</th></tr></thead>
+      <tbody>
+        <tr><td>Standard seul — w = 52 mm</td><td style="color:var(--err);font-weight:700;">27 %</td></tr>
+        <tr><td>3 tailles — w = 49, 52, 56 mm</td><td style="color:var(--warn);font-weight:700;">62 %</td></tr>
+        <tr><td>5 tailles — w = 47, 52, 56, 60, 64 mm</td><td style="color:var(--warn);font-weight:700;">81 %</td></tr>
+        <tr><td>7 tailles — w = 45, 49, 52, 56, 60, 64, 69 mm</td><td style="color:var(--ok);font-weight:700;">91 %</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;font-size:.87rem;color:var(--muted);">
+      Couverture = proportion de la population dont la circonférence érectile tombe dans la plage d'étirement optimal (±10–20 %) d'au moins une taille de la gamme. Source : TheyFit FitKit, n > 20 000.
+    </p>
   </div>
 </section>
 
@@ -156,7 +179,7 @@ C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></d
 
   <h3>Exemple numérique</h3>
   <div class="card">
-    <p>Pour un pénis de <strong>C = 119,6 mm</strong> (moyenne), calculons ΔP à λ = 1,15 pour différentes largeurs nominales (t₀ = 0,065 mm, E = 1,8 MPa) :</p>
+    <p>Pour un pénis de <strong>C = 119,6 mm</strong> (moyenne), calculons ΔP à λ = 1,15 pour différentes largeurs nominales (t₀ = 0,065 mm, E = 1,69 MPa) :</p>
     <table style="margin-top:14px;">
       <thead><tr><th>w (mm)</th><th>C₀ (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Verdict</th></tr></thead>
       <tbody id="pressure-table"></tbody>
@@ -173,7 +196,7 @@ C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></d
 <section>
   <h2>4 · ΔP en fonction de λ — comparaison de largeurs nominales</h2>
   <div class="chart-card">
-    <div class="chart-title">ΔP(λ) pour différentes largeurs w — modèle libre, t₀ = 0,065 mm, E = 1,8 MPa</div>
+    <div class="chart-title">ΔP(λ) pour différentes largeurs w — modèle libre, t₀ = 0,065 mm, E = 1,69 MPa</div>
     <canvas id="pressureChart"></canvas>
     <div class="chart-legend" id="pressure-legend"></div>
   </div>
@@ -185,9 +208,9 @@ C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></d
 <!-- 4b. EFFETS t₀ ET E -->
 <section>
   <h2>4b · Effets de t₀ et E sur la courbe ΔP</h2>
-  <p style="color:var(--muted);margin-bottom:20px;font-size:.9rem;">La largeur nominale w n'est pas le seul levier : l'épaisseur t₀ et le module de Young E modifient eux aussi la courbe de pression, chacun selon une logique distincte. Les graphiques ci-dessous maintiennent les deux autres paramètres à leurs valeurs de référence (w = 52 mm, t₀ = 0,065 mm, E = 1,8 MPa).</p>
+  <p style="color:var(--muted);margin-bottom:20px;font-size:.9rem;">La largeur nominale w n'est pas le seul levier : l'épaisseur t₀ et le module de Young E modifient eux aussi la courbe de pression, chacun selon une logique distincte. Les graphiques ci-dessous maintiennent les deux autres paramètres à leurs valeurs de référence (w = 52 mm, t₀ = 0,065 mm, E = 1,69 MPa).</p>
 
-  <h3>Effet de l'épaisseur t₀ <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted)">(w = 52 mm, E = 1,8 MPa fixés)</span></h3>
+  <h3>Effet de l'épaisseur t₀ <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted)">(w = 52 mm, E = 1,69 MPa fixés)</span></h3>
   <div class="chart-card">
     <div class="chart-title">ΔP(C_pénis) — variation de t₀ · Modèle libre (σ_z = 0)</div>
     <canvas id="chartT4b"></canvas>
@@ -221,6 +244,15 @@ C_pénis ≈ C₀ × 1,15 = 104 × 1,15 = <strong>119,6 mm ≈ 12 cm</strong></d
         <tr><td class="td-acc">E (module)</td><td>↑ ΔP + pente ↑</td><td>Amplification + raidissement</td><td>Rétrécit fortement, ↓ vers petites C</td><td>Non-linéaire</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<section>
+
+  <div class="card" style="margin-top:0;border-color:rgba(79,255,176,0.2);">
+    <p style="font-size:.88rem;color:var(--muted);">
+      <strong>Encadrement des résultats :</strong> le modèle <strong>libre</strong> (σ_z = 0, λ_z = λ_θ<sup>−½</sup>) donne la pression <em>minimale</em> théorique — applicable à un préservatif lubrifié. Le modèle <strong>bloqué</strong> (λ_z = 1) donne la pression <em>maximale</em> — correspondant au protocole Gerofi sur mandrin rigide. L'écart entre ces deux bornes constitue l'intervalle d'incertitude du modèle en usage réel.
+    </p>
   </div>
 </section>
 
@@ -377,6 +409,7 @@ function drawCDF() {
 
 // ── Pressure table ────────────────────────────────────────────────────────────
 function computeDP(C_mm, w_mm, t0_mm, E_MPa) {
+  // σ_z=0 (membrane mince, σ_r=0) → λ_z=λ^(-1/2)
   const C1=E_MPa/6, lam=C_mm/(2*w_mm);
   const R=C_mm*1e-3/(2*Math.PI);
   const sigma=2*C1*(lam**2-1/lam);
@@ -384,14 +417,14 @@ function computeDP(C_mm, w_mm, t0_mm, E_MPa) {
   return {lam, dP: sigma*1e6*t/R};
 }
 
-const refMin = computeDP(114.4,52,0.065,1.8).dP;
-const refMax = computeDP(124.8,52,0.065,1.8).dP;
+const refMin = computeDP(114.4,52,0.065,1.69).dP;
+const refMax = computeDP(124.8,52,0.065,1.69).dP;
 
 const wList=[45,47,49,52,53,54,56,57,58,60,64,69];
 const C_test=119.6;
 const tbody=document.getElementById('pressure-table');
 wList.forEach(w=>{
-  const {lam,dP}=computeDP(C_test,w,0.065,1.8);
+  const {lam,dP}=computeDP(C_test,w,0.065,1.69);
   const ok=dP>=refMin&&dP<=refMax;
   const color=dP<refMin?'var(--warn)':dP>refMax?'var(--err)':'var(--accent)';
   const verdict=dP<refMin?'Trop large':dP>refMax?'Trop étroit':'Compatible';
@@ -426,7 +459,8 @@ function drawPressure() {
     for(let i=0;i<=nPts;i++){
       const lam=lMin+(lMax-lMin)*i/nPts;
       const C0=2*w*1e-3, Cv=lam*C0, R=Cv/(2*Math.PI);
-      const C1=1.8/6, t0=0.065e-3;
+      const C1=1.69/6, t0=0.065e-3;
+      // σ_z=0 (membrane mince) → λ_z=λ^(-1/2)
       const sigma=2*C1*(lam**2-1/lam);
       const t=t0/Math.sqrt(lam);
       pts.push({lam, dP:sigma*1e6*t/R/1000});
@@ -507,6 +541,7 @@ window.addEventListener('resize',()=>{ drawCDF(); drawPressure(); });
 
 // ── Param chart utility (4b) ─────────────────────────────────────────────────
 function dpCalc(C_mm, w_mm, t0_mm, E_MPa) {
+  // σ_z=0 (membrane mince, σ_r=0) → λ_z=λ^(-1/2)
   const C1 = E_MPa / 6, lam = C_mm / (2 * w_mm);
   if (lam <= 1.0) return 0;
   const R = C_mm * 1e-3 / (2 * Math.PI);
@@ -601,21 +636,21 @@ function makeParamChart2(canvasId, legendId, curves, xMin, xMax, xLabel, refMin,
       `<div class="leg-item"><div class="leg-line" style="background:${c.color};height:${c.lw||2}px"></div><span>${c.label}</span></div>`
     ).join('') +
     `<div class="leg-item"><div class="leg-line" style="background:rgba(79,255,176,0.4);height:8px;border-radius:2px"></div><span>REF_LABEL</span></div>`;
-    leg.innerHTML = leg.innerHTML.replace('REF_LABEL', 'Zone P_min–P_max · w=52mm, E=1,8MPa, t₀=0,065mm');
+    leg.innerHTML = leg.innerHTML.replace('REF_LABEL', 'Zone P_min–P_max · w=52mm, E=1,69MPa, t₀=0,065mm');
   }
 }
 
 const COLORS6 = ['#74c0fc','#4fffb0','#ffd166','#f783ac','#ff6b6b','#a9e34b'];
-const REF_W = 52, REF_T = 0.065, REF_E = 1.8;
-const DP_REFMIN = dpCalc(114.4, 52, 0.065, 1.8);
-const DP_REFMAX = dpCalc(124.8, 52, 0.065, 1.8);
+const REF_W = 52, REF_T = 0.065, REF_E = 1.69;
+const DP_REFMIN = dpCalc(114.4, 52, 0.065, 1.69);
+const DP_REFMAX = dpCalc(124.8, 52, 0.065, 1.69);
 
 function drawParamCharts4b() {
   // Chart t0 — x: 104 to 150mm (all start at 2*52=104 for λ>1)
   const tVals = [0.050, 0.055, 0.060, 0.065, 0.070, 0.080];
   makeParamChart2('chartT4b', 'legendT4b',
     tVals.map((t, i) => ({
-      pts: makePts2(52, t, 1.8, 104, 150),
+      pts: makePts2(52, t, 1.69, 104, 150),
       color: COLORS6[i],
       label: 't\u2080 = ' + (t * 1000).toFixed(0) + ' \u00b5m' + (t === 0.065 ? ' \u2605' : ''),
       dash: t === 0.065 ? [] : [5, 3], lw: t === 0.065 ? 2.5 : 1.5,
@@ -624,13 +659,13 @@ function drawParamCharts4b() {
   );
 
   // Chart E — x: 104 to 145mm
-  const eVals = [1.0, 1.4, 1.8, 2.2, 2.6, 3.2];
+  const eVals = [1.0, 1.4, 1.69, 2.2, 2.6, 3.2];
   makeParamChart2('chartE4b', 'legendE4b',
     eVals.map((e, i) => ({
       pts: makePts2(52, 0.065, e, 104, 145),
       color: COLORS6[i],
-      label: 'E = ' + e.toFixed(1) + ' MPa' + (e === 1.8 ? ' \u2605' : ''),
-      dash: e === 1.8 ? [] : [5, 3], lw: e === 1.8 ? 2.5 : 1.5,
+      label: 'E = ' + e.toFixed(2) + ' MPa' + (e === 1.69 ? ' \u2605' : ''),
+      dash: e === 1.69 ? [] : [5, 3], lw: e === 1.69 ? 2.5 : 1.5,
     })),
     104, 145, 'Circonférence érectile (mm)', DP_REFMIN, DP_REFMAX
   );
@@ -638,6 +673,7 @@ function drawParamCharts4b() {
 
 drawParamCharts4b();
 window.addEventListener('resize', drawParamCharts4b);
+
 
 </script>
 </body>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penile Volume Heatmap – Schneider et al. (2000)</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  background: #1a1a2e; color: #c8d8f0;
+  display: flex; flex-direction: column;
+  height: 100vh; overflow: hidden;
+  padding: 6px 8px 4px;
+}
+h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex-shrink: 0; }
+.panel {
+  background: #1e1e3a; border: 0.5px solid #38385a; border-radius: 7px;
+  padding: 5px 8px; margin-bottom: 4px; flex-shrink: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.panel label { font-size: 11px; color: #7888a8; }
+.panel input[type=number] {
+  width: 68px; padding: 2px 5px; font-size: 11px;
+  border-radius: 4px; border: 0.5px solid #3a3a6a;
+  background: #10102a; color: #d0dcf4;
+}
+.panel button {
+  padding: 2px 8px; font-size: 11px;
+  border: 0.5px solid #3a3a6a; border-radius: 4px;
+  background: #10102a; color: #98a8c8; cursor: pointer;
+}
+.panel button.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+.panel button:hover:not(.active) { background: #1e1e44; }
+#status { font-size: 10px; color: #485868; flex-shrink: 0; min-height: 14px; margin-bottom: 2px; }
+#canvas-wrap { flex: 1 1 0; min-height: 0; min-width: 0; position: relative; width: 100%; }
+#heatCanvas { display: block; position: absolute; top: 0; left: 0; }
+.legend {
+  flex-shrink: 0; margin-top: 3px;
+  display: flex; flex-wrap: wrap; gap: 5px 12px;
+}
+.li { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #607080; }
+.ld { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.ls { width: 16px; height: 2px; flex-shrink: 0; border-radius: 1px; }
+.lds { width: 16px; height: 0; border-top: 2px dashed; flex-shrink: 0; }
+.ref { font-size: 9px; color: #303840; margin-top: 2px; flex-shrink: 0; line-height: 1.5; }
+#tip {
+  display: none; position: absolute; z-index: 30; pointer-events: none;
+  background: rgba(5,5,20,0.97); border: 0.5px solid #283870;
+  border-radius: 7px; padding: 8px 11px;
+  font-size: 11px; color: #a8bcd8; line-height: 1.7; max-width: 270px;
+}
+#tip b { color: #fff; font-size: 11.5px; display: block; margin-bottom: 4px;
+         border-bottom: 0.5px solid #1a2850; padding-bottom: 4px; }
+#tip .tr { display: flex; justify-content: space-between; gap: 12px; }
+#tip .tv { color: #ccdeff; font-weight: 600; }
+#tip .tk { color: #4868a0; font-size: 10px; }
+#tip .tn { font-size: 9.5px; color: #384860; margin-top: 4px;
+           border-top: 0.5px solid #182040; padding-top: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Penile Volume Heatmap — Schneider et al. (2000) · Monte Carlo (ρ = 0.55, n = 100,000)</h1>
+
+<div class="panel">
+  <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
+    <span style="font-size:11px;color:#8898b8;font-weight:500;flex-shrink:0">Cohort:</span>
+    <button id="btn0" class="active" onclick="sel(0)">Schneider et al. (2000) — young (n=111)</button>
+    <button id="btn1"               onclick="sel(1)">Schneider et al. (2000) — older (n=32)</button>
+    <button id="btn2"               onclick="sel(2)">Schneider et al. (2000) — pooled (n=143)</button>
+  </div>
+  <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
+    <button id="btn3" onclick="sel(3)">Wessells et al. (1996) (n=80)</button>
+    <button id="btn4" onclick="sel(4)">Da Ros et al. (1993) (n=150)</button>
+    <button id="btn5" onclick="sel(5)">Compiled studies (n=373)</button>
+    <button id="btn6" onclick="sel(6)">TheyFit (n=20,000)</button>
+  </div>
+  <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:2px;border-top:0.5px solid #2a2a4a;margin-top:2px;">
+    <label>Circ. (mm):</label>
+    <input type="number" id="ic" value="120" min="50" max="250">
+    <label>Length (mm):</label>
+    <input type="number" id="il" value="140" min="50" max="300">
+    <button onclick="go()">Compute ↗</button>
+  </div>
+</div>
+
+<div id="status">>Ready.</div>
+<div id="canvas-wrap"><canvas id="heatCanvas"></canvas><div id="tip"></div></div>
+<div class="legend" id="leg"></div>
+<p class="ref">Schneider T. et al. (2000) — data in mm. Cylinder model: V=π(C/2π)²L. Axes ±3.5 SD rounded to 5 mm. Hover dots for details.</p>
+
+<script>
+const ST=[
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4},
+  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2},
+  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0},
+  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3},
+  {grp:"TheyFit",                 lb:"TheyFit",                 n:20000,cm:119.6, cs:15.1, lm:130.0, ls:20.0},
+];
+let cur=0, lastState=null, gpts=[];
+
+function r5(v){return Math.round(v/5)*5;}
+function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function vol(c,l){const r=c/(2*Math.PI);return Math.PI*r*r*l;}
+function normCDF(z){
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const s=z<0?-1:1,x=Math.abs(z)/Math.SQRT2,t=1/(1+p*x);
+  return 0.5*(1+s*(1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x)));
+}
+function pr(v,m,s){return normCDF((v-m)/s)*100;}
+function prMC(v,sorted){let lo=0,hi=sorted.length-1;while(lo<hi){const m=(lo+hi)>>1;sorted[m]<v?lo=m+1:hi=m;}return lo/sorted.length*100;}
+function ord(p){const n=Math.round(p);if(n>=11&&n<=13)return n+'th';switch(n%10){case 1:return n+'st';case 2:return n+'nd';case 3:return n+'rd';default:return n+'th';}}
+
+function sel(i){cur=i;document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6').forEach((b,j)=>b.classList.toggle('active',j===i));go();}
+
+function runMC(st,N=100000,rho=0.55){
+  const vols=new Float64Array(N);
+  for(let i=0;i<N;i++){
+    const z1=randn(),z2=randn();
+    vols[i]=vol(Math.max(st.cm+st.cs*z1,1),Math.max(st.lm+st.ls*(rho*z1+Math.sqrt(1-rho*rho)*z2),1));
+  }
+  const s=vols.slice().sort((a,b)=>a-b);
+  const pct=p=>s[Math.min(Math.floor(p*N),N-1)];
+  const mn=vols.reduce((a,v)=>a+v,0)/N;
+  const sd=Math.sqrt(vols.reduce((a,v)=>a+(v-mn)**2,0)/N);
+  return{s,mn,sd,p25:pct(.25),p50:pct(.5),p75:pct(.75),pm1:mn-sd,pp1:mn+sd,pm2:mn-2*sd,pp2:mn+2*sd};
+}
+
+function dens(c,l,st,rho=0.55){
+  const zc=(c-st.cm)/st.cs,zl=(l-st.lm)/st.ls,r2=1-rho*rho;
+  return Math.exp(-1/(2*r2)*(zc*zc-2*rho*zc*zl+zl*zl));
+}
+function dcol(d){
+  const S=[[0,[255,255,255]],[.2,[210,225,245]],[.4,[140,175,220]],[.6,[70,120,190]],[.8,[25,70,150]],[1,[5,25,90]]];
+  for(let i=0;i<S.length-1;i++){
+    const[t0,c0]=S[i],[t1,c1]=S[i+1];
+    if(d>=t0&&d<=t1){const f=(d-t0)/(t1-t0);return[Math.round(c0[0]+(c1[0]-c0[0])*f),Math.round(c0[1]+(c1[1]-c0[1])*f),Math.round(c0[2]+(c1[2]-c0[2])*f)];}
+  }
+  return[5,25,90];
+}
+function isoC(vt,ls){return ls.map(l=>l>0?2*Math.PI*Math.sqrt(vt/(Math.PI*l)):null);}
+
+function draw(st,res,uc,ul){
+  const canvas=document.getElementById('heatCanvas');
+  const wrap=document.getElementById('canvas-wrap');
+
+  /* ── Canvas = exact size of wrap ── */
+  const W=wrap.clientWidth;
+  const H=wrap.clientHeight;
+  canvas.width=W; canvas.height=H;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  /* ── Axis ranges ── */
+  const SIGMA=3.5;
+  const CMIN=r5(st.cm-SIGMA*st.cs), CMAX=r5(st.cm+SIGMA*st.cs);
+  const LMIN=r5(st.lm-SIGMA*st.ls), LMAX=r5(st.lm+SIGMA*st.ls);
+  const Crange=CMAX-CMIN, Lrange=LMAX-LMIN;
+
+  /* ── Fixed font size matching page text ── */
+  const FONT=10;  /* px — matches page body ~11px */
+  const FONT_AXIS=10;
+
+  /* ── Padding sized to fit labels ── */
+  /* Y labels are 3-digit numbers → ~3*FONT*0.6 = 18px wide */
+  const PAD={ left: FONT*3.8, right: FONT*0.6, top: FONT*1.2, bottom: FONT*3.2 };
+
+  /* ── Plot dimensions: fill W fully, derive H from aspect ── */
+  const PW=W-PAD.left-PAD.right;
+  const ppm=PW/Crange;             /* pixels per mm — same for both axes */
+  const PH=Math.round(Lrange*ppm);
+
+  /* if PH > available height, constrain by H */
+  const avH=H-PAD.top-PAD.bottom;
+  const ppm2 = PH>avH ? avH/Lrange : ppm;
+  const PW2  = PH>avH ? Math.round(Crange*ppm2) : PW;
+  const PH2  = PH>avH ? avH : PH;
+
+  const toX=c=>PAD.left+(c-CMIN)/Crange*PW2;
+  const toY=l=>PAD.top+(LMAX-l)/Lrange*PH2;
+
+  /* ── Offscreen heatmap ── */
+  const off=document.createElement('canvas');
+  off.width=PW2; off.height=PH2;
+  const oc=off.getContext('2d');
+  const id=oc.createImageData(PW2,PH2);
+  for(let py=0;py<PH2;py++){
+    for(let px=0;px<PW2;px++){
+      const c=CMIN+(px+.5)/PW2*Crange;
+      const l=LMAX-(py+.5)/PH2*Lrange;
+      const[r,g,b]=dcol(dens(c,l,st));
+      const i=(py*PW2+px)*4;
+      id.data[i]=r;id.data[i+1]=g;id.data[i+2]=b;id.data[i+3]=255;
+    }
+  }
+  oc.putImageData(id,0,0);
+  ctx.drawImage(off,PAD.left,PAD.top,PW2,PH2);
+
+  /* ── Determine X tick label step so labels don't overlap ──
+     Each 3-digit label needs ~FONT*2.2 px wide + 2px gap = FONT*2.6 px.
+     Minimum mm between labels = that width / ppm2.
+     Round up to nearest multiple of 5.                          */
+  const minGapPx=FONT*2.6;
+  const minGapMm=minGapPx/ppm2;
+  const xStep=Math.ceil(minGapMm/5)*5;   /* e.g. 5, 10, 15, 20 … */
+
+  /* ── Grid + ticks ── */
+  ctx.save();
+  ctx.font=FONT+'px system-ui,sans-serif';
+
+  /* X */
+  for(let c=CMIN;c<=CMAX;c+=5){
+    const x=toX(c);
+    const showLabel=(c%xStep===0);
+    const maj=(c%25===0);
+    ctx.beginPath();ctx.strokeStyle='rgba(120,140,200,0.10)';ctx.lineWidth=.5;
+    ctx.moveTo(x,PAD.top);ctx.lineTo(x,PAD.top+PH2);ctx.stroke();
+    ctx.beginPath();ctx.strokeStyle=maj?'#506070':'#303848';ctx.lineWidth=maj?1:.5;
+    ctx.moveTo(x,PAD.top+PH2);ctx.lineTo(x,PAD.top+PH2+(maj?5:3));ctx.stroke();
+    if(showLabel){
+      ctx.fillStyle='#6a7a8a';ctx.textAlign='center';
+      ctx.fillText(c,x,PAD.top+PH2+FONT+4);
+    }
+  }
+
+  /* Y */
+  for(let l=LMIN;l<=LMAX;l+=5){
+    const y=toY(l);
+    const maj=(l%25===0);
+    ctx.beginPath();ctx.strokeStyle='rgba(120,140,200,0.10)';ctx.lineWidth=.5;
+    ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+PW2,y);ctx.stroke();
+    ctx.beginPath();ctx.strokeStyle=maj?'#506070':'#303848';ctx.lineWidth=maj?1:.5;
+    ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left-(maj?5:3),y);ctx.stroke();
+    /* Y: label every 5mm — they don't overlap since spacing = ppm2*5 ≥ FONT */
+    ctx.fillStyle='#6a7a8a';ctx.textAlign='right';
+    ctx.fillText(l,PAD.left-FONT*.5,y+FONT*.35);
+  }
+
+  /* border */
+  ctx.beginPath();ctx.strokeStyle='#283848';ctx.lineWidth=1;
+  ctx.strokeRect(PAD.left,PAD.top,PW2,PH2);
+
+  /* axis titles */
+  ctx.fillStyle='#5a6a7a';ctx.font=FONT_AXIS+'px system-ui,sans-serif';ctx.textAlign='center';
+  ctx.fillText('Circumference (mm)',PAD.left+PW2/2,PAD.top+PH2+PAD.bottom-2);
+  ctx.save();
+  ctx.translate(FONT_AXIS,PAD.top+PH2/2);ctx.rotate(-Math.PI/2);
+  ctx.fillText('Length (mm)',0,0);
+  ctx.restore();
+  ctx.restore();
+
+  /* ── Isovolume curves ── */
+  const NI=500;
+  const la=Array.from({length:NI+1},(_,i)=>LMIN+i*Lrange/NI);
+  const ISO=[
+    {v:res.pm2,dash:[7,4],col:'#202060',lw:1.4,lb:'-2 SD'},
+    {v:res.pm1,dash:[4,3],col:'#202060',lw:1.4,lb:'-1 SD'},
+    {v:res.p25,dash:[],   col:'#b08000',lw:2,  lb:'P25'},
+    {v:res.p50,dash:[],   col:'#aa2000',lw:2.5,lb:'P50'},
+    {v:res.p75,dash:[],   col:'#006000',lw:2,  lb:'P75'},
+    {v:res.pp1,dash:[4,3],col:'#202060',lw:1.4,lb:'+1 SD'},
+    {v:res.pp2,dash:[7,4],col:'#202060',lw:1.4,lb:'+2 SD'},
+  ];
+  ISO.forEach(ln=>{
+    const ca=isoC(ln.v,la);
+    ctx.save();ctx.strokeStyle=ln.col;ctx.lineWidth=ln.lw;
+    if(ln.dash.length)ctx.setLineDash(ln.dash);
+    ctx.beginPath();let go=false;
+    for(let i=0;i<=NI;i++){
+      const c=ca[i];
+      if(!c||isNaN(c)||c<CMIN||c>CMAX){go=false;continue;}
+      const x=toX(c),y=toY(la[i]);
+      go?ctx.lineTo(x,y):(ctx.moveTo(x,y),go=true);
+    }
+    ctx.stroke();ctx.restore();
+    for(let i=Math.floor(NI*.7);i>=Math.floor(NI*.15);i--){
+      const c=ca[i];if(!c||isNaN(c)||c<CMIN+6||c>CMAX-6)continue;
+      const lv=la[i];if(lv<LMIN+6||lv>LMAX-6)continue;
+      ctx.save();ctx.font='bold '+FONT+'px system-ui,sans-serif';
+      ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=2;
+      ctx.strokeText(ln.lb,toX(c)+3,toY(lv)-3);
+      ctx.fillStyle=ln.col;ctx.fillText(ln.lb,toX(c)+3,toY(lv)-3);
+      ctx.restore();break;
+    }
+  });
+
+  /* ── Stats ── */
+  const vm=vol(st.cm,st.lm),pvm=Math.round(prMC(vm,res.s));
+  const vu=vol(uc,ul),pcu=Math.round(pr(uc,st.cm,st.cs)),plu=Math.round(pr(ul,st.lm,st.ls)),pvu=Math.round(prMC(vu,res.s));
+  const hM=`<b>Population mean — ${st.lb}</b>
+    <div class="tr"><span>Circumference</span><span class="tv">${st.cm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
+    <div class="tr"><span>Length</span><span class="tv">${st.lm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
+    <div class="tr"><span>Volume</span><span class="tv">${(vm/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
+    <div class="tn">SD circ.: ${st.cs.toFixed(1)} mm · SD length: ${st.ls.toFixed(1)} mm · n=${st.n}</div>`;
+  const hU=`<b>Evaluated penis</b>
+    <div class="tr"><span>Circumference</span><span class="tv">${uc.toFixed(0)} mm</span><span class="tk">${ord(pcu)} pct.</span></div>
+    <div class="tr"><span>Length</span><span class="tv">${ul.toFixed(0)} mm</span><span class="tk">${ord(plu)} pct.</span></div>
+    <div class="tr"><span>Volume</span><span class="tv">${(vu/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvu)} pct.</span></div>
+    <div class="tn">Cohort: ${st.lb}</div>`;
+
+  /* ── Dots ── */
+  function dot(c,l,fill,lbl,side){
+    const x=toX(c),y=toY(l),R=6;
+    ctx.save();
+    ctx.beginPath();ctx.arc(x,y,R,0,2*Math.PI);
+    ctx.fillStyle=fill;ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.font='bold '+FONT+'px system-ui,sans-serif';
+    const tw=ctx.measureText(lbl).width;
+    const lx=side==='r'?x+R+4:x-R-4-tw;
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=2.5;ctx.strokeText(lbl,lx,y+FONT*.35);
+    ctx.fillStyle=fill;ctx.fillText(lbl,lx,y+FONT*.35);
+    ctx.restore();
+    return{cx:x,cy:y,r:R+5};
+  }
+  const pm=dot(st.cm,st.lm,'#2090ff','Mean','r'); pm.html=hM;
+  const pu=dot(uc,ul,'#ff3388','Evaluated','l');   pu.html=hU;
+  gpts=[pm,pu];
+
+  /* ── Density bar ── */
+  const bW=Math.min(120,Math.round(PW2*.15)),bH=8;
+  const bx=PAD.left+PW2-bW-2,by=PAD.top+4;
+  for(let i=0;i<bW;i++){const[r,g,b]=dcol(i/bW);ctx.fillStyle=`rgb(${r},${g},${b})`;ctx.fillRect(bx+i,by,1,bH);}
+  ctx.strokeStyle='rgba(0,0,60,.25)';ctx.lineWidth=.5;ctx.strokeRect(bx,by,bW,bH);
+  ctx.font=FONT+'px system-ui,sans-serif';ctx.fillStyle='#4a5a6a';
+  ctx.textAlign='left'; ctx.fillText('low', bx,by+bH+FONT);
+  ctx.textAlign='right';ctx.fillText('high',bx+bW,by+bH+FONT);
+  ctx.textAlign='center';ctx.fillText('Pop. density',bx+bW/2,by-2);
+
+  buildLeg(ISO);
+  document.getElementById('status').textContent=
+    `${st.lb} | Median vol.: ${(res.p50/1000).toFixed(2)} cm³ | Evaluated vol.: ${(vu/1000).toFixed(2)} cm³ | Hover dots for details.`;
+}
+
+function showTip(pt){
+  const tip=document.getElementById('tip'),wrap=document.getElementById('canvas-wrap');
+  tip.innerHTML=pt.html;tip.style.display='block';
+  let tx=pt.cx+14,ty=pt.cy-10;
+  if(tx+275>wrap.clientWidth)tx=pt.cx-285;
+  if(ty<0)ty=4;
+  tip.style.left=tx+'px';tip.style.top=ty+'px';
+}
+function hideTip(){document.getElementById('tip').style.display='none';}
+document.getElementById('heatCanvas').addEventListener('mousemove',function(e){
+  const r=this.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  let hit=null;for(const p of gpts){if(Math.hypot(mx-p.cx,my-p.cy)<=p.r){hit=p;break;}}
+  this.style.cursor=hit?'pointer':'default';hit?showTip(hit):hideTip();
+});
+document.getElementById('heatCanvas').addEventListener('mouseleave',hideTip);
+
+function buildLeg(iso){
+  const lb=document.getElementById('leg');lb.innerHTML='';
+  iso.forEach(l=>{
+    const d=document.createElement('div');d.className='li';
+    if(l.dash.length){const s=document.createElement('span');s.className='lds';s.style.borderTopColor=l.col;d.appendChild(s);}
+    else{const s=document.createElement('span');s.className='ls';s.style.background=l.col;d.appendChild(s);}
+    const t=document.createElement('span');t.textContent='Isovolume '+l.lb;d.appendChild(t);lb.appendChild(d);
+  });
+  [{col:'#2090ff',lb:'Population mean'},{col:'#ff3388',lb:'Evaluated penis'}].forEach(p=>{
+    const d=document.createElement('div');d.className='li';
+    const s=document.createElement('span');s.className='ld';s.style.background=p.col;d.appendChild(s);
+    const t=document.createElement('span');t.textContent=p.lb;d.appendChild(t);lb.appendChild(d);
+  });
+}
+
+function go(){
+  const st=ST[cur];
+  const uc=parseFloat(document.getElementById('ic').value)||120;
+  const ul=parseFloat(document.getElementById('il').value)||140;
+  document.getElementById('status').textContent='Running Monte Carlo… (100,000 draws)';
+  setTimeout(()=>{const res=runMC(st);lastState={res,uc,ul,st};draw(st,res,uc,ul);},20);
+}
+
+window.addEventListener('load',go);
+window.addEventListener('resize',()=>{if(lastState){const{res,uc,ul,st}=lastState;draw(st,res,uc,ul);}});
+</script>
+</body>
+</html>

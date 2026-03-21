@@ -1,651 +1,777 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CondomFit — Pressure Calculator (blocked)</title>
+<title>CondomFit — Calculator (blocked model)</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161a23;
-    --surface2: #1e2330;
-    --border: #2a3045;
-    --accent: #4fffb0;
-    --text: #e8ecf4;
-    --text-muted: #7a8299;
-    --ok: #4fffb0;
-    --warn: #ffd166;
-    --err: #ff6b6b;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px 80px;
-    background-image:
-      radial-gradient(ellipse at 20% 10%, rgba(79,255,176,0.07) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(255,107,107,0.05) 0%, transparent 50%);
-  }
-  header { text-align: center; margin-bottom: 48px; animation: fadeDown 0.6s ease both; }
-  header .tag {
-    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em;
-    color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: block;
-  }
-  h1 { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
-  h1 span { color: var(--accent); }
-  header p { margin-top: 14px; color: var(--text-muted); font-size: 0.95rem; max-width: 480px; line-height: 1.6; }
-  .card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-    padding: 32px; width: 100%; max-width: 620px; margin-bottom: 20px;
-    animation: fadeUp 0.5s ease both;
-  }
-  .card-title {
-    font-size: 0.75rem; font-family: 'DM Mono', monospace; letter-spacing: 0.15em;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 24px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card-title::before {
-    content: ''; display: inline-block; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--accent);
-  }
-  .field { margin-bottom: 20px; }
-  label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; font-family: 'DM Mono', monospace; }
-  label strong { color: var(--text); font-weight: 500; }
-  input[type="number"] {
-    width: 100%; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 52px 12px 16px; color: var(--text);
-    font-family: 'DM Mono', monospace; font-size: 1rem; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,255,176,0.12); }
-  .input-unit { position: relative; }
-  .input-unit .unit {
-    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-    font-family: 'DM Mono', monospace; font-size: 0.8rem; color: var(--text-muted); pointer-events: none;
-  }
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .preset-btn {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 0.75rem;
-    padding: 6px 12px; cursor: pointer; transition: all 0.15s;
-  }
-  .preset-btn:hover, .preset-btn.active {
-    border-color: var(--accent); color: var(--accent); background: rgba(79,255,176,0.08);
-  }
-  button.calc-btn {
-    width: 100%; background: var(--accent); color: #0d0f14; border: none; border-radius: 12px;
-    padding: 16px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
-    letter-spacing: 0.03em; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; margin-top: 8px;
-  }
-  button.calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,255,176,0.3); }
-  button.calc-btn:active { transform: translateY(0); }
-
-  /* Results */
-  #results { display: none; width: 100%; max-width: 620px; animation: fadeUp 0.4s ease both; }
-  .verdict {
-    border-radius: 16px; padding: 28px 32px; margin-bottom: 20px; border: 2px solid;
-    text-align: center; position: relative; overflow: hidden;
-  }
-  .verdict::before { content: ''; position: absolute; inset: 0; opacity: 0.06; border-radius: 14px; }
-  .verdict.ok      { border-color: var(--ok); }      .verdict.ok::before      { background: var(--ok); }
-  .verdict.low     { border-color: var(--warn); }    .verdict.low::before     { background: var(--warn); }
-  .verdict.high    { border-color: var(--err); }     .verdict.high::before    { background: var(--err); }
-  .verdict.comfort { border-color: #74c0fc; }        .verdict.comfort::before { background: #74c0fc; }
-  .verdict.snug    { border-color: #f783ac; }        .verdict.snug::before    { background: #f783ac; }
-  .verdict.comfort .verdict-title { color: #74c0fc; }
-  .verdict.snug    .verdict-title { color: #f783ac; }
-  .verdict-icon { font-size: 2.5rem; margin-bottom: 8px; }
-  .verdict-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
-  .verdict.ok .verdict-title  { color: var(--ok); }
-  .verdict.low .verdict-title { color: var(--warn); }
-  .verdict.high .verdict-title{ color: var(--err); }
-  .verdict-sub { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; max-width: 420px; margin: 0 auto; }
-
-  /* Chart */
-  .chart-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-    padding: 28px 24px 20px; margin-bottom: 20px;
-  }
-  .chart-card .card-title { margin-bottom: 16px; }
-  #pressureCanvas { width: 100% !important; display: block; cursor: crosshair; }
-
-  .chart-legend {
-    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px;
-    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text-muted);
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .legend-line { width: 20px; height: 2px; flex-shrink: 0; }
-  .legend-dashed { background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 8px); }
-
-  /* Data grid */
-  .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .data-cell { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
-  .data-cell .dc-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-  .data-cell .dc-value { font-size: 1.3rem; font-weight: 700; font-family: 'DM Mono', monospace; }
-  .dc-value.green   { color: var(--ok); }
-  .dc-value.yellow  { color: var(--warn); }
-  .dc-value.red     { color: var(--err); }
-  .dc-value.comfort { color: #74c0fc; }
-  .dc-value.snug    { color: #f783ac; }
-
-  .formula-box {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
-    padding: 16px 20px; font-family: 'DM Mono', monospace; font-size: 0.75rem;
-    color: var(--text-muted); line-height: 1.9; margin-bottom: 20px;
-  }
-  .formula-box .formula-title { color: var(--accent); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-
-  footer { margin-top: 48px; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--text-muted); line-height: 1.8; max-width: 520px; }
-  .error-msg { color: var(--err); font-family: 'DM Mono', monospace; font-size: 0.78rem; margin-top: 6px; display: none; }
-
-  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:translateY(0); } }
-  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } .data-grid { grid-template-columns: 1fr; } }
-
-  .demo-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid var(--accent); color: var(--accent);
-    border-radius: 10px; padding: 9px 18px; font-family: 'Syne', sans-serif;
-    font-weight: 600; font-size: .85rem; text-decoration: none;
-    transition: background .15s, transform .15s;
-    margin-top: 10px;
-  }
-  .demo-link:hover { background: rgba(79,255,176,.08); transform: translateY(-1px); }
+  :root{--bg:#0d0f14;--surface:#161a23;--surface2:#1e2330;--border:#2a3045;--accent:#4fffb0;--text:#e8ecf4;--text-muted:#7a8299;--ok:#4fffb0;--warn:#ffd166;--err:#ff6b6b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px 80px;background-image:radial-gradient(ellipse at 20% 10%,rgba(79,255,176,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,107,107,.05) 0%,transparent 50%);}
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .6s ease both;}
+  header .tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;display:block;}
+  h1{font-size:clamp(2rem,6vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-.02em;}
+  h1 span{color:var(--accent);}
+  header p{margin-top:14px;color:var(--text-muted);font-size:.95rem;max-width:480px;line-height:1.6;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:620px;margin-bottom:20px;animation:fadeUp .5s ease both;}
+  .card.top-join{border-radius:0 0 16px 16px;}
+  .card-title{font-size:.75rem;font-family:'DM Mono',monospace;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+  .card-title::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .field{margin-bottom:20px;}
+  label{display:block;font-size:.82rem;color:var(--text-muted);margin-bottom:8px;font-family:'DM Mono',monospace;}
+  label strong{color:var(--text);font-weight:500;}
+  input[type="number"]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 52px 12px 16px;color:var(--text);font-family:'DM Mono',monospace;font-size:1rem;outline:none;transition:border-color .2s,box-shadow .2s;}
+  input[type="number"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,255,176,.12);}
+  .input-unit{position:relative;}
+  .input-unit .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-muted);pointer-events:none;}
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  /* Onglets chapitres */
+  .chapter-tabs{display:flex;width:100%;max-width:620px;border-radius:14px 14px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;}
+  .chapter-tab{flex:1;padding:14px 20px;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text-muted);border:none;transition:all .2s;letter-spacing:.02em;}
+  .chapter-tab.active{background:var(--surface);color:var(--accent);}
+  .chapter-tab:first-child{border-right:1px solid var(--border);}
+  .chapter{display:none;width:100%;max-width:620px;}
+  .chapter.active{display:block;}
+  /* Presets */
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .preset-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:.75rem;padding:6px 12px;cursor:pointer;transition:all .15s;}
+  .preset-btn:hover,.preset-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,255,176,.08);}
+  /* Marques */
+  .brand-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .brand-filter-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:.75rem;padding:6px 14px;cursor:pointer;transition:all .15s;}
+  .brand-filter-btn:hover,.brand-filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,255,176,.08);}
+  .brand-group{display:none;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .brand-group.visible{display:flex;}
+  .brand-btn{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 14px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:border-color .15s,background .15s;flex-wrap:wrap;}
+  .brand-btn:hover{border-color:var(--accent);background:rgba(79,255,176,.06);}
+  .brand-btn.active{border-color:var(--accent);background:rgba(79,255,176,.10);}
+  .brand-name{font-family:'Syne',sans-serif;font-size:.83rem;font-weight:600;color:var(--text);}
+  .brand-spec{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);}
+  .brand-btn.active .brand-name{color:var(--accent);}
+  /* Bouton calculer */
+  button.calc-btn{display:block;margin:8px auto 0;background:var(--accent);color:#0d0f14;border:none;border-radius:12px;padding:14px 40px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.03em;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+  button.calc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,255,176,.3);}
+  button.calc-btn:active{transform:translateY(0);}
+  /* Résultats */
+  .results-section{display:none;width:100%;max-width:620px;animation:fadeUp .4s ease both;}
+  .verdict{border-radius:16px;padding:28px 32px;margin-bottom:20px;border:2px solid;text-align:center;position:relative;overflow:hidden;}
+  .verdict::before{content:'';position:absolute;inset:0;opacity:.06;border-radius:14px;}
+  .verdict.ok    {border-color:var(--ok);}    .verdict.ok::before    {background:var(--ok);}
+  .verdict.low   {border-color:var(--warn);}  .verdict.low::before   {background:var(--warn);}
+  .verdict.high  {border-color:var(--err);}   .verdict.high::before  {background:var(--err);}
+  .verdict.comfort{border-color:#74c0fc;}     .verdict.comfort::before{background:#74c0fc;}
+  .verdict.snug  {border-color:#f783ac;}      .verdict.snug::before  {background:#f783ac;}
+  .verdict-icon{font-size:2.5rem;margin-bottom:8px;}
+  .verdict-title{font-size:1.4rem;font-weight:800;margin-bottom:6px;}
+  .verdict.ok .verdict-title{color:var(--ok);} .verdict.low .verdict-title{color:var(--warn);} .verdict.high .verdict-title{color:var(--err);}
+  .verdict.comfort .verdict-title{color:#74c0fc;} .verdict.snug .verdict-title{color:#f783ac;}
+  .verdict-sub{font-size:.88rem;color:var(--text-muted);line-height:1.5;max-width:420px;margin:0 auto;}
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px 20px;margin-bottom:20px;}
+  .chart-card .card-title{margin-bottom:16px;}
+  canvas{width:100%!important;display:block;cursor:crosshair;}
+  .chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);}
+  .legend-item{display:flex;align-items:center;gap:6px;}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .legend-line{width:20px;height:2px;flex-shrink:0;}
+  .data-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .data-cell{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .dc-label{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+  .dc-value{font-size:1.3rem;font-weight:700;font-family:'DM Mono',monospace;}
+  .dc-value.green{color:var(--ok);} .dc-value.yellow{color:var(--warn);} .dc-value.red{color:var(--err);} .dc-value.comfort{color:#74c0fc;} .dc-value.snug{color:#f783ac;}
+  .formula-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-muted);line-height:1.9;margin-bottom:20px;}
+  .formula-box .formula-title{color:var(--accent);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+  footer{margin-top:48px;text-align:center;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-muted);line-height:1.8;max-width:520px;}
+  .error-msg{color:var(--err);font-family:'DM Mono',monospace;font-size:.78rem;margin-top:6px;display:none;}
+  .demo-link{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:9px 18px;font-family:'Syne',sans-serif;font-weight:600;font-size:.85rem;text-decoration:none;transition:background .15s,transform .15s;margin-top:10px;}
+  .demo-link:hover{background:rgba(79,255,176,.08);transform:translateY(-1px);}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp  {from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)}}
+  @media(max-width:480px){.row-2{grid-template-columns:1fr}.data-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
+<div style="text-align:center;padding:20px 0 0;">
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:.75rem;color:#7a8299;text-decoration:none;padding:6px 14px;border:1px solid #2a3045;border-radius:100px;background:#161a23;transition:color .2s;" onmouseover="this.style.color='#4fffb0';this.style.borderColor='#4fffb0'" onmouseout="this.style.color='#7a8299';this.style.borderColor='#2a3045'">← Back to home</a>
+</div>
+
 <header>
-  <span class="tag">Biomechanics · Neo-Hookean Model · Blocked Membrane · Laplace's Law</span>
+  <span class="tag">Biomechanics · Neo-Hookean model · Blocked membrane · λ_z = 1</span>
   <h1>Condom<span>Fit</span></h1>
-  <p>Calculates the pressure exerted by a condom on an erect penis and checks whether the condom is suited to your anatomy.</p>
-  <a href="demo_blocked_en.html" class="demo-link" target="_blank">📐 View mathematical derivation</a>
-  <a href="context_w52_en.html" class="demo-link" target="_blank">📊 📊 Context & statistics</a>
+  <p>Calculates the pressure exerted by a condom on an erect penis and checks whether the condom fits your anatomy.</p>
+  <a href="demo_blocked_en.html" class="demo-link" target="_blank">📐 Mathematical demonstration</a>
+  <a href="context_w52_en.html" class="demo-link" target="_blank">📊 Context &amp; statistics</a>
 </header>
 
+<!-- Circumference — commune aux deux chapitres -->
 <div class="card">
   <div class="card-title">Your anatomy</div>
   <div class="field">
-    <label><strong>Erect penis circumference</strong><br>Measured at the widest point, in mm</label>
+    <label><strong>Erect penile circumference</strong><br>Measured at the widest point, in mm</label>
     <div class="input-unit">
-      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="e.g. 119.6">
+      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="ex : 119.6">
       <span class="unit">mm</span>
     </div>
     <div class="error-msg" id="err-circ">Value out of range (80–180 mm)</div>
   </div>
 </div>
 
-<div class="card" style="animation-delay:0.1s">
-  <div class="card-title">Your condom</div>
-  <div class="presets" id="presets">
-    <div class="preset-btn" onclick="applyPreset(45,0.065,1.8,this)">45mm</div>
-    <div class="preset-btn" onclick="applyPreset(47,0.065,1.8,this)">47mm</div>
-    <div class="preset-btn" onclick="applyPreset(49,0.065,1.8,this)">49mm</div>
-    <div class="preset-btn active" onclick="applyPreset(52,0.065,1.8,this)">52mm ★</div>
-    <div class="preset-btn" onclick="applyPreset(53,0.065,1.8,this)">53mm</div>
-    <div class="preset-btn" onclick="applyPreset(54,0.065,1.8,this)">54mm</div>
-    <div class="preset-btn" onclick="applyPreset(56,0.065,1.8,this)">56mm</div>
-    <div class="preset-btn" onclick="applyPreset(57,0.065,1.8,this)">57mm</div>
-    <div class="preset-btn" onclick="applyPreset(58,0.065,1.8,this)">58mm</div>
-    <div class="preset-btn" onclick="applyPreset(60,0.065,1.8,this)">60mm</div>
-    <div class="preset-btn" onclick="applyPreset(64,0.065,1.8,this)">64mm</div>
-    <div class="preset-btn" onclick="applyPreset(69,0.065,1.8,this)">69mm</div>
-  </div>
-  <div class="row-2">
-    <div class="field">
-      <label><strong>Nominal width w</strong></label>
-      <div class="input-unit">
-        <input type="number" id="width" min="30" max="80" step="0.1" value="52">
-        <span class="unit">mm</span>
-      </div>
-    </div>
-    <div class="field">
-      <label><strong>Wall thickness t₀</strong></label>
-      <div class="input-unit">
-        <input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065">
-        <span class="unit">mm</span>
-      </div>
-    </div>
-  </div>
-  <div class="field">
-    <label><strong>Young's modulus E</strong> — 1.8 MPa = reference value for latex condom</label>
-    <div class="input-unit">
-      <input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.8">
-      <span class="unit">MPa</span>
-    </div>
-  </div>
-  <div class="error-msg" id="err-inputs">Please check the entered values.</div>
-  <button class="calc-btn" onclick="calculate()">Calculate pressure →</button>
+<!-- Onglets -->
+<div class="chapter-tabs">
+  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 By brand</button>
+  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Custom</button>
 </div>
 
-<div id="results">
-
-  <div class="verdict" id="verdict-box">
-    <div class="verdict-icon" id="verdict-icon"></div>
-    <div class="verdict-title" id="verdict-title"></div>
-    <div class="verdict-sub" id="verdict-sub"></div>
+<!-- ══════════════════════
+     CHAPITRE 1 — MARQUE
+══════════════════════ -->
+<div class="chapter active" id="chapter-brand">
+  <div class="card top-join">
+    <div class="card-title">Select a condom</div>
+    <div class="brand-filter">
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('skyn',this)">Skyn</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('durex',this)">Durex</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('pasante',this)">Pasante</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('glyde',this)">Glyde</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('lelo',this)">Lelo</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('mylubie',this)">My Lubie</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('rfsu',this)">RFSU</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('myone',this)">MyOne</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('exs',this)">Exs</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('intimy',this)">Intimy</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('mysize',this)">My.Size PRO</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('eden',this)">Eden</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('lifestyles',this)">Lifestyles</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('trojan',this)">Trojan</button>
+      <button type="button" class="brand-filter-btn" onclick="filterBrand('cautionwear',this)">Caution Wear</button>
+    </div>
+    <div class="brand-group" id="group-skyn">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">polyisoprene</div>
+      <button type="button" class="brand-btn" data-w="51" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Skyn close feel</span><span class="brand-spec">w=51mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Skyn original</span><span class="brand-spec">w=53mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.055" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Skyn elite</span><span class="brand-spec">w=53mm · t₀=0.055mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.04" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">Skyn supreme feel</span><span class="brand-spec">w=53mm · t₀=0.040mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Skyn XL king size</span><span class="brand-spec">w=56mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.055" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Skyn elite XL king size</span><span class="brand-spec">w=56mm · t₀=0.055mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.065" data-e="1.5" onclick="applyBrand(this)"><span class="brand-name">Skyn XXL mega large</span><span class="brand-spec">w=60mm · t₀=0.065mm · E=1.50MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-durex">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex / polyisoprene</div>
+      <button type="button" class="brand-btn" data-w="52.5" data-t0="0.065" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">Durex Love</span><span class="brand-spec">w=52.5mm · t₀=0.065mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="52.5" data-t0="0.054" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">Durex Feeling Extra close fit</span><span class="brand-spec">w=52.5mm · t₀=0.054mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.075" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Durex Classic Protect</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.075" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Durex Nude — Latex-free (polyisoprene)</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.065" data-e="1.9" onclick="applyBrand(this)"><span class="brand-name">Durex originals classic natural</span><span class="brand-spec">w=56mm · t₀=0.065mm · E=1.90MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.06" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Durex Thin Feel Feeling Sensitive</span><span class="brand-spec">w=56mm · t₀=0.060mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.048" data-e="2.2" onclick="applyBrand(this)"><span class="brand-name">Durex Nude</span><span class="brand-spec">w=56mm · t₀=0.048mm · E=2.20MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.054" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Durex Feeling Extra</span><span class="brand-spec">w=56mm · t₀=0.054mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.065" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Durex Classic Jeans XL</span><span class="brand-spec">w=60mm · t₀=0.065mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.062" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Durex Feeling XL</span><span class="brand-spec">w=60mm · t₀=0.062mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.057" data-e="1.85" onclick="applyBrand(this)"><span class="brand-name">Durex Nude XL</span><span class="brand-spec">w=60mm · t₀=0.057mm · E=1.85MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-pasante">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Pasante trim</span><span class="brand-spec">w=49mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.04" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">Pasante silk thin</span><span class="brand-spec">w=53mm · t₀=0.040mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.075" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Pasante naturelle</span><span class="brand-spec">w=54mm · t₀=0.075mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Pasante regular</span><span class="brand-spec">w=54mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Pasante king size</span><span class="brand-spec">w=60mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="69" data-t0="0.07" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">Pasante super king</span><span class="brand-spec">w=69mm · t₀=0.070mm · E=2.40MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-glyde">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex vegan</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.062" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Glyde slimfit</span><span class="brand-spec">w=49mm · t₀=0.062mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.062" data-e="2.0" onclick="applyBrand(this)"><span class="brand-name">Glyde ultra</span><span class="brand-spec">w=53mm · t₀=0.062mm · E=2.00MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.062" data-e="2.0" onclick="applyBrand(this)"><span class="brand-name">Glyde maxi</span><span class="brand-spec">w=56mm · t₀=0.062mm · E=2.00MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.062" data-e="2.0" onclick="applyBrand(this)"><span class="brand-name">Glyde supermax</span><span class="brand-spec">w=60mm · t₀=0.062mm · E=2.00MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-lelo">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.055" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">Lelo hex Standard</span><span class="brand-spec">w=54mm · t₀=0.055mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="58" data-t0="0.057" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lelo hex respect xl</span><span class="brand-spec">w=58mm · t₀=0.057mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-mylubie">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">My Lubie ultra fin Standard</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="57" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">My Lubie fin large</span><span class="brand-spec">w=57mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.068" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">My Lubie fin extra large</span><span class="brand-spec">w=60mm · t₀=0.068mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-rfsu">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.06" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">RFSU Tight</span><span class="brand-spec">w=49mm · t₀=0.060mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="52" data-t0="0.06" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">RFSU 17006</span><span class="brand-spec">w=52mm · t₀=0.060mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="52" data-t0="0.04" data-e="3.0" onclick="applyBrand(this)"><span class="brand-name">RFSU Beyond thin</span><span class="brand-spec">w=52mm · t₀=0.040mm · E=3.00MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.06" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">RFSU Profil</span><span class="brand-spec">w=53mm · t₀=0.060mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">RFSU Thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="55" data-t0="0.07" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">RFSU Grande</span><span class="brand-spec">w=55mm · t₀=0.070mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.07" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">RFSU Grande XL</span><span class="brand-spec">w=60mm · t₀=0.070mm · E=2.10MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-myone">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="45" data-t0="0.055" data-e="3.0" onclick="applyBrand(this)"><span class="brand-name">MyOne 45</span><span class="brand-spec">w=45mm · t₀=0.055mm · E=3.00MPa</span></button>
+      <button type="button" class="brand-btn" data-w="47" data-t0="0.055" data-e="3.0" onclick="applyBrand(this)"><span class="brand-name">MyOne 47</span><span class="brand-spec">w=47mm · t₀=0.055mm · E=3.00MPa</span></button>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.055" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">MyOne 49</span><span class="brand-spec">w=49mm · t₀=0.055mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="51" data-t0="0.055" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">MyOne 51</span><span class="brand-spec">w=51mm · t₀=0.055mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.055" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">MyOne 53</span><span class="brand-spec">w=53mm · t₀=0.055mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="55" data-t0="0.055" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">MyOne 55</span><span class="brand-spec">w=55mm · t₀=0.055mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="57" data-t0="0.055" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">MyOne 57</span><span class="brand-spec">w=57mm · t₀=0.055mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.055" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">MyOne 60</span><span class="brand-spec">w=60mm · t₀=0.055mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="64" data-t0="0.062" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">MyOne 64</span><span class="brand-spec">w=64mm · t₀=0.062mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="69" data-t0="0.062" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">MyOne 69</span><span class="brand-spec">w=69mm · t₀=0.062mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-exs">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.069" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">Exs snug fit</span><span class="brand-spec">w=49mm · t₀=0.069mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="3.6" onclick="applyBrand(this)"><span class="brand-name">Exs nano thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=3.60MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.073" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs regular</span><span class="brand-spec">w=54mm · t₀=0.073mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.08" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs extra safe</span><span class="brand-spec">w=56mm · t₀=0.080mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.075" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs Ribbed texture, Flared head, Teat tip</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.069" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Exs magnum</span><span class="brand-spec">w=60mm · t₀=0.069mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="64" data-t0="0.069" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs 64 (upcoming)</span><span class="brand-spec">w=64mm · t₀=0.069mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="69" data-t0="0.069" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs jumbo</span><span class="brand-spec">w=69mm · t₀=0.069mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-intimy">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Intimy Classic</span><span class="brand-spec">w=53mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Intimy XL</span><span class="brand-spec">w=56mm · t₀=0.065mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Intimy XXL</span><span class="brand-spec">w=60mm · t₀=0.065mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-mysize">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="45" data-t0="0.05" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 45</span><span class="brand-spec">w=45mm · t₀=0.050mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="47" data-t0="0.05" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 47</span><span class="brand-spec">w=47mm · t₀=0.050mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.05" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 49</span><span class="brand-spec">w=49mm · t₀=0.050mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 53</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="57" data-t0="0.06" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 57</span><span class="brand-spec">w=57mm · t₀=0.060mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="60" data-t0="0.06" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 60</span><span class="brand-spec">w=60mm · t₀=0.060mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="64" data-t0="0.06" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 64</span><span class="brand-spec">w=64mm · t₀=0.060mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="69" data-t0="0.06" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 69</span><span class="brand-spec">w=69mm · t₀=0.060mm · E=2.40MPa</span></button>
+      <button type="button" class="brand-btn" data-w="72" data-t0="0.06" data-e="2.4" onclick="applyBrand(this)"><span class="brand-name">My.Size PRO 72</span><span class="brand-spec">w=72mm · t₀=0.060mm · E=2.40MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-eden">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Eden Feel texturé</span><span class="brand-spec">w=53mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.052" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">Eden extra-fin</span><span class="brand-spec">w=54mm · t₀=0.052mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Eden Fruits</span><span class="brand-spec">w=54mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="54" data-t0="0.04" data-e="2.7" onclick="applyBrand(this)"><span class="brand-name">Eden absolu ultra-finesse</span><span class="brand-spec">w=54mm · t₀=0.040mm · E=2.70MPa</span></button>
+      <button type="button" class="brand-btn" data-w="57" data-t0="0.065" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Eden extra-large</span><span class="brand-spec">w=57mm · t₀=0.065mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-cautionwear">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.07" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Caution Wear iron grip snugger fit</span><span class="brand-spec">w=49mm · t₀=0.070mm · E=1.80MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.06" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">Caution Wear black ice ultra thin</span><span class="brand-spec">w=53mm · t₀=0.060mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.07" data-e="1.5" onclick="applyBrand(this)"><span class="brand-name">Caution Wear grande large fit</span><span class="brand-spec">w=56mm · t₀=0.070mm · E=1.50MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-trojan">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Trojan ENZ</span><span class="brand-spec">w=53mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="55" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Trojan magnum</span><span class="brand-spec">w=55mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="55" data-t0="0.06" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Trojan magnum thin</span><span class="brand-spec">w=55mm · t₀=0.060mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="58" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Trojan magnum xl</span><span class="brand-spec">w=58mm · t₀=0.070mm · E=1.69MPa</span></button>
+    </div>
+    <div class="brand-group" id="group-lifestyles">
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-bottom:4px;letter-spacing:.06em;">natural latex</div>
+      <button type="button" class="brand-btn" data-w="49" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lifestyles snugger fit</span><span class="brand-spec">w=49mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="52" data-t0="0.09" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lifestyles tough</span><span class="brand-spec">w=52mm · t₀=0.090mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="52" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lifestyles lubricated original</span><span class="brand-spec">w=52mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.07" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lifestyles tuxedo black</span><span class="brand-spec">w=53mm · t₀=0.070mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.066" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Lifestyles ultra sensitive</span><span class="brand-spec">w=53mm · t₀=0.066mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">Lifestyles ultra thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.10MPa</span></button>
+      <button type="button" class="brand-btn" data-w="56" data-t0="0.07" data-e="1.5" onclick="applyBrand(this)"><span class="brand-name">Lifestyles large</span><span class="brand-spec">w=56mm · t₀=0.070mm · E=1.50MPa</span></button>
+    </div>
+    <div class="error-msg" id="err-brand">Please select a condom.</div>
+    <button type="button" class="calc-btn" onclick="calculateBrand()">Calculate →</button>
   </div>
 
-  <!-- CHART -->
-  <div class="chart-card">
-    <div class="card-title">Pressure curve ΔP as a function of circumference</div>
-    <canvas id="pressureCanvas"></canvas>
-    <div class="chart-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>Curve &#916;P(C) &mdash; selected condom</span></div>
-      <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b; width:12px; height:12px; border:2px solid #fff;"></div><span>Your position</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:#4fffb0; opacity:0.45;"></div><span>P_min t&#8320;=0.060 mm — lower bound Comfort fit</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:#4fffb0; opacity:0.85;"></div><span>P_min t&#8320;=0.065 mm — lower bound Perfect fit</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:#4fffb0;"></div><span>P_moy t&#8320;=0.065 mm — reference pressure</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:#ffd166; opacity:0.75;"></div><span>P_max t&#8320;=0.065 mm — upper bound Perfect fit</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:#ffd166;"></div><span>P_max t&#8320;=0.070 mm — upper bound Snug fit</span></div>
-      <div class="legend-item"><div class="legend-line" style="background:rgba(160,180,255,0.75);"></div><span>C&#772; / &plusmn;1SD / &plusmn;2SD &mdash; TheyFit (n&gt;20&#8239;000)</span></div>
+  <div class="results-section" id="results-brand">
+    <div class="verdict" id="vbox-brand">
+      <div class="verdict-icon" id="vicon-brand"></div>
+      <div class="verdict-title" id="vtitle-brand"></div>
+      <div class="verdict-sub" id="vsub-brand"></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title">Manufacturer size guide</div>
+      <canvas id="brandChart"></canvas>
+      <div class="chart-legend" id="brand-legend"></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title">Pressure curve ΔP(C)</div>
+      <canvas id="pressureCanvasBrand"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — selected condom</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your position</span></div>
+      </div>
+    </div>
+    <div class="data-grid">
+      <div class="data-cell"><div class="dc-label">Pressure ΔP</div><div class="dc-value" id="res-p-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Elongation λ_θ</div><div class="dc-value" id="res-lambda-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Tension T</div><div class="dc-value" id="res-T-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Stress σ_θ</div><div class="dc-value" id="res-sigma-brand">—</div></div>
+    </div>
+    <div class="formula-box">
+      <div class="formula-title">Blocked model — λ_z = 1</div>
+      λ_z = 1 · λ_r = λ_θ<sup>−1</sup> · σ_θ = 2C₁(λ_θ² − λ_θ<sup>−2</sup>) · t = t₀/λ_θ · ΔP = σ_θ·t/R
     </div>
   </div>
+</div>
 
-  <div class="data-grid">
-    <div class="data-cell">
-      <div class="dc-label">Calculated pressure ΔP</div>
-      <div class="dc-value" id="res-p">—</div>
+<!-- ══════════════════════════
+     CHAPITRE 2 — PARAMÉTRABLE
+══════════════════════════ -->
+<div class="chapter" id="chapter-custom">
+  <div class="card top-join">
+    <div class="card-title">Votre préservatif</div>
+    <div class="presets" id="presets">
+      <div class="preset-btn" onclick="applyPreset(45,0.065,1.69,this)">45mm</div>
+      <div class="preset-btn" onclick="applyPreset(47,0.065,1.69,this)">47mm</div>
+      <div class="preset-btn" onclick="applyPreset(49,0.065,1.69,this)">49mm</div>
+      <div class="preset-btn active" onclick="applyPreset(52,0.065,1.69,this)">52mm ★</div>
+      <div class="preset-btn" onclick="applyPreset(53,0.065,1.69,this)">53mm</div>
+      <div class="preset-btn" onclick="applyPreset(54,0.065,1.69,this)">54mm</div>
+      <div class="preset-btn" onclick="applyPreset(56,0.065,1.69,this)">56mm</div>
+      <div class="preset-btn" onclick="applyPreset(57,0.065,1.69,this)">57mm</div>
+      <div class="preset-btn" onclick="applyPreset(58,0.065,1.69,this)">58mm</div>
+      <div class="preset-btn" onclick="applyPreset(60,0.065,1.69,this)">60mm</div>
+      <div class="preset-btn" onclick="applyPreset(64,0.065,1.69,this)">64mm</div>
+      <div class="preset-btn" onclick="applyPreset(69,0.065,1.69,this)">69mm</div>
     </div>
-    <div class="data-cell">
-      <div class="dc-label">Elongation λ_θ</div>
-      <div class="dc-value" id="res-lambda">—</div>
+    <div class="row-2">
+      <div class="field">
+        <label><strong>Largeur nominale w</strong></label>
+        <div class="input-unit"><input type="number" id="width" min="30" max="80" step="0.1" value="52"><span class="unit">mm</span></div>
+      </div>
+      <div class="field">
+        <label><strong>Thickness t₀</strong></label>
+        <div class="input-unit"><input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065"><span class="unit">mm</span></div>
+      </div>
     </div>
-    <div class="data-cell">
-      <div class="dc-label">Membrane tension T</div>
-      <div class="dc-value" id="res-T">—</div>
+    <div class="field">
+      <label><strong>Young's modulus E</strong> — 1.69 MPa = reference Cooper et al. 2018</label>
+      <div class="input-unit"><input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.69"><span class="unit">MPa</span></div>
     </div>
-    <div class="data-cell">
-      <div class="dc-label">Stress σ_θ</div>
-      <div class="dc-value" id="res-sigma">—</div>
-    </div>
+    <div class="error-msg" id="err-inputs">Please check the input values.</div>
+    <button type="button" class="calc-btn" onclick="calculate()">Calculate pressure →</button>
   </div>
 
-  <div class="formula-box">
-    <div class="formula-title">Physical model used</div>
-    Neo-Hookean model · C₁ = E/6  (G = E/3, ν = 0.5)<br>
-    Axially blocked · λ_z = 1 → λ_r = λ_θ<sup>−1</sup><br>
-    σ_θ = 2C₁(λ_θ² − λ_θ<sup>−2</sup>)  ·  σ_z = 2C₁(1 − λ_θ<sup>−2</sup>) &gt; 0<br>
-    t = t₀/λ_θ  ·  T = σ_θ · t  ·  ΔP = T / R   [Laplace's Law — cylinder]<br>
-    References: P_min/P_max computed for w=52mm, t₀=0.065mm, E=1.8MPa, C=[114.4 ; 124.8 mm]
+  <div class="results-section" id="results-custom">
+    <div class="verdict" id="verdict-box">
+      <div class="verdict-icon" id="verdict-icon"></div>
+      <div class="verdict-title" id="verdict-title"></div>
+      <div class="verdict-sub" id="verdict-sub"></div>
+    </div>
+    <div class="chart-card">
+      <div class="card-title">Pressure curve ΔP(C)</div>
+      <canvas id="pressureCanvas"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — chosen condom</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your position</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:#4fffb0;opacity:.45"></div><span>P_min comfort (E=1.48MPa)</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:#4fffb0;opacity:.85"></div><span>P_min perfect (E=1.69MPa)</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:#4fffb0"></div><span>P_moy perfect</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:#ffd166;opacity:.75"></div><span>P_max perfect (E=1.69MPa)</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:#ffd166"></div><span>P_max snug (E=1.90MPa)</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(160,180,255,.75)"></div><span>C̄ / ±1SD / ±2SD — TheyFit (n&gt;20,000)</span></div>
+      </div>
+    </div>
+    <div class="data-grid">
+      <div class="data-cell"><div class="dc-label">Pressure ΔP</div><div class="dc-value" id="res-p">—</div></div>
+      <div class="data-cell"><div class="dc-label">Elongation λ_θ</div><div class="dc-value" id="res-lambda">—</div></div>
+      <div class="data-cell"><div class="dc-label">Tension T</div><div class="dc-value" id="res-T">—</div></div>
+      <div class="data-cell"><div class="dc-label">Stress σ_θ</div><div class="dc-value" id="res-sigma">—</div></div>
+    </div>
+    <div class="formula-box">
+      <div class="formula-title">Blocked model — λ_z = 1</div>
+      λ_z = 1 · λ_r = λ_θ<sup>−1</sup> · σ_θ = 2C₁(λ_θ² − λ_θ<sup>−2</sup>) · t = t₀/λ_θ · ΔP = σ_θ·t/R<br>
+      References: w=52mm, t₀=0.065mm, λ∈[1.10;1.20] · E=1.48/1.69/1.90 MPa (Cooper 2018 ±0.21)
+    </div>
   </div>
-
 </div>
 
 <footer>
   For informational purposes only · Neo-Hookean biomechanical model + Laplace's Law<br>
-  Sources: ISO 4074 · Gerofi et al. (Condom Design and Acceptability) · TheyFit FitKit · natural latex literature
+  Sources: ISO 4074 · Gerofi et al. · Cooper et al. 2018 · TheyFit FitKit
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  MODÈLE NÉO-HOOKÉEN ÉQUIBIAXIAL + LOI DE LAPLACE
-// ═══════════════════════════════════════════════════════════
+// ═══ DONNÉES FABRICANTS ═══
+const SIZE_GUIDES = {
+  skyn: [
+    {w:51, cMin:112, cMax:117},
+    {w:53, cMin:118, cMax:124},
+    {w:56, cMin:125, cMax:136},
+    {w:60, cMin:137, cMax:148},
+  ],
+  durex: [
+    {w:52.5, cMin:111, cMax:123},
+    {w:56, cMin:124, cMax:133},
+    {w:60, cMin:134, cMax:148},
+  ],
+  pasante: [
+    {w:49, cMin:102, cMax:114},
+    {w:53, cMin:115, cMax:132},
+    {w:60, cMin:133, cMax:146},
+    {w:69, cMin:147, cMax:163},
+  ],
+  glyde: [
+    {w:49, cMin:108, cMax:116},
+    {w:53, cMin:117, cMax:123},
+    {w:56, cMin:124, cMax:132},
+    {w:60, cMin:133, cMax:142},
+  ],
+  lelo: null,
+  mylubie: null,
+  rfsu: [
+    {w:49, cMin:100, cMax:109},
+    {w:52, cMin:110, cMax:119},
+    {w:55, cMin:120, cMax:129},
+    {w:60, cMin:130, cMax:141},
+  ],
+  myone: [
+    {w:45, cMin:95, cMax:98},
+    {w:47, cMin:99, cMax:107},
+    {w:49, cMin:108, cMax:112},
+    {w:51, cMin:113, cMax:119},
+    {w:53, cMin:120, cMax:125},
+    {w:55, cMin:126, cMax:131},
+    {w:57, cMin:132, cMax:138},
+    {w:60, cMin:139, cMax:148},
+    {w:64, cMin:149, cMax:159},
+    {w:69, cMin:160, cMax:180},
+  ],
+  exs: [
+    {w:49, cMin:98, cMax:108},
+    {w:53, cMin:109, cMax:118},
+    {w:54, cMin:119, cMax:124},
+    {w:56, cMin:125, cMax:132},
+    {w:60, cMin:133, cMax:146},
+    {w:64, cMin:147, cMax:156},
+    {w:69, cMin:157, cMax:165},
+  ],
+  intimy: null,
+  eden: null,
+  lifestyles: null,
+  trojan: null,
+  cautionwear: null,
+  mysize: [
+    {w:45, cMin:94, cMax:104},
+    {w:47, cMin:105, cMax:110},
+    {w:49, cMin:111, cMax:116},
+    {w:53, cMin:117, cMax:123},
+    {w:57, cMin:124, cMax:132},
+    {w:60, cMin:133, cMax:141},
+    {w:64, cMin:142, cMax:151},
+    {w:69, cMin:152, cMax:160},
+    {w:72, cMin:161, cMax:180},
+  ],
+};
+const BRAND_NAMES = {
+  skyn: 'Skyn',
+  durex: 'Durex',
+  pasante: 'Pasante',
+  glyde: 'Glyde',
+  lelo: 'Lelo',
+  mylubie: 'My Lubie',
+  rfsu: 'RFSU',
+  myone: 'MyOne',
+  exs: 'Exs',
+  intimy: 'Intimy',
+  eden: null,
+  lifestyles: null,
+  trojan: null,
+  cautionwear: null,
+  mysize: 'My.Size PRO',
+};
+
+// ═══ PHYSIQUE ═══
 function computePressure(C_mm, w_mm, t0_mm, E_MPa) {
-  // Neo-Hookean, lambda_z = 1 (axially blocked: no axial displacement)
-  // => lambda_r = 1/lambda_theta        [incompressibility]
-  // => sigma_theta = 2*C1*(lambda^2 - lambda^(-2))
-  // => sigma_z     = 2*C1*(1 - lambda^(-2))  > 0 [axial tension]
-  // => t_current   = t0 / lambda
-  // => T = sigma_theta * t_current
-  // => dP = T / R  [Laplace, cylinder]
-  const C1     = E_MPa / 6.0;
-  const C0     = 2.0 * w_mm;
-  const lambda = C_mm / C0;
-  const R_m    = (C_mm * 1e-3) / (2 * Math.PI);
-  const t0_m   = t0_mm * 1e-3;
-  const sigma  = 2 * C1 * (lambda**2 - 1/lambda**2);   // MPa  [blocked: lambda_z=1]
-  const t_cur  = t0_m / lambda;                         // m    [lambda_r = 1/lambda]
-  const T      = sigma * 1e6 * t_cur;                   // N/m
-  const dP     = T / R_m;                               // Pa
-  return { lambda, sigma, T, dP };
+  // Blocked model : λ_z = 1, σ_r = 0
+  // λ_r = λ_θ^(-1), t = t₀/λ_θ
+  // σ_θ = 2C₁(λ_θ² − λ_θ^(-2))
+  const C1=E_MPa/6, lambda=C_mm/(2*w_mm);
+  const R_m=C_mm*1e-3/(2*Math.PI), t_cur=t0_mm*1e-3/lambda;
+  const sigma=2*C1*(lambda**2-lambda**(-2)), T=sigma*1e6*t_cur, dP=T/R_m;
+  return {lambda, sigma, T, dP};
 }
 
-// ═══════════════════════════════════════════════════════════
-//  PRESSIONS DE RÉFÉRENCE — 3 épaisseurs (w=52mm, E=1.8MPa)
-//  C_min=114.4mm (+10%), C_moy=119.6mm (+15%), C_max=124.8mm (+20%)
-// ═══════════════════════════════════════════════════════════
-const REF_W = 52, REF_E = 1.8;
-// t0 = 0.060 mm
-const Pmin_060 = computePressure(114.4, REF_W, 0.060, REF_E).dP;
-const Pmax_060 = computePressure(124.8, REF_W, 0.060, REF_E).dP;
-// t0 = 0.065 mm  (référence centrale)
-const Pmin_065 = computePressure(114.4, REF_W, 0.065, REF_E).dP;
-const Pmoy_065 = computePressure(119.6, REF_W, 0.065, REF_E).dP;
-const Pmax_065 = computePressure(124.8, REF_W, 0.065, REF_E).dP;
-// t0 = 0.070 mm
-const Pmin_070 = computePressure(114.4, REF_W, 0.070, REF_E).dP;
-const Pmax_070 = computePressure(124.8, REF_W, 0.070, REF_E).dP;
-// Aliases pour le graphique (zones horizontales)
-const refPmin = Pmin_065, refPmoy = Pmoy_065, refPmax = Pmax_065;
+// ═══ RÉFÉRENCES ═══
+const REF_W=52, REF_T0=0.065, E_low=1.48, E_ref=1.69, E_high=1.90;
+const Pmin_comfort=computePressure(114.4,REF_W,REF_T0,E_low).dP;
+const Pmin_perfect=computePressure(114.4,REF_W,REF_T0,E_ref).dP;
+const Pmoy_perfect=computePressure(119.6,REF_W,REF_T0,E_ref).dP;
+const Pmax_perfect=computePressure(124.8,REF_W,REF_T0,E_ref).dP;
+const Pmax_snug   =computePressure(124.8,REF_W,REF_T0,E_high).dP;
+const Pmin_060=Pmin_comfort, Pmin_065=Pmin_perfect;
+const Pmoy_065=Pmoy_perfect, Pmax_065=Pmax_perfect, Pmax_070=Pmax_snug;
+const refPmin=Pmin_perfect, refPmoy=Pmoy_perfect, refPmax=Pmax_perfect;
 
-// ═══════════════════════════════════════════════════════════
-//  PRESETS
-// ═══════════════════════════════════════════════════════════
-function applyPreset(w, t, e, btn) {
-  document.getElementById('width').value = w;
-  document.getElementById('thick').value = t;
-  document.getElementById('emod').value  = e;
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+// ═══ ÉTAT ═══
+let selectedBrandKey=null, selectedProduct=null;
+
+// ═══ NAVIGATION ═══
+function switchChapter(key, btn) {
+  document.querySelectorAll('.chapter').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.chapter-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('chapter-'+key).classList.add('active');
   btn.classList.add('active');
 }
 
-// ═══════════════════════════════════════════════════════════
-//  DESSIN DU GRAPHIQUE (Canvas 2D pur)
-// ═══════════════════════════════════════════════════════════
-function drawChart(userCirc, userDP, w_mm, t0_mm, E_MPa) {
-  const canvas = document.getElementById('pressureCanvas');
-  const dpr    = window.devicePixelRatio || 1;
-  const W_css  = canvas.parentElement.clientWidth - 48;
-  const H_css  = Math.round(W_css * 0.55);
-  canvas.style.width  = W_css + 'px';
-  canvas.style.height = H_css + 'px';
-  canvas.width  = W_css * dpr;
-  canvas.height = H_css * dpr;
-
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  const W = W_css, H = H_css;
-
-  // Marges
-  const ml = 62, mr = 24, mt = 20, mb = 46;
-  const pw = W - ml - mr;   // plot width
-  const ph = H - mt - mb;   // plot height
-
-  // Plage de circonférences
-  const C_min = 85, C_max = 160;
-  const nPts = 200;
-
-  // Calcul de la courbe
-  const pts = [];
-  for (let i = 0; i <= nPts; i++) {
-    const C = C_min + (C_max - C_min) * i / nPts;
-    const r = computePressure(C, w_mm, t0_mm, E_MPa);
-    if (r.lambda > 0.5) pts.push({ C, dP: r.dP / 1000 }); // kPa
-  }
-
-  // Échelle Y : 0 → max(courbe, refPmax*1.3)
-  const maxDP = Math.max(...pts.map(p => p.dP), refPmax / 1000 * 1.35, userDP / 1000 * 1.25);
-  const minDP = 0;
-
-  function xPos(C)  { return ml + (C - C_min) / (C_max - C_min) * pw; }
-  function yPos(dp) { return mt + ph - (dp - minDP) / (maxDP - minDP) * ph; }
-
-  // ── Fond ──
-  ctx.fillStyle = '#161a23';
-  ctx.fillRect(0, 0, W, H);
-
-  // ── Green zone between Pmin and Pmax ──
-  const yTop  = yPos(refPmax / 1000);
-  const yBot  = yPos(refPmin / 1000);
-  ctx.fillStyle = 'rgba(79,255,176,0.07)';
-  ctx.fillRect(ml, yTop, pw, yBot - yTop);
-
-  // ── Grille horizontale ──
-  ctx.strokeStyle = '#2a3045';
-  ctx.lineWidth = 1;
-  const nGridY = 5;
-  for (let i = 0; i <= nGridY; i++) {
-    const dp = minDP + (maxDP - minDP) * i / nGridY;
-    const y = yPos(dp);
-    ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(ml + pw, y); ctx.stroke();
-    ctx.fillStyle = '#7a8299';
-    ctx.font = `${10 * dpr / dpr}px DM Mono, monospace`;
-    ctx.textAlign = 'right';
-    ctx.fillText(dp.toFixed(2), ml - 8, y + 4);
-  }
-
-  // ── Axe X : ticks ──
-  ctx.fillStyle = '#7a8299';
-  ctx.font = '10px DM Mono, monospace';
-  ctx.textAlign = 'center';
-  const xTicks = [90, 100, 110, 114.4, 119.6, 124.8, 130, 140, 150, 160];
-  xTicks.forEach(C => {
-    const x = xPos(C);
-    ctx.strokeStyle = '#2a3045'; ctx.lineWidth = 0.5;
-    ctx.beginPath(); ctx.moveTo(x, mt); ctx.lineTo(x, mt + ph); ctx.stroke();
-    ctx.fillStyle = '#7a8299';
-    ctx.fillText(C % 1 === 0 ? C : C.toFixed(1), x, mt + ph + 16);
-  });
-
-  // ── Labels axes ──
-  ctx.fillStyle = '#4fffb0';
-  ctx.font = '10px DM Mono, monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('Circumference (mm)', ml + pw / 2, H - 4);
-
-  ctx.save();
-  ctx.translate(12, mt + ph / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText('ΔP (kPa)', 0, 0);
-  ctx.restore();
-
-  // ── Lignes horizontales de référence ──
-  function drawHLine(dp_kPa, color, label, dash) {
-    const y = yPos(dp_kPa);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash(dash || []);
-    ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(ml + pw, y); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = color;
-    ctx.font = '9px DM Mono, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText(label + ' ' + dp_kPa.toFixed(3) + ' kPa', ml + 4, y - 5);
-  }
-  drawHLine(Pmin_060/1000, 'rgba(79,255,176,0.45)', 'P_min 0.060', [5,4]);
-  drawHLine(Pmin_065/1000, 'rgba(79,255,176,0.85)', 'P_min 0.065', [6,3]);
-  drawHLine(Pmoy_065/1000, 'rgba(79,255,176,1.0)',  'P_moy 0.065', [4,2]);
-  drawHLine(Pmax_065/1000, 'rgba(255,209,102,0.75)','P_max 0.065', [6,3]);
-  drawHLine(Pmax_070/1000, 'rgba(255,209,102,1.0)', 'P_max 0.070', [5,4]);
-
-  // ── Courbe ΔP(C) ──
-  ctx.strokeStyle = '#4fffb0';
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(79,255,176,0.4)';
-  ctx.shadowBlur = 6;
-  ctx.beginPath();
-  pts.forEach((p, i) => {
-    const x = xPos(p.C), y = yPos(p.dP);
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  // ── Lignes verticales statistiques (Cmoy +/- 1ET, 2ET) ──
-  // Source: TheyFit FitKit — C_mean = 119.6 mm, SD = 15.1 mm
-  const C_MOY = 119.6, C_ET = 15.1;
-  const VCOL = 'rgba(160,180,255,0.60)';
-  const statLines = [
-    { C: C_MOY - 2*C_ET, label: '-2SD', dash: [3, 5] },
-    { C: C_MOY -   C_ET, label: '-1SD', dash: [5, 3] },
-    { C: C_MOY,          label: 'Cmean', dash: [6, 2] },
-    { C: C_MOY +   C_ET, label: '+1SD', dash: [5, 3] },
-    { C: C_MOY + 2*C_ET, label: '+2SD', dash: [3, 5] },
-  ];
-  statLines.forEach(sl => {
-    const sx = xPos(sl.C);
-    if (sx < ml || sx > ml + pw) return;
-    ctx.strokeStyle = VCOL;
-    ctx.lineWidth = sl.label === 'Cmoy' ? 1.5 : 1;
-    ctx.setLineDash(sl.dash);
-    ctx.beginPath(); ctx.moveTo(sx, mt); ctx.lineTo(sx, mt + ph); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = VCOL;
-    ctx.font = (sl.label === 'Cmoy' ? 'bold ' : '') + '9px DM Mono, monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(sl.label, sx, mt + 12);
-    ctx.font = '8px DM Mono, monospace';
-    ctx.fillText(sl.C.toFixed(1), sx, mt + ph - 5);
-  });
-
-  // ── Ligne verticale a la position utilisateur ──
-  const ux = xPos(userCirc);
-  ctx.strokeStyle = 'rgba(255,107,107,0.4)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 3]);
-  ctx.beginPath(); ctx.moveTo(ux, mt); ctx.lineTo(ux, mt + ph); ctx.stroke();
-  ctx.setLineDash([]);
-
-  // ── Point utilisateur ──
-  const uy = yPos(userDP / 1000);
-  // Halo
-  ctx.beginPath();
-  ctx.arc(ux, uy, 10, 0, 2 * Math.PI);
-  ctx.fillStyle = 'rgba(255,107,107,0.2)';
-  ctx.fill();
-  // Point
-  ctx.beginPath();
-  ctx.arc(ux, uy, 5.5, 0, 2 * Math.PI);
-  ctx.fillStyle = '#ff6b6b';
-  ctx.shadowColor = '#ff6b6b';
-  ctx.shadowBlur = 10;
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  // Contour blanc
-  ctx.beginPath();
-  ctx.arc(ux, uy, 5.5, 0, 2 * Math.PI);
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // ── Étiquette utilisateur ──
-  const labelX = ux + (ux > ml + pw * 0.7 ? -10 : 10);
-  const labelAlign = ux > ml + pw * 0.7 ? 'right' : 'left';
-  ctx.fillStyle = '#ff6b6b';
-  ctx.font = 'bold 10px DM Mono, monospace';
-  ctx.textAlign = labelAlign;
-  ctx.fillText(`You: ${(userDP/1000).toFixed(3)} kPa`, labelX, uy - 12);
-  ctx.fillStyle = '#7a8299';
-  ctx.font = '9px DM Mono, monospace';
-  ctx.fillText(`C = ${userCirc} mm`, labelX, uy + 20);
-
-  // ── Bordure du graphe ──
-  ctx.strokeStyle = '#2a3045';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(ml, mt, pw, ph);
+// ═══ SÉLECTEUR MARQUE ═══
+function filterBrand(key, btn) {
+  document.querySelectorAll('.brand-group').forEach(g=>g.classList.remove('visible'));
+  document.querySelectorAll('.brand-filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('group-'+key).classList.add('visible');
+  btn.classList.add('active');
+  document.querySelectorAll('.brand-btn').forEach(b=>b.classList.remove('active'));
+  selectedBrandKey=key; selectedProduct=null;
+}
+function applyBrand(btn) {
+  document.querySelectorAll('.brand-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedProduct={w:parseFloat(btn.dataset.w), t0:parseFloat(btn.dataset.t0), E:parseFloat(btn.dataset.e)};
 }
 
-// ═══════════════════════════════════════════════════════════
-//  CALCUL PRINCIPAL
-// ═══════════════════════════════════════════════════════════
-function calculate() {
-  const circ = parseFloat(document.getElementById('circ').value);
-  const w    = parseFloat(document.getElementById('width').value);
-  const t0   = parseFloat(document.getElementById('thick').value);
-  const E    = parseFloat(document.getElementById('emod').value);
+// ═══ VERDICT ═══
+function getVerdict(dP) {
+  if(dP<Pmin_060)  return {cls:'low',     icon:'⚠️', title:'Too large',  color:'yellow'};
+  if(dP<Pmin_065)  return {cls:'comfort',  icon:'😌', title:'Comfort fit', color:'comfort'};
+  if(dP<=Pmax_065) return {cls:'ok',       icon:'✅', title:'Perfect fit', color:'green'};
+  if(dP<=Pmax_070) return {cls:'snug',     icon:'🤏', title:'Snug fit',    color:'snug'};
+  return                  {cls:'high',     icon:'❌', title:'Too tight', color:'red'};
+}
 
-  let valid = true;
-  if (isNaN(circ) || circ < 80 || circ > 180) {
-    document.getElementById('err-circ').style.display = 'block'; valid = false;
-  } else { document.getElementById('err-circ').style.display = 'none'; }
-  if (isNaN(w) || w < 30 || w > 80 || isNaN(t0) || t0 <= 0 || isNaN(E) || E <= 0) {
-    document.getElementById('err-inputs').style.display = 'block'; valid = false;
-  } else { document.getElementById('err-inputs').style.display = 'none'; }
-  if (!valid) return;
+// ═══ CALCUL — CHAPITRE MARQUE ═══
+function calculateBrand() {
+  // 1. Circumference
+  const circEl = document.getElementById('circ');
+  const circ = parseFloat(circEl ? circEl.value : '');
+  const errCirc = document.getElementById('err-circ');
+  if(isNaN(circ)||circ<80||circ>180) {
+    if(errCirc){ errCirc.style.display='block'; errCirc.scrollIntoView({behavior:'smooth',block:'center'}); }
+    return;
+  }
+  if(errCirc) errCirc.style.display='none';
 
-  // Pre-check: condom larger than penis
-  const C0 = 2.0 * w;
-  if (circ <= C0) {
-    const vBox  = document.getElementById('verdict-box');
-    const vIcon = document.getElementById('verdict-icon');
-    const vTitle= document.getElementById('verdict-title');
-    const vSub  = document.getElementById('verdict-sub');
-    vBox.className = 'verdict low';
-    vIcon.textContent  = '📏';
-    vTitle.textContent = 'Condom larger than penis';
-    vSub.textContent   = `The condom circumference (${C0} mm) is greater than your penis circumference (${circ} mm). No pressure calculation performed.`;
-    document.getElementById('res-p').className   = 'dc-value yellow';
-    document.getElementById('res-p').textContent = '—';
-    document.getElementById('res-lambda').textContent = '< 1';
-    document.getElementById('res-T').textContent      = '—';
-    document.getElementById('res-sigma').textContent  = '—';
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.style.display = 'block';
-    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // 2. Produit sélectionné
+  const errBrand = document.getElementById('err-brand');
+  if(!selectedProduct) {
+    if(errBrand){ errBrand.style.display='block'; errBrand.scrollIntoView({behavior:'smooth',block:'center'}); }
+    return;
+  }
+  if(errBrand) errBrand.style.display='none';
+
+  // 3. Calcul
+  const w=selectedProduct.w, t0=selectedProduct.t0, E=selectedProduct.E;
+  const C0=2*w;
+
+  const vbox  = document.getElementById('vbox-brand');
+  const vicon = document.getElementById('vicon-brand');
+  const vtitle= document.getElementById('vtitle-brand');
+  const vsub  = document.getElementById('vsub-brand');
+  const resDiv= document.getElementById('results-brand');
+
+  if(!vbox||!resDiv){ console.error('Éléments DOM manquants'); return; }
+
+  if(circ<=C0){
+    vbox.className='verdict low';
+    if(vicon) vicon.textContent='📏';
+    if(vtitle) vtitle.textContent='Condom larger than the penis';
+    if(vsub) vsub.textContent='C₀='+C0+'mm > C_pénis='+circ+'mm.';
+    resDiv.style.display='block';
+    resDiv.scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
 
-  const res     = computePressure(circ, w, t0, E);
-  const dP_kPa  = res.dP / 1000;
+  const res=computePressure(circ,w,t0,E);
+  const dP_kPa=res.dP/1000;
+  const v=getVerdict(res.dP);
 
-  // ── Verdict: 5 zones ──
-  // Zone 1: too large     → P < Pmin(0.060)
-  // Zone 2: comfort fit   → Pmin(0.060) ≤ P < Pmin(0.065)
-  // Zone 3: perfect fit   → Pmin(0.065) ≤ P ≤ Pmax(0.065)
-  // Zone 4: snug fit      → Pmax(0.065) < P ≤ Pmax(0.070)
-  // Zone 5: too tight     → P > Pmax(0.070)
-  const vBox  = document.getElementById('verdict-box');
-  const vIcon = document.getElementById('verdict-icon');
-  const vTitle= document.getElementById('verdict-title');
-  const vSub  = document.getElementById('verdict-sub');
-  vBox.className = 'verdict';
-  let colorClass = 'green';
+  vbox.className='verdict '+v.cls;
+  if(vicon) vicon.textContent=v.icon;
+  if(vtitle) vtitle.textContent=v.title;
+  const msgs={
+    low:'ΔP='+dP_kPa.toFixed(3)+' kPa — insufficient grip, risk of slipping.',
+    comfort:'ΔP='+dP_kPa.toFixed(3)+' kPa — slightly large, relaxed fit.',
+    ok:'ΔP='+dP_kPa.toFixed(3)+' kPa — optimal size.',
+    snug:'ΔP='+dP_kPa.toFixed(3)+' kPa — slightly tight, good grip.',
+    high:'ΔP='+dP_kPa.toFixed(3)+' kPa — excessive constriction.'
+  };
+  if(vsub) vsub.textContent=msgs[v.cls]||'';
 
-  if (res.dP < Pmin_060) {
-    vBox.classList.add('low'); colorClass = 'yellow';
-    vIcon.textContent  = '⚠️';
-    vTitle.textContent = 'Too large';
-    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa < P_min (${(Pmin_060/1000).toFixed(3)} kPa). Insufficient grip — risk of slippage.`;
-  } else if (res.dP < Pmin_065) {
-    vBox.classList.add('comfort'); colorClass = 'comfort';
-    vIcon.textContent  = '😌';
-    vTitle.textContent = 'Comfort fit';
-    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa. Slightly large — comfortable, relaxed fit.`;
-  } else if (res.dP <= Pmax_065) {
-    vBox.classList.add('ok'); colorClass = 'green';
-    vIcon.textContent  = '✅';
-    vTitle.textContent = 'Perfect fit';
-    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa ∈ [${(Pmin_065/1000).toFixed(3)} ; ${(Pmax_065/1000).toFixed(3)}] kPa. Optimal size — balanced grip and comfort.`;
-  } else if (res.dP <= Pmax_070) {
-    vBox.classList.add('snug'); colorClass = 'snug';
-    vIcon.textContent  = '🤏';
-    vTitle.textContent = 'Snug fit';
-    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa. Slightly tight — good grip, close fit.`;
-  } else {
-    vBox.classList.add('high'); colorClass = 'red';
-    vIcon.textContent  = '❌';
-    vTitle.textContent = 'Too tight';
-    vSub.textContent   = `ΔP = ${dP_kPa.toFixed(3)} kPa > P_max (${(Pmax_070/1000).toFixed(3)} kPa). Excessive constriction — likely discomfort, increased risk of breakage.`;
-  }
+  const pEl=document.getElementById('res-p-brand');
+  if(pEl){ pEl.className='dc-value '+v.color; pEl.textContent=dP_kPa.toFixed(3)+' kPa'; }
+  const lEl=document.getElementById('res-lambda-brand');
+  if(lEl) lEl.textContent=res.lambda.toFixed(4);
+  const tEl=document.getElementById('res-T-brand');
+  if(tEl) tEl.textContent=res.T.toFixed(3)+' N/m';
+  const sEl=document.getElementById('res-sigma-brand');
+  if(sEl) sEl.textContent=(res.sigma*1e3).toFixed(2)+' kPa';
 
-  // ── Data cells ──
-  const cssColor = {green:'green', yellow:'yellow', red:'red', comfort:'comfort', snug:'snug'}[colorClass] || 'green';
-  document.getElementById('res-p').className     = `dc-value ${cssColor}`;
-  document.getElementById('res-p').textContent   = dP_kPa.toFixed(3) + ' kPa';
-  document.getElementById('res-lambda').textContent = res.lambda.toFixed(4);
-  document.getElementById('res-T').textContent   = res.T.toFixed(3) + ' N/m';
-  document.getElementById('res-sigma').textContent  = (res.sigma * 1e3).toFixed(2) + ' kPa';
-
-  // ── Affichage & graphique ──
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.style.display = 'block';
-
-  // Laisser le DOM se mettre à jour avant de dessiner
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      drawChart(circ, res.dP, w, t0, E);
-      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
+  // 4. Afficher résultats et dessiner
+  resDiv.style.display='block';
+  void resDiv.offsetHeight; // forcer reflow
+  setTimeout(function(){
+    drawBrandChart(circ, w, selectedBrandKey);
+    drawPressureChart('pressureCanvasBrand', circ, res.dP, w, t0, E);
+    resDiv.scrollIntoView({behavior:'smooth',block:'start'});
+  }, 50);
 }
 
-// Redessiner si la fenêtre est redimensionnée
-let _lastParams = null;
-window.addEventListener('resize', () => {
-  if (_lastParams) drawChart(..._lastParams);
-});
+// ═══ GRAPHIQUE FABRICANT ═══
+function drawBrandChart(userCirc, selectedW, brandKey) {
+  const canvas=document.getElementById('brandChart');
+  const guide=SIZE_GUIDES[brandKey];
+  if(!guide){
+    canvas.style.display='none';
+    document.getElementById('brand-legend').innerHTML='<span style="color:var(--text-muted);font-size:.75rem;font-family:\'DM Mono\',monospace;">Guide des tailles non disponible pour cette marque.</span>';
+    return;
+  }
+  canvas.style.display='block';
+  const dpr=window.devicePixelRatio||1;
+  const W_css=canvas.parentElement.clientWidth-48;
+  const barH=34, barGap=14, H_css=guide.length*(barH+barGap)+60;
+  canvas.style.width=W_css+'px'; canvas.style.height=H_css+'px';
+  canvas.width=W_css*dpr; canvas.height=H_css*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const W=W_css, H=H_css, ml=62, mr=20, mt=24, mb=30, pw=W-ml-mr;
 
-const _origDraw = drawChart;
-window.drawChart = function(...args) { _lastParams = args; _origDraw(...args); };
+  const allC=[...guide.flatMap(r=>[r.cMin,r.cMax]),userCirc];
+  const xMin=Math.min(...allC)-8, xMax=Math.max(...allC)+8;
+  const xp=c=>ml+(c-xMin)/(xMax-xMin)*pw;
+
+  ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
+
+  // Grille verticale
+  [100,110,120,130,140,150].forEach(c=>{
+    if(c<xMin||c>xMax) return;
+    const x=xp(c);
+    ctx.strokeStyle='#2a3045'; ctx.lineWidth=0.5; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x,mt); ctx.lineTo(x,H-mb); ctx.stroke();
+    ctx.fillStyle='#7a8299'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(c,x,H-mb+14);
+  });
+  ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('Circumference érectile (mm)',ml+pw/2,H-2);
+
+  // Barres
+  guide.forEach((row,i)=>{
+    const y=mt+i*(barH+barGap);
+    const x1=xp(row.cMin), x2=xp(row.cMax);
+    const isSel=(row.w===selectedW);
+    ctx.fillStyle=isSel?'rgba(79,255,176,0.22)':'rgba(79,255,176,0.08)';
+    ctx.strokeStyle=isSel?'#4fffb0':'rgba(79,255,176,0.30)';
+    ctx.lineWidth=isSel?2:1; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.roundRect(x1,y,x2-x1,barH,5); ctx.fill(); ctx.stroke();
+    // Label w
+    ctx.fillStyle=isSel?'#4fffb0':'#7a8299';
+    ctx.font=(isSel?'bold ':'')+'11px DM Mono,monospace'; ctx.textAlign='right';
+    ctx.fillText('w='+row.w+'mm',ml-6,y+barH/2+4);
+    // Plage
+    ctx.fillStyle='#e8ecf4'; ctx.font='9px DM Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText(row.cMin+'–'+row.cMax+' mm',x1+(x2-x1)/2,y+barH/2+4);
+  });
+
+  // Ligne verticale utilisateur
+  if(userCirc>=xMin&&userCirc<=xMax){
+    const ux=xp(userCirc);
+    ctx.strokeStyle='rgba(255,107,107,0.85)'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(ux,mt); ctx.lineTo(ux,H-mb); ctx.stroke(); ctx.setLineDash([]);
+    // Point sur barre sélectionnée
+    const selRow=guide.find(r=>r.w===selectedW);
+    if(selRow){
+      const si=guide.indexOf(selRow), sy=mt+si*(barH+barGap)+barH/2;
+      ctx.beginPath(); ctx.arc(ux,sy,8,0,2*Math.PI); ctx.fillStyle='rgba(255,107,107,0.2)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(ux,sy,5,0,2*Math.PI);
+      ctx.fillStyle='#ff6b6b'; ctx.shadowColor='#ff6b6b'; ctx.shadowBlur=8; ctx.fill(); ctx.shadowBlur=0;
+      ctx.beginPath(); ctx.arc(ux,sy,5,0,2*Math.PI); ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    const lx=ux+(ux>ml+pw*0.7?-8:8), la=ux>ml+pw*0.7?'right':'left';
+    ctx.fillStyle='#ff6b6b'; ctx.font='bold 9px DM Mono,monospace'; ctx.textAlign=la;
+    ctx.fillText('C='+userCirc+'mm',lx,mt+10);
+  }
+  document.getElementById('brand-legend').innerHTML=
+    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Manufacturer recommended range</span></div>'+
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your circumference ('+userCirc+'mm)</span></div>';
+}
+
+// ═══ GRAPHIQUE ΔP(C) ═══
+function drawPressureChart(canvasId, userCirc, userDP, w_mm, t0_mm, E_MPa) {
+  const canvas=document.getElementById(canvasId); if(!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  const W_css=canvas.parentElement.clientWidth-48, H_css=Math.round(W_css*0.55);
+  canvas.style.width=W_css+'px'; canvas.style.height=H_css+'px';
+  canvas.width=W_css*dpr; canvas.height=H_css*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const W=W_css,H=H_css,ml=62,mr=24,mt=20,mb=46,pw=W-ml-mr,ph=H-mt-mb;
+  const C_min=85,C_max=160,nPts=200;
+  const pts=[];
+  for(let i=0;i<=nPts;i++){const C=C_min+(C_max-C_min)*i/nPts;const r=computePressure(C,w_mm,t0_mm,E_MPa);if(r.lambda>0.5)pts.push({C,dP:r.dP/1000});}
+  const maxDP=Math.max(...pts.map(p=>p.dP),refPmax/1000*1.35,userDP/1000*1.25);
+  const xp=C=>ml+(C-C_min)/(C_max-C_min)*pw;
+  const yp=dp=>mt+ph-dp/maxDP*ph;
+  ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(79,255,176,0.07)'; ctx.fillRect(ml,yp(refPmax/1000),pw,yp(refPmin/1000)-yp(refPmax/1000));
+  for(let i=0;i<=5;i++){const dp=maxDP*i/5,y=yp(dp);ctx.strokeStyle='#2a3045';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText(dp.toFixed(2),ml-8,y+4);}
+  [90,100,110,114.4,119.6,124.8,130,140,150,160].forEach(C=>{const x=xp(C);ctx.strokeStyle='#2a3045';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,mt);ctx.lineTo(x,mt+ph);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(C%1===0?C:C.toFixed(1),x,mt+ph+16);});
+  ctx.fillStyle='#4fffb0';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText('Circumference (mm)',ml+pw/2,H-4);
+  ctx.save();ctx.translate(12,mt+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('ΔP (kPa)',0,0);ctx.restore();
+  const dHL=(dp,col,lbl,dash)=>{const y=yp(dp);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col;ctx.font='9px DM Mono,monospace';ctx.textAlign='left';ctx.fillText(lbl+' '+dp.toFixed(3)+' kPa',ml+4,y-5);};
+  dHL(Pmin_060/1000,'rgba(79,255,176,0.45)','P_min comfort',[5,4]);
+  dHL(Pmin_065/1000,'rgba(79,255,176,0.85)','P_min perfect',[6,3]);
+  dHL(Pmoy_065/1000,'rgba(79,255,176,1.0)','P_moy perfect',[4,2]);
+  dHL(Pmax_065/1000,'rgba(255,209,102,0.75)','P_max perfect',[6,3]);
+  dHL(Pmax_070/1000,'rgba(255,209,102,1.0)','P_max snug',[5,4]);
+  ctx.strokeStyle='#4fffb0';ctx.lineWidth=2.5;ctx.shadowColor='rgba(79,255,176,0.4)';ctx.shadowBlur=6;ctx.beginPath();pts.forEach((p,i)=>{const x=xp(p.C),y=yp(p.dP);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.shadowBlur=0;
+  const CM=119.6,CE=15.1,VC='rgba(160,180,255,0.60)';
+  [{C:CM-2*CE,l:'-2ET',d:[3,5]},{C:CM-CE,l:'-1ET',d:[5,3]},{C:CM,l:'Cmoy',d:[6,2]},{C:CM+CE,l:'+1ET',d:[5,3]},{C:CM+2*CE,l:'+2ET',d:[3,5]}].forEach(sl=>{const sx=xp(sl.C);if(sx<ml||sx>ml+pw)return;ctx.strokeStyle=VC;ctx.lineWidth=sl.l==='Cmoy'?1.5:1;ctx.setLineDash(sl.d);ctx.beginPath();ctx.moveTo(sx,mt);ctx.lineTo(sx,mt+ph);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=VC;ctx.font=(sl.l==='Cmoy'?'bold ':'')+' 9px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(sl.l,sx,mt+12);ctx.font='8px DM Mono,monospace';ctx.fillText(sl.C.toFixed(1),sx,mt+ph-5);});
+  const ux=xp(userCirc),uy=yp(userDP/1000);
+  ctx.strokeStyle='rgba(255,107,107,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(ux,mt);ctx.lineTo(ux,mt+ph);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(ux,uy,10,0,2*Math.PI);ctx.fillStyle='rgba(255,107,107,0.2)';ctx.fill();
+  ctx.beginPath();ctx.arc(ux,uy,5.5,0,2*Math.PI);ctx.fillStyle='#ff6b6b';ctx.shadowColor='#ff6b6b';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+  ctx.beginPath();ctx.arc(ux,uy,5.5,0,2*Math.PI);ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+  const lx=ux+(ux>ml+pw*0.7?-10:10),la=ux>ml+pw*0.7?'right':'left';
+  ctx.fillStyle='#ff6b6b';ctx.font='bold 10px DM Mono,monospace';ctx.textAlign=la;ctx.fillText('Vous : '+(userDP/1000).toFixed(3)+' kPa',lx,uy-12);
+  ctx.fillStyle='#7a8299';ctx.font='9px DM Mono,monospace';ctx.fillText('C = '+userCirc+' mm',lx,uy+20);
+  ctx.strokeStyle='#2a3045';ctx.lineWidth=1;ctx.strokeRect(ml,mt,pw,ph);
+}
+
+// ═══ CALCUL — CHAPITRE PARAMÉTRABLE ═══
+function applyPreset(w,t,e,btn){
+  document.getElementById('width').value=w;document.getElementById('thick').value=t;document.getElementById('emod').value=e;
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+}
+function calculate(){
+  const circ=parseFloat(document.getElementById('circ').value);
+  const w=parseFloat(document.getElementById('width').value);
+  const t0=parseFloat(document.getElementById('thick').value);
+  const E=parseFloat(document.getElementById('emod').value);
+  let valid=true;
+  if(isNaN(circ)||circ<80||circ>180){document.getElementById('err-circ').style.display='block';valid=false;}else document.getElementById('err-circ').style.display='none';
+  if(isNaN(w)||w<30||w>80||isNaN(t0)||t0<=0||isNaN(E)||E<=0){document.getElementById('err-inputs').style.display='block';valid=false;}else document.getElementById('err-inputs').style.display='none';
+  if(!valid)return;
+  const C0=2*w;
+  if(circ<=C0){
+    const vBox=document.getElementById('verdict-box');vBox.className='verdict low';
+    document.getElementById('verdict-icon').textContent='📏';document.getElementById('verdict-title').textContent='Condom larger than the penis';
+    document.getElementById('verdict-sub').textContent=`C₀=${C0}mm > C_pénis=${circ}mm.`;
+    document.getElementById('results-custom').style.display='block';document.getElementById('results-custom').scrollIntoView({behavior:'smooth',block:'start'});return;
+  }
+  const res=computePressure(circ,w,t0,E);const dP_kPa=res.dP/1000;const v=getVerdict(res.dP);
+  const vBox=document.getElementById('verdict-box');vBox.className='verdict '+v.cls;
+  document.getElementById('verdict-icon').textContent=v.icon;document.getElementById('verdict-title').textContent=v.title;
+  const msgs={low:`ΔP=${dP_kPa.toFixed(3)} kPa < P_min (${(Pmin_060/1000).toFixed(3)} kPa). Adhérence insuffisante.`,comfort:`ΔP=${dP_kPa.toFixed(3)} kPa — légèrement large.`,ok:`ΔP=${dP_kPa.toFixed(3)} kPa ∈ [${(Pmin_065/1000).toFixed(3)} ; ${(Pmax_065/1000).toFixed(3)}] kPa. Taille optimale.`,snug:`ΔP=${dP_kPa.toFixed(3)} kPa — légèrement serré.`,high:`ΔP=${dP_kPa.toFixed(3)} kPa > P_max (${(Pmax_070/1000).toFixed(3)} kPa). Constriction excessive.`};
+  document.getElementById('verdict-sub').textContent=msgs[v.cls]||'';
+  document.getElementById('res-p').className=`dc-value ${v.color}`;document.getElementById('res-p').textContent=dP_kPa.toFixed(3)+' kPa';
+  document.getElementById('res-lambda').textContent=res.lambda.toFixed(4);document.getElementById('res-T').textContent=res.T.toFixed(3)+' N/m';document.getElementById('res-sigma').textContent=(res.sigma*1e3).toFixed(2)+' kPa';
+  document.getElementById('results-custom').style.display='block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{drawPressureChart('pressureCanvas',circ,res.dP,w,t0,E);document.getElementById('results-custom').scrollIntoView({behavior:'smooth',block:'start'});}));
+}
+// Resize
+let _lb=null,_lc=null;
+window.addEventListener('resize',()=>{if(_lb)drawBrandChart(..._lb);if(_lc)drawPressureChart(..._lc);});
+const _ob=drawBrandChart,_oc=drawPressureChart;
+window.drawBrandChart=function(...a){_lb=a;_ob(...a);};
+window.drawPressureChart=function(...a){_lc=a;_oc(...a);};
 </script>
 </body>
 </html>

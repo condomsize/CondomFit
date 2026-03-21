@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CondomFit — Bibliography</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14; --surface:#161a23; --surface2:#1e2330; --border:#2a3045;
+    --accent:#4fffb0; --text:#e8ecf4; --text-muted:#7a8299;
+    --ok:#4fffb0; --warn:#ffd166; --err:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;
+    min-height:100vh;padding:40px 20px 80px;
+    background-image:
+      radial-gradient(ellipse at 15% 10%,rgba(79,255,176,0.07) 0%,transparent 50%),
+      radial-gradient(ellipse at 85% 85%,rgba(255,107,107,0.04) 0%,transparent 50%);
+  }
+  .page-wrap{max-width:780px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:52px;animation:fadeDown .6s ease both;}
+  header .tag{
+    font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;
+    color:var(--accent);text-transform:uppercase;margin-bottom:12px;display:block;
+  }
+  h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.02em;}
+  h1 span{color:var(--accent);}
+  header p{margin:14px auto 0;color:var(--text-muted);font-size:.93rem;max-width:520px;line-height:1.6;}
+
+  .section{margin-bottom:48px;animation:fadeUp .5s ease both;}
+  .section-header{
+    display:flex;align-items:center;gap:12px;margin-bottom:24px;
+    padding-bottom:12px;border-bottom:1px solid var(--border);
+  }
+  .section-num{
+    font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);
+    background:rgba(79,255,176,.08);border:1px solid rgba(79,255,176,.2);
+    border-radius:6px;padding:3px 10px;letter-spacing:.1em;
+  }
+  .section-title{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:.01em;}
+
+  .ref-list{display:flex;flex-direction:column;gap:16px;}
+  .ref-entry{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:20px 22px;transition:border-color .2s;
+  }
+  .ref-entry:hover{border-color:rgba(79,255,176,.3);}
+
+  .ref-badge{
+    display:inline-block;font-family:'DM Mono',monospace;font-size:.65rem;
+    letter-spacing:.1em;text-transform:uppercase;border-radius:4px;
+    padding:2px 8px;margin-bottom:10px;font-weight:500;
+  }
+  .badge-mec  {background:rgba(79,255,176,.1); color:#4fffb0;border:1px solid rgba(79,255,176,.2);}
+  .badge-tri  {background:rgba(116,192,252,.1);color:#74c0fc;border:1px solid rgba(116,192,252,.2);}
+  .badge-bio  {background:rgba(247,131,172,.1);color:#f783ac;border:1px solid rgba(247,131,172,.2);}
+  .badge-std  {background:rgba(255,209,102,.1);color:#ffd166;border:1px solid rgba(255,209,102,.2);}
+  .badge-stat {background:rgba(160,180,255,.1);color:#a0b4ff;border:1px solid rgba(160,180,255,.2);}
+
+  .ref-authors{font-size:.88rem;color:var(--text);line-height:1.5;margin-bottom:4px;}
+  .ref-authors strong{font-weight:600;}
+  .ref-year{color:var(--accent);font-weight:700;}
+  .ref-title{font-size:.9rem;color:var(--text);line-height:1.55;margin-bottom:6px;font-style:italic;}
+  .ref-source{font-size:.82rem;color:var(--text-muted);line-height:1.5;font-family:'DM Mono',monospace;}
+  .ref-source .journal{color:var(--text);font-style:normal;font-weight:500;}
+  .ref-doi{
+    display:inline-flex;align-items:center;gap:5px;margin-top:10px;
+    font-family:'DM Mono',monospace;font-size:.72rem;color:var(--accent);
+    text-decoration:none;border:1px solid rgba(79,255,176,.2);border-radius:6px;
+    padding:4px 10px;transition:background .15s;
+  }
+  .ref-doi:hover{background:rgba(79,255,176,.08);}
+  .ref-pmid{
+    display:inline-flex;align-items:center;gap:5px;margin-top:10px;margin-left:8px;
+    font-family:'DM Mono',monospace;font-size:.72rem;color:#a0b4ff;
+    text-decoration:none;border:1px solid rgba(160,180,255,.2);border-radius:6px;
+    padding:4px 10px;transition:background .15s;
+  }
+  .ref-pmid:hover{background:rgba(160,180,255,.08);}
+
+  .ref-usage{
+    margin-top:12px;padding-top:10px;border-top:1px solid var(--border);
+    font-size:.78rem;color:var(--text-muted);line-height:1.6;
+    font-family:'DM Mono',monospace;
+  }
+  .ref-usage::before{content:'↳ ';color:var(--accent);}
+
+  .footnote{
+    background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+    padding:16px 20px;margin-top:32px;font-family:'DM Mono',monospace;
+    font-size:.75rem;color:var(--text-muted);line-height:1.8;
+  }
+  .footnote strong{color:var(--text);}
+
+  footer{margin-top:48px;text-align:center;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text-muted);line-height:1.8;}
+
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp  {from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<div style="text-align:center;padding:0 0 20px;">
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:.75rem;color:#7a8299;text-decoration:none;padding:6px 14px;border:1px solid #2a3045;border-radius:100px;background:#161a23;transition:color .2s;" onmouseover="this.style.color='#4fffb0';this.style.borderColor='#4fffb0'" onmouseout="this.style.color='#7a8299';this.style.borderColor='#2a3045'">← Back to home</a>
+</div>
+
+<header>
+  <span class="tag">CondomFit · Scientific references</span>
+  <h1>Biblio<span>graphy</span></h1>
+  <p>Scientific and normative references used in the construction of the biomechanical model, calibration of material parameters, and validation of results.</p>
+</header>
+
+<!-- 1. MECHANICS -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Material mechanics — Neo-Hookean model</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-mec">Mechanics</span>
+      <div class="ref-authors"><strong>Rivlin, R.S.</strong> <span class="ref-year">(1948)</span></div>
+      <div class="ref-title">Large elastic deformations of isotropic materials. IV. Further developments of the general theory.</div>
+      <div class="ref-source"><span class="journal">Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences</span>, 241(835), 379–397.</div>
+      <a class="ref-doi" href="https://doi.org/10.1098/rsta.1948.0024" target="_blank">DOI: 10.1098/rsta.1948.0024</a>
+      <div class="ref-usage">Theoretical foundation of the incompressible neo-Hookean model. Strain energy W = C₁(I₁ − 3), Cauchy stress tensor, incompressibility condition λ_r·λ_θ·λ_z = 1.</div>
+    </div>
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-mec">Mechanics</span>
+      <div class="ref-authors"><strong>Treloar, L.R.G.</strong> <span class="ref-year">(1975)</span></div>
+      <div class="ref-title">The Physics of Rubber Elasticity (3rd ed.).</div>
+      <div class="ref-source"><span class="journal">Clarendon Press</span>, Oxford. ISBN 978-0-19-857001-8.</div>
+      <div class="ref-usage">Modelling of natural rubber as an incompressible elastic solid. Relation C₁ = E/6 for ν = 0.5 (incompressible material). Foundational reference for latex condom modelling.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 2. MATERIAL PARAMETERS -->
+<div class="section" style="animation-delay:.1s">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Material parameters — Young's modulus and friction</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-tri">Tribology</span>
+      <div class="ref-authors"><strong>Cooper, B.G., Chin, S.L., Xiao, R., Buch, K., Kim, D., &amp; Grinstaff, M.W.</strong> <span class="ref-year">(2018)</span></div>
+      <div class="ref-title">Friction-lowering capabilities and human subject preferences for a hydrophilic surface coating on latex substrates: implications for increasing condom usage.</div>
+      <div class="ref-source"><span class="journal">Royal Society Open Science</span>, 5(10), 180291.</div>
+      <a class="ref-doi" href="https://doi.org/10.1098/rsos.180291" target="_blank">DOI: 10.1098/rsos.180291</a>
+      <div class="ref-usage">Primary source for E = 1.69 MPa (Young's modulus of condom latex measured by uniaxial tensile testing) E = 1.69 MPa is used as the reference parameter in all CondomFit calculators. The measured friction coefficients (μ = 0.10 water-based, μ = 0.15 silicone) are documented here for information — the axial friction model σ_z = μ·σ_θ not being experimentally validated, it is not implemented in CondomFit.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 3. BIOMECHANICAL MEASUREMENTS -->
+<div class="section" style="animation-delay:.15s">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">Biomechanical measurements — Membrane and bead pressure</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-bio">Biomechanics</span>
+      <div class="ref-authors"><strong>Gerofi, J., Deniaud, F., &amp; Friel, P.</strong> <span class="ref-year">(1995)</span></div>
+      <div class="ref-title">Interaction of condom design and user techniques and condom acceptability.</div>
+      <div class="ref-source"><span class="journal">Contraception</span>, 52(4), 223–228.</div>
+      <a class="ref-doi" href="https://doi.org/10.1016/0010-7824(95)00183-B" target="_blank">DOI: 10.1016/0010-7824(95)00183-B</a>
+      <a class="ref-pmid" href="https://pubmed.ncbi.nlm.nih.gov/8605780/" target="_blank">PMID: 8605780</a>
+      <div class="ref-usage">Source of experimental reference data: membrane pressure (film press) and bead pressure measured on two condoms (WHO-Hankook and USAID-Sultan) on a rigid cylindrical mandrel (C = 135 mm). These measurements calibrate and validate the CondomFit neo-Hookean model. Data used: Hankook w=51.5mm, t₀=0.069mm, L=192mm, d_bead=1.56mm, ΔP_film=2.3kPa, ΔP_bead=23.4kPa; Sultan w=52.8mm, t₀=0.061mm, L=184mm, d_bead=1.85mm, ΔP_film=2.0kPa, ΔP_bead=22.5kPa.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 4. STANDARDS -->
+<div class="section" style="animation-delay:.2s">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Standards and norms</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-std">Standard</span>
+      <div class="ref-authors"><strong>International Organization for Standardization</strong> <span class="ref-year">(2015)</span></div>
+      <div class="ref-title">ISO 4074:2015 — Natural rubber latex male condoms — Requirements and test methods.</div>
+      <div class="ref-source"><span class="journal">ISO</span>, Geneva, Switzerland.</div>
+      <a class="ref-doi" href="https://www.iso.org/standard/59718.html" target="_blank">ISO 59718</a>
+      <div class="ref-usage">International standard defining the nominal width w = 52 mm as the reference size, burst resistance and water-tightness test methods. Normative context for the w = 52 mm choice analysed in CondomFit context pages.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 5. POPULATION DATA -->
+<div class="section" style="animation-delay:.25s">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">Population anatomical data</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-stat">Epidemiology</span>
+      <div class="ref-authors"><strong>Wessells, H., Lue, T.F., &amp; McAninch, J.W.</strong> <span class="ref-year">(1996)</span></div>
+      <div class="ref-title">Penile length in the flaccid and erect states: guidelines for penile augmentation.</div>
+      <div class="ref-source"><span class="journal">The Journal of Urology</span>, 156(3), 995–997.</div>
+      <a class="ref-doi" href="https://doi.org/10.1016/S0022-5347(01)65682-9" target="_blank">DOI: 10.1016/S0022-5347(01)65682-9</a>
+      <a class="ref-pmid" href="https://pubmed.ncbi.nlm.nih.gov/8709382/" target="_blank">PMID: 8709382</a>
+      <div class="ref-usage">Prospective measurement of erect penile length and circumference under pharmacologically induced erection in 80 men. First study to measure the penis in all three states (flaccid, stretched, erect). Contributes to the weighted cross-study mean used in CondomFit.</div>
+    </div>
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-stat">Epidemiology</span>
+      <div class="ref-authors"><strong>Da Ros, C.T., Teloken, C., Sogari, P.R., Silva, F.L., Barcelos Filho, M., &amp; Souto, C.A.V.</strong> <span class="ref-year">(1993)</span></div>
+      <div class="ref-title">Estudo da dimensão peniana em ereção fármaco-induzida. [Study of penile dimensions under pharmacologically induced erection.]</div>
+      <div class="ref-source"><span class="journal">Jornal Brasileiro de Urologia</span>, 19(3), 130–132. LILACS: lil-134150.</div>
+      <a class="ref-pmid" href="https://pesquisa.bvsalud.org/portal/resource/pt/lil-134150" target="_blank">LILACS: lil-134150</a>
+      <div class="ref-usage">Measurement of penile length, proximal circumference (119.2 mm ± 16 mm) and distal circumference (110.5 mm ± 12 mm) under drug-induced erection in 150 men with no complaint about penile size. Brazilian study, Caucasian population. Contributes to the weighted cross-study mean.</div>
+    </div>
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-stat">Epidemiology</span>
+      <div class="ref-authors"><strong>Schneider, T., Sperling, H., Lümmen, G., Syllwasschy, J., &amp; Rübben, H.</strong> <span class="ref-year">(2001)</span></div>
+      <div class="ref-title">Does penile size in younger men cause problems in condom use? A prospective measurement of penile dimensions in 111 young and 32 older men.</div>
+      <div class="ref-source"><span class="journal">Urology</span>, 57(2), 314–318.</div>
+      <a class="ref-doi" href="https://doi.org/10.1016/S0090-4295(00)00925-0" target="_blank">DOI: 10.1016/S0090-4295(00)00925-0</a>
+      <a class="ref-pmid" href="https://pubmed.ncbi.nlm.nih.gov/11182344/" target="_blank">PMID: 11182344</a>
+      <div class="ref-usage">Prospective measurement of penile dimensions in 111 young men (18–19 years) and 32 older men (40–68 years). Erect base width: 39.5 mm (young group) and 35.0 mm (older group). Study directly motivated by the question of condom size adequacy. Contributes to the weighted cross-study mean.</div>
+    </div>
+
+    <div class="ref-entry" style="border-color:rgba(79,255,176,0.25);background:rgba(79,255,176,0.03);">
+      <span class="ref-badge badge-stat">CondomFit synthesis</span>
+      <div class="ref-authors"><strong>Wessells et al. (1996), Da Ros et al. (1993), Schneider et al. (2001)</strong></div>
+      <div class="ref-title">Weighted cross-study mean — erect penile circumference (n = 373).</div>
+      <div class="ref-source" style="margin-top:8px;">CondomFit calculation from the three studies above (n_total = 80 + 150 + 111 + 32 = 373).</div>
+      <div class="ref-usage">Weighted mean: <strong>C̄ = 120.7 mm</strong>, estimated SD = 14 mm. This validates the use of TheyFit data (C̄ = 119.6 mm, σ = 15.1 mm) as the reference in CondomFit. Although not peer-reviewed, TheyFit data benefit from a much larger sample size (n &gt; 20,000) and illustrate a higher σ, consistent with the variability expected in a large general population. The convergence of both sources (120.7 mm vs 119.6 mm) reinforces the robustness of the central parameter used.</div>
+    </div>
+
+    <div class="ref-entry">
+      <span class="ref-badge badge-stat">Proprietary data</span>
+      <div class="ref-authors"><strong>TheyFit / myONE Perfect Fit</strong> <span class="ref-year">(2013, aggregated data)</span></div>
+      <div class="ref-title">FitKit measurement database — erect penile circumference distribution (n > 20,000).</div>
+      <div class="ref-source"><span class="journal">TheyFit Ltd</span> (UK) / ONE Condoms (US). Unpublished data, reported by Joe Nelson (TheyFit founder) via public communication and blog condomsizeandfacts.blogspot.com (2013).</div>
+      <div class="ref-usage">Source of the statistical distribution parameters used in CondomFit: C̄ = 119.6 mm, σ = 15.1 mm. Although not peer-reviewed, these data are validated by convergence with the weighted mean from clinical studies (120.7 mm), and benefit from a very large sample size (n &gt; 20,000) illustrating real-world variability in the general population. <em>Proprietary data — interpret with caution.</em></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Methodological note -->
+<!-- 6. INTERACTIVE VISUALISATION -->
+<div class="section" style="animation-delay:.3s">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">Interactive visualisation — Erect penile volume</span>
+  </div>
+  <div class="ref-list">
+
+    <div class="ref-entry" style="border-color:rgba(79,255,176,0.25);background:rgba(79,255,176,0.03);">
+      <span class="ref-badge badge-stat">CondomFit visualisation</span>
+      <div class="ref-authors"><strong>CondomFit</strong> <span class="ref-year">(2025)</span></div>
+      <div class="ref-title">Interactive heatmap of erect penile volume — Monte Carlo simulation (ρ = 0.55, n = 100,000).</div>
+      <div class="ref-source" style="margin-top:8px;">Data: <span class="journal">Schneider et al. (2000)</span>, <span class="journal">Wessells et al. (1996)</span>, <span class="journal">Da Ros et al. (1993)</span>, <span class="journal">TheyFit FitKit (n = 20,000)</span>. Cylinder model V = π(C/2π)²L with length-circumference correlation ρ = 0.55.</div>
+      <a class="ref-doi" href="penis_volume_heatmap.html" target="_blank">↗ Open interactive visualisation</a>
+      <div class="ref-usage">Bivariate distribution (circumference × length) simulated by Monte Carlo across 7 cohorts. Allows visualisation of an individual's volume percentile and comparison of inter-study distributions. Graphical complement to the anatomical data in section 05.</div>
+    </div>
+
+  </div>
+</div>
+<div class="footnote">
+  <strong>Model validation note</strong><br>
+  The CondomFit biomechanical model is calibrated on Gerofi et al. (1995) measurements by independent back-calculation: the effective Young's modulus is derived from membrane pressure measurements (E_Hankook = 2.58 MPa, E_Sultan = 2.80 MPa), while the bead modulus is derived from bead pressure measurements (E_bead_Hankook = 1.48 MPa, E_bead_Sultan = 1.33 MPa). These values differ from E = 1.69 MPa (Cooper 2018) measured by uniaxial tensile testing on unaged latex — the discrepancy is attributed to different measurement conditions (preformed condom latex vs. flat sheet) and material ageing.<br><br>
+  <strong>Citation format</strong>: references follow a hybrid format inspired by Vancouver style (used in medical sciences) and APA, adapted for web presentation.
+</div>
+
+<footer>
+  CondomFit · Bibliography · For informational purposes only<br>
+  Neo-Hookean biomechanical model · Laplace's Law · TheyFit, Gerofi, Cooper data
+</footer>
+
+</div>
+</body>
+</html>
