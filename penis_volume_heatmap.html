@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Penile Volume Heatmap – Schneider et al. (2000)</title>
+<title>Penile Volume Heatmap</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -63,7 +63,7 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 </head>
 <body>
 
-<h1>Penile Volume Heatmap — Schneider et al. (2000) · Monte Carlo (ρ = 0.55, n = 100,000)</h1>
+<h1 id="page-title">Penile Volume Heatmap — Monte Carlo : ρ = 0.55 ("symphisis pubis") / 0.46 ("penile skin junction"), n = 100,000</h1>
 
 <div class="panel">
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
@@ -78,6 +78,13 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
     <button id="btn5" onclick="sel(5)">Compiled studies (n=373)</button>
     <button id="btn6" onclick="sel(6)">TheyFit (n=20,000)</button>
   </div>
+  <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
+    <button id="btn7"  onclick="sel(7)">Kwanjin Park et al. (1998) (n=287)</button>
+    <button id="btn8"  onclick="sel(8)">Habous et al. (2015) (n=778)</button>
+    <button id="btn9"  onclick="sel(9)">Promodu et al. (2007) (n=301)</button>
+    <button id="btn10" onclick="sel(10)">Cuntong Wang (2024) (n=34,060)</button>
+    <button id="btn11" onclick="sel(11)">Salama (2015) (n=105)</button>
+  </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:2px;border-top:0.5px solid #2a2a4a;margin-top:2px;">
     <label>Circ. (mm):</label>
     <input type="number" id="ic" value="120" min="50" max="250">
@@ -90,17 +97,22 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 <div id="status">>Ready.</div>
 <div id="canvas-wrap"><canvas id="heatCanvas"></canvas><div id="tip"></div></div>
 <div class="legend" id="leg"></div>
-<p class="ref">Schneider T. et al. (2000) — data in mm. Cylinder model: V=π(C/2π)²L. Axes ±3.5 SD rounded to 5 mm. Hover dots for details.</p>
+<p class="ref" id="study-info">Schneider et al. (2000) · young cohort · n=111 · C̄=124.1 mm (SD=11.9) · L̄=144.8 mm (SD=19.9) · measurement: symphisis pubis · ρ=0.55 · Cylinder model: V=π(C/2π)²L. Hover dots for details.</p>
 
 <script>
 const ST=[
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4},
-  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2},
-  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0},
-  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3},
-  {grp:"TheyFit",                 lb:"TheyFit",                 n:20000,cm:119.6, cs:15.1, lm:130.0, ls:20.0},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",    n:111,   cm:124.1, cs:11.9, lm:144.8, ls:19.9, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",    n:32,    cm:110.0, cs:10.1, lm:141.8, ls:18.3, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled",   n:143,   cm:120.9, cs:11.5, lm:144.1, ls:19.4, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",    n:80,    cm:123.0, cs:13.1, lm:157.4, ls:26.2, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",      n:150,   cm:119.2, cs:16.5, lm:143.1, ls:20.0, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Compiled studies",        lb:"Compiled studies",          n:373,   cm:120.7, cs:14.0, lm:146.6, ls:21.3, rho:0.55, meas:"symphisis pubis"},
+  {grp:"TheyFit",                 lb:"TheyFit",                   n:20000, cm:119.6, cs:15.1, lm:130.0, ls:20.0, rho:0.46, meas:"penile skin junction"},
+  {grp:"Kwanjin Park et al. (1998)", lb:"Kwanjin Park et al. (1998)", n:287, cm:121.1, cs:11.0, lm:140.6, ls:14.9, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Habous et al. (2015)",    lb:"Habous et al. (2015)",      n:778,   cm:115.0, cs:17.4, lm:143.4, ls:18.6, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Promodu et al. (2007)",   lb:"Promodu et al. (2007)",     n:301,   cm:114.6, cs:13.5, lm:129.3, ls:16.3, rho:0.46, meas:"penile skin junction"},
+  {grp:"Cuntong Wang (2024)",     lb:"Cuntong Wang (2024)",       n:34060, cm:107.5, cs:13.4, lm:124.2, ls:16.3, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Salama (2015)",           lb:"Salama (2015)",             n:105,   cm:119.2, cs:10.6, lm:150.4, ls:15.1, rho:0.55, meas:"symphisis pubis"},
 ];
 let cur=0, lastState=null, gpts=[];
 
@@ -116,9 +128,16 @@ function pr(v,m,s){return normCDF((v-m)/s)*100;}
 function prMC(v,sorted){let lo=0,hi=sorted.length-1;while(lo<hi){const m=(lo+hi)>>1;sorted[m]<v?lo=m+1:hi=m;}return lo/sorted.length*100;}
 function ord(p){const n=Math.round(p);if(n>=11&&n<=13)return n+'th';switch(n%10){case 1:return n+'st';case 2:return n+'nd';case 3:return n+'rd';default:return n+'th';}}
 
-function sel(i){cur=i;document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6').forEach((b,j)=>b.classList.toggle('active',j===i));go();}
+function sel(i){
+  cur=i;
+  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6,#btn7,#btn8,#btn9,#btn10,#btn11').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const st=ST[i];
+  document.getElementById('study-info').textContent=
+    st.lb+' · n='+st.n+' · C\u0305='+(st.cm).toFixed(1)+' mm (SD='+(st.cs).toFixed(1)+') · L\u0305='+(st.lm).toFixed(1)+' mm (SD='+(st.ls).toFixed(1)+') · measurement: '+st.meas+' · \u03c1='+st.rho+' · Cylinder model: V=\u03c0(C/2\u03c0)\u00b2L. Hover dots for details.';
+  go();
+}
 
-function runMC(st,N=100000,rho=0.55){
+function runMC(st,N=100000){const rho=st.rho||0.55;
   const vols=new Float64Array(N);
   for(let i=0;i<N;i++){
     const z1=randn(),z2=randn();
@@ -131,7 +150,7 @@ function runMC(st,N=100000,rho=0.55){
   return{s,mn,sd,p25:pct(.25),p50:pct(.5),p75:pct(.75),pm1:mn-sd,pp1:mn+sd,pm2:mn-2*sd,pp2:mn+2*sd};
 }
 
-function dens(c,l,st,rho=0.55){
+function dens(c,l,st){const rho=st.rho||0.55;
   const zc=(c-st.cm)/st.cs,zl=(l-st.lm)/st.ls,r2=1-rho*rho;
   return Math.exp(-1/(2*r2)*(zc*zc-2*rho*zc*zl+zl*zl));
 }
@@ -149,7 +168,6 @@ function draw(st,res,uc,ul){
   const canvas=document.getElementById('heatCanvas');
   const wrap=document.getElementById('canvas-wrap');
 
-  /* ── Canvas = exact size of wrap ── */
   const W=wrap.clientWidth;
   const H=wrap.clientHeight;
   canvas.width=W; canvas.height=H;
@@ -158,26 +176,19 @@ function draw(st,res,uc,ul){
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
 
-  /* ── Axis ranges ── */
   const SIGMA=3.5;
   const CMIN=r5(st.cm-SIGMA*st.cs), CMAX=r5(st.cm+SIGMA*st.cs);
   const LMIN=r5(st.lm-SIGMA*st.ls), LMAX=r5(st.lm+SIGMA*st.ls);
   const Crange=CMAX-CMIN, Lrange=LMAX-LMIN;
 
-  /* ── Fixed font size matching page text ── */
-  const FONT=10;  /* px — matches page body ~11px */
+  const FONT=10;
   const FONT_AXIS=10;
-
-  /* ── Padding sized to fit labels ── */
-  /* Y labels are 3-digit numbers → ~3*FONT*0.6 = 18px wide */
   const PAD={ left: FONT*3.8, right: FONT*0.6, top: FONT*1.2, bottom: FONT*3.2 };
 
-  /* ── Plot dimensions: fill W fully, derive H from aspect ── */
   const PW=W-PAD.left-PAD.right;
-  const ppm=PW/Crange;             /* pixels per mm — same for both axes */
+  const ppm=PW/Crange;
   const PH=Math.round(Lrange*ppm);
 
-  /* if PH > available height, constrain by H */
   const avH=H-PAD.top-PAD.bottom;
   const ppm2 = PH>avH ? avH/Lrange : ppm;
   const PW2  = PH>avH ? Math.round(Crange*ppm2) : PW;
@@ -186,7 +197,6 @@ function draw(st,res,uc,ul){
   const toX=c=>PAD.left+(c-CMIN)/Crange*PW2;
   const toY=l=>PAD.top+(LMAX-l)/Lrange*PH2;
 
-  /* ── Offscreen heatmap ── */
   const off=document.createElement('canvas');
   off.width=PW2; off.height=PH2;
   const oc=off.getContext('2d');
@@ -203,19 +213,13 @@ function draw(st,res,uc,ul){
   oc.putImageData(id,0,0);
   ctx.drawImage(off,PAD.left,PAD.top,PW2,PH2);
 
-  /* ── Determine X tick label step so labels don't overlap ──
-     Each 3-digit label needs ~FONT*2.2 px wide + 2px gap = FONT*2.6 px.
-     Minimum mm between labels = that width / ppm2.
-     Round up to nearest multiple of 5.                          */
   const minGapPx=FONT*2.6;
   const minGapMm=minGapPx/ppm2;
-  const xStep=Math.ceil(minGapMm/5)*5;   /* e.g. 5, 10, 15, 20 … */
+  const xStep=Math.ceil(minGapMm/5)*5;
 
-  /* ── Grid + ticks ── */
   ctx.save();
   ctx.font=FONT+'px system-ui,sans-serif';
 
-  /* X */
   for(let c=CMIN;c<=CMAX;c+=5){
     const x=toX(c);
     const showLabel=(c%xStep===0);
@@ -230,7 +234,6 @@ function draw(st,res,uc,ul){
     }
   }
 
-  /* Y */
   for(let l=LMIN;l<=LMAX;l+=5){
     const y=toY(l);
     const maj=(l%25===0);
@@ -238,16 +241,13 @@ function draw(st,res,uc,ul){
     ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+PW2,y);ctx.stroke();
     ctx.beginPath();ctx.strokeStyle=maj?'#506070':'#303848';ctx.lineWidth=maj?1:.5;
     ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left-(maj?5:3),y);ctx.stroke();
-    /* Y: label every 5mm — they don't overlap since spacing = ppm2*5 ≥ FONT */
     ctx.fillStyle='#6a7a8a';ctx.textAlign='right';
     ctx.fillText(l,PAD.left-FONT*.5,y+FONT*.35);
   }
 
-  /* border */
   ctx.beginPath();ctx.strokeStyle='#283848';ctx.lineWidth=1;
   ctx.strokeRect(PAD.left,PAD.top,PW2,PH2);
 
-  /* axis titles */
   ctx.fillStyle='#5a6a7a';ctx.font=FONT_AXIS+'px system-ui,sans-serif';ctx.textAlign='center';
   ctx.fillText('Circumference (mm)',PAD.left+PW2/2,PAD.top+PH2+PAD.bottom-2);
   ctx.save();
@@ -256,7 +256,6 @@ function draw(st,res,uc,ul){
   ctx.restore();
   ctx.restore();
 
-  /* ── Isovolume curves ── */
   const NI=500;
   const la=Array.from({length:NI+1},(_,i)=>LMIN+i*Lrange/NI);
   const ISO=[
@@ -292,12 +291,18 @@ function draw(st,res,uc,ul){
   });
 
   /* ── Stats ── */
-  const vm=vol(st.cm,st.lm),pvm=Math.round(prMC(vm,res.s));
-  const vu=vol(uc,ul),pcu=Math.round(pr(uc,st.cm,st.cs)),plu=Math.round(pr(ul,st.lm,st.ls)),pvu=Math.round(prMC(vu,res.s));
+  // Volume du point médian = vol(cm, lm) placé sur la courbe P50
+  const vm_median=vol(st.cm,st.lm);
+  const pvm=Math.round(prMC(vm_median,res.s));
+  const vu=vol(uc,ul);
+  const pcu=Math.round(pr(uc,st.cm,st.cs));
+  const plu=Math.round(pr(ul,st.lm,st.ls));
+  const pvu=Math.round(prMC(vu,res.s));
+
   const hM=`<b>Population mean — ${st.lb}</b>
     <div class="tr"><span>Circumference</span><span class="tv">${st.cm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
     <div class="tr"><span>Length</span><span class="tv">${st.lm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
-    <div class="tr"><span>Volume</span><span class="tv">${(vm/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
+    <div class="tr"><span>Volume</span><span class="tv">${(vm_median/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
     <div class="tn">SD circ.: ${st.cs.toFixed(1)} mm · SD length: ${st.ls.toFixed(1)} mm · Vol. SD: ${(res.sd/1000).toFixed(2)} cm³ · n=${st.n}</div>`;
   const hU=`<b>Evaluated penis</b>
     <div class="tr"><span>Circumference</span><span class="tv">${uc.toFixed(0)} mm</span><span class="tk">${ord(pcu)} pct.</span></div>
@@ -305,7 +310,6 @@ function draw(st,res,uc,ul){
     <div class="tr"><span>Volume</span><span class="tv">${(vu/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvu)} pct.</span></div>
     <div class="tn">Cohort: ${st.lb}</div>`;
 
-  /* ── Dots ── */
   function dot(c,l,fill,lbl,side){
     const x=toX(c),y=toY(l),R=6;
     ctx.save();
@@ -324,7 +328,6 @@ function draw(st,res,uc,ul){
   const pu=dot(uc,ul,'#ff3388','Evaluated','l');   pu.html=hU;
   gpts=[pm,pu];
 
-  /* ── Density bar ── */
   const bW=Math.min(120,Math.round(PW2*.15)),bH=8;
   const bx=PAD.left+PW2-bW-2,by=PAD.top+4;
   for(let i=0;i<bW;i++){const[r,g,b]=dcol(i/bW);ctx.fillStyle=`rgb(${r},${g},${b})`;ctx.fillRect(bx+i,by,1,bH);}
@@ -336,7 +339,7 @@ function draw(st,res,uc,ul){
 
   buildLeg(ISO);
   document.getElementById('status').textContent=
-    `${st.lb} | Mean vol.: ${(res.mn/1000).toFixed(2)} cm³ ± ${(res.sd/1000).toFixed(2)} cm³ | Median vol.: ${(res.p50/1000).toFixed(2)} cm³ | Evaluated vol.: ${(vu/1000).toFixed(2)} cm³ | Hover dots for details.`;
+    `${st.lb} | Mean vol.: ${(vm_median/1000).toFixed(2)} cm³ ± ${(res.sd/1000).toFixed(2)} cm³ (SD) | Median vol. (P50): ${(res.p50/1000).toFixed(2)} cm³ | Evaluated vol.: ${(vu/1000).toFixed(2)} cm³ | Hover dots for details.`;
 }
 
 function showTip(pt){
