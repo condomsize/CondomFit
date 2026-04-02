@@ -315,8 +315,8 @@ function draw(st,res,uc,ul){
   const vu=vol(uc,ul),pcu=Math.round(pr(uc,st.cm,st.cs)),plu=Math.round(pr(ul,st.lm,st.ls)),pvu=Math.round(prMC(vu,res.s));
   const hM=`<b>Population mean — ${st.lb}</b>
     <div class="tr"><span>Circumference</span><span class="tv">${st.cm.toFixed(1)} +- ${st.cs.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
-    <div class="tr"><span>Length</span><span class="tv">${st.lm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
-    <div class="tr"><span>Volume</span><span class="tv">${(vm/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
+    <div class="tr"><span>Length</span><span class="tv">${st.lm.toFixed(1)} +- ${st.ls.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
+    <div class="tr"><span>Volume</span><span class="tv">${(vm/1000).toFixed(2)} +- ${(res.s/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
     <div class="tn">SD circ.: ${st.cs.toFixed(1)} mm · SD length: ${st.ls.toFixed(1)} mm · n=${st.n}</div>`;
   const hU=`<b>Evaluated penis</b>
     <div class="tr"><span>Circumference</span><span class="tv">${uc.toFixed(0)} mm</span><span class="tk">${ord(pcu)} pct.</span></div>
