@@ -63,7 +63,7 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 </head>
 <body>
 
-<h1 id="page-title">Penile Volume Heatmap — Monte Carlo : ρ = 0.55 ("symphise pubis") / 0.46 ("penile skin junction"), n = 100,000</h1>
+<h1 id="page-title">Penile Volume Heatmap — Monte Carlo : ρ = 0.55 ("symphisis pubis") / 0.46 ("penile skin junction"), n = 100,000</h1>
 
 <div class="panel">
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
@@ -96,21 +96,21 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 <div id="status">>Ready.</div>
 <div id="canvas-wrap"><canvas id="heatCanvas"></canvas><div id="tip"></div></div>
 <div class="legend" id="leg"></div>
-<p class="ref" id="study-info">Schneider et al. (2000) · young cohort · n=111 · C̄=124.1 mm (SD=11.9) · L̄=144.8 mm (SD=19.9) · measurement: symphise pubis · ρ=0.55 · Cylinder model: V=π(C/2π)²L. Hover dots for details.</p>
+<p class="ref" id="study-info">Schneider et al. (2000) · young cohort · n=111 · C̄=124.1 mm (SD=11.9) · L̄=144.8 mm (SD=19.9) · measurement: symphisis pubis · ρ=0.55 · Cylinder model: V=π(C/2π)²L. Hover dots for details.</p>
 
 <script>
 const ST=[
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9, rho:0.55, meas:"symphise pubis"},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3, rho:0.55, meas:"symphise pubis"},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4, rho:0.55, meas:"symphise pubis"},
-  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2, rho:0.55, meas:"symphise pubis"},
-  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0, rho:0.55, meas:"symphise pubis"},
-  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3, rho:0.55, meas:"symphise pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3, rho:0.55, meas:"symphisis pubis"},
   {grp:"TheyFit",                 lb:"TheyFit",             n:20000,cm:119.6, cs:15.1, lm:130.0, ls:20.0, rho:0.46, meas:"penile skin junction"},
-  {grp:"Kwanjin Park et al. (1998)",lb:"Kwanjin Park et al. (1998)",n:287, cm:121.1, cs:11.0, lm:140.6, ls:14.9, rho:0.55, meas:"symphise pubis"},
-  {grp:"Habous et al. (2015)",     lb:"Habous et al. (2015)", n:778, cm:115.0, cs:17.4, lm:143.4, ls:18.6, rho:0.55, meas:"symphise pubis"},
+  {grp:"Kwanjin Park et al. (1998)",lb:"Kwanjin Park et al. (1998)",n:287, cm:121.1, cs:11.0, lm:140.6, ls:14.9, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Habous et al. (2015)",     lb:"Habous et al. (2015)", n:778, cm:115.0, cs:17.4, lm:143.4, ls:18.6, rho:0.55, meas:"symphisis pubis"},
   {grp:"Promodu et al. (2007)",    lb:"Promodu et al. (2007)", n:301, cm:114.6, cs:13.5, lm:129.3, ls:16.3, rho:0.46, meas:"penile skin junction"},
-  {grp:"Cuntong Wang (2024)",      lb:"Cuntong Wang (2024)", n:34060, cm:107.5, cs:13.4, lm:124.2, ls:16.3, rho:0.55, meas:"symphise pubis"},
+  {grp:"Cuntong Wang (2024)",      lb:"Cuntong Wang (2024)", n:34060, cm:107.5, cs:13.4, lm:124.2, ls:16.3, rho:0.55, meas:"symphisis pubis"},
 ];
 let cur=0, lastState=null, gpts=[];
 
