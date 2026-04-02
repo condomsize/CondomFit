@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CondomFit — Size finder</title>
+<title>CondomFit — Recherche par circonférence</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0d0f14;--surface:#161a23;--surface2:#1e2330;--border:#2a3045;--accent:#4fffb0;--text:#e8ecf4;--text-muted:#7a8299;--ok:#4fffb0;--warn:#ffd166;--err:#ff6b6b;--comfort:#74c0fc;--snug:#f783ac;}
@@ -58,7 +58,7 @@
   .brand-spec{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);}
   .brand-btn.active .brand-name{color:var(--accent);}
 
-  /* Mechanical model */
+  /* Modèle mécanique */
   .model-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
   .model-btn{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:'Syne',sans-serif;text-align:left;transition:all .2s;color:var(--text-muted);width:100%;}
   .model-btn:hover{border-color:rgba(79,255,176,.4);color:var(--text);}
@@ -134,31 +134,31 @@
 </head>
 <body>
 
-<a href="index.html" class="back-link">← Back to home</a>
+<a href="index.html" class="back-link">← Retour à l'accueil</a>
 
 <header>
-  <span class="tag">CondomFit · Reverse calculator</span>
-  <h1>Which <span>size</span> fits me?</h1>
+  <span class="tag">CondomFit · Calcul inversé</span>
+  <h1>Quelle <span>taille</span> me convient ?</h1>
   <p>Entrez votre circonférence. La page calcule la pression pour chaque préservatif ou largeur nominale et identifie les tailles compatibles.</p>
 </header>
 
-<!-- Circumference — commune -->
+<!-- Circonférence — commune -->
 <div class="card">
-  <div class="card-title">Your anatomy</div>
+  <div class="card-title">Votre morphologie</div>
   <div class="field">
-    <label><strong>Penile circumference C</strong> — measured at the base or widest point</label>
+    <label><strong>Circonférence pénienne C</strong> — mesurée à la base ou au point le plus large</label>
     <div class="input-unit">
       <input type="number" id="circ" min="80" max="200" step="0.5" placeholder="ex : 119">
       <span class="unit">mm</span>
     </div>
-    <div class="error-msg" id="err-circ">Expected value between 80 and 200 mm.</div>
+    <div class="error-msg" id="err-circ">Valeur attendue entre 80 et 200 mm.</div>
   </div>
 </div>
 
 <!-- Onglets -->
 <div class="chapter-tabs">
-  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 By brand</button>
-  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Custom</button>
+  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 Par marque</button>
+  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Paramétrable</button>
 </div>
 
 <!-- ══════════════════════════
@@ -166,7 +166,7 @@
 ══════════════════════════ -->
 <div class="chapter active" id="chapter-brand">
   <div class="card top-join">
-    <div class="card-title">Select a brand</div>
+    <div class="card-title">Sélectionner une marque</div>
 
     <div class="brand-filter">
       <button type="button" class="brand-filter-btn" onclick="filterBrand('skyn',this)">Skyn</button>
@@ -201,7 +201,7 @@
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Love" data-w="52.5" data-t0="0.065" data-e="2.7" onclick="toggleProduct(this)"><span class="brand-name">Durex Love</span><span class="brand-spec">w=52.5mm · t₀=0.065mm · E=2.70MPa</span></button>
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Feeling Extra close fit" data-w="52.5" data-t0="0.054" data-e="2.4" onclick="toggleProduct(this)"><span class="brand-name">Durex Feeling Extra close fit</span><span class="brand-spec">w=52.5mm · t₀=0.054mm · E=2.40MPa</span></button>
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Classic Protect" data-w="56" data-t0="0.075" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Durex Classic Protect</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
-      <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Nude — Latex-free (polyisoprene)" data-w="56" data-t0="0.075" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Durex Nude — Latex-free (polyisoprene)</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Nude — Sans latex (polyisoprene)" data-w="56" data-t0="0.075" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Durex Nude — Sans latex (polyisoprene)</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex originals classic natural" data-w="56" data-t0="0.065" data-e="1.9" onclick="toggleProduct(this)"><span class="brand-name">Durex originals classic natural</span><span class="brand-spec">w=56mm · t₀=0.065mm · E=1.90MPa</span></button>
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Thin Feel Feeling Sensitive" data-w="56" data-t0="0.06" data-e="1.8" onclick="toggleProduct(this)"><span class="brand-name">Durex Thin Feel Feeling Sensitive</span><span class="brand-spec">w=56mm · t₀=0.060mm · E=1.80MPa</span></button>
       <button type="button" class="brand-btn" data-brand="durex" data-label="Durex Nude" data-w="56" data-t0="0.048" data-e="2.2" onclick="toggleProduct(this)"><span class="brand-name">Durex Nude</span><span class="brand-spec">w=56mm · t₀=0.048mm · E=2.20MPa</span></button>
@@ -292,17 +292,17 @@
     </div>
 
     <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">
-      Select one or more products to compare. The mechanical model applies to all.
+      Sélectionnez un ou plusieurs articles à comparer. Le modèle mécanique s'applique à tous.
     </div>
 
-    <span class="field-label"><strong>Mechanical model</strong></span>
+    <span class="field-label"><strong>Modèle mécanique</strong></span>
     <div class="model-selector">
       <button type="button" class="model-btn active" id="btn-free-brand" onclick="selectModelBrand('free')">
-        <span class="mb-icon">🔓</span><span class="mb-title">Free model</span>
+        <span class="mb-icon">🔓</span><span class="mb-title">Modèle libre</span>
         <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Lower bound</span>
       </button>
       <button type="button" class="model-btn" id="btn-blocked-brand" onclick="selectModelBrand('blocked')">
-        <span class="mb-icon">🔒</span><span class="mb-title">Blocked model</span>
+        <span class="mb-icon">🔒</span><span class="mb-title">Modèle bloqué</span>
         <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Upper bound</span>
       </button>
     </div>
@@ -338,8 +338,8 @@
       <button type="button" class="brand-btn" data-brand="lifestyles" data-label="Lifestyles ultra thin" data-w="53" data-t0="0.05" data-e="2.1" onclick="toggleProduct(this)"><span class="brand-name">Lifestyles ultra thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.10MPa</span></button>
       <button type="button" class="brand-btn" data-brand="lifestyles" data-label="Lifestyles large" data-w="56" data-t0="0.07" data-e="1.5" onclick="toggleProduct(this)"><span class="brand-name">Lifestyles large</span><span class="brand-spec">w=56mm · t₀=0.070mm · E=1.50MPa</span></button>
     </div>
-    <div class="error-msg" id="err-brand">Please select at least one product.</div>
-    <button type="button" class="calc-btn" onclick="calculateBrand()">Compare products →</button>
+    <div class="error-msg" id="err-brand">Veuillez sélectionner au moins un article.</div>
+    <button type="button" class="calc-btn" onclick="calculateBrand()">Comparer les articles →</button>
   </div>
 
   <!-- Résultats marque -->
@@ -347,35 +347,35 @@
     <div class="summary-bar">
       <div class="summary-left">
         <div class="circ-val" id="brand-circ-val">— mm</div>
-        <div class="circ-label">Circumference</div>
+        <div class="circ-label">Circonférence</div>
         <div class="model-badge" id="brand-model-badge">—</div>
       </div>
       <div class="summary-right" id="brand-stats"></div>
     </div>
 
     <div class="zone-legend">
-      <div class="zone-chip too-large"><div class="dot"></div>Too large</div>
+      <div class="zone-chip too-large"><div class="dot"></div>Trop large</div>
       <div class="zone-chip comfort"><div class="dot"></div>Comfort fit</div>
       <div class="zone-chip perfect"><div class="dot"></div>✦ Perfect fit</div>
       <div class="zone-chip snug"><div class="dot"></div>Snug fit</div>
-      <div class="zone-chip too-tight"><div class="dot"></div>Too tight</div>
+      <div class="zone-chip too-tight"><div class="dot"></div>Trop étroit</div>
     </div>
 
     <div class="bar-chart-card" id="size-guide-card" style="display:none;">
-      <div class="card-title" id="size-guide-title">Manufacturer size guide</div>
+      <div class="card-title" id="size-guide-title">Guide des tailles fabricant</div>
       <canvas id="sizeGuideCanvas" style="display:block;width:100%;"></canvas>
       <div class="chart-legend" id="size-guide-legend" style="margin-top:10px;"></div>
     </div>
 
     <div class="bar-chart-card">
-      <div class="card-title">Pressure ΔP by product</div>
+      <div class="card-title">Pression ΔP par article</div>
       <div id="bar-chart-brand"></div>
       <div id="bar-legend-brand" style="margin-top:14px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);line-height:2;"></div>
     </div>
 
     <div class="results-table-wrap">
       <table>
-        <thead><tr><th>Product</th><th>w (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Zone</th></tr></thead>
+        <thead><tr><th>Article</th><th>w (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Zone</th></tr></thead>
         <tbody id="results-tbody-brand"></tbody>
       </table>
     </div>
@@ -390,37 +390,37 @@
   <div class="card top-join" style="max-width:640px;">
     <div class="card-title">Paramètres</div>
 
-    <span class="field-label"><strong>Mechanical model</strong></span>
+    <span class="field-label"><strong>Modèle mécanique</strong></span>
     <div class="model-selector">
       <button type="button" class="model-btn active" id="btn-free" onclick="selectModel('free')">
-        <span class="mb-icon">🔓</span><span class="mb-title">Free model</span>
+        <span class="mb-icon">🔓</span><span class="mb-title">Modèle libre</span>
         <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Lower bound</span>
       </button>
       <button type="button" class="model-btn" id="btn-blocked" onclick="selectModel('blocked')">
-        <span class="mb-icon">🔒</span><span class="mb-title">Blocked model</span>
+        <span class="mb-icon">🔒</span><span class="mb-title">Modèle bloqué</span>
         <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Upper bound</span>
       </button>
     </div>
 
-    <button type="button" class="params-toggle" onclick="toggleParams(this)">⚙ Physical parameters (optional) ▾</button>
+    <button type="button" class="params-toggle" onclick="toggleParams(this)">⚙ Paramètres physiques (optionnel) ▾</button>
     <div class="params-panel" id="params-panel">
       <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);margin:12px 0 14px;line-height:1.6;">
-        These values apply uniformly to all nominal widths tested.
+        Ces valeurs s'appliquent uniformément à toutes les largeurs nominales testées.
       </div>
       <div class="row-2">
         <div class="field">
-          <label><strong>Thickness t₀</strong></label>
+          <label><strong>Épaisseur t₀</strong></label>
           <div class="input-unit"><input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065"><span class="unit">mm</span></div>
         </div>
         <div class="field">
-          <label><strong>Young's modulus E</strong></label>
+          <label><strong>Module de Young E</strong></label>
           <div class="input-unit"><input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.69"><span class="unit">MPa</span></div>
         </div>
       </div>
-      <div class="error-msg" id="err-params">Please check the parameters.</div>
+      <div class="error-msg" id="err-params">Veuillez vérifier les paramètres.</div>
     </div>
 
-    <button type="button" class="calc-btn" onclick="calculate()">Find my compatible sizes →</button>
+    <button type="button" class="calc-btn" onclick="calculate()">Trouver mes tailles compatibles →</button>
   </div>
 
   <!-- Résultats paramétrable -->
@@ -428,22 +428,22 @@
     <div class="summary-bar">
       <div class="summary-left">
         <div class="circ-val" id="res-circ-val">— mm</div>
-        <div class="circ-label">Circumference</div>
+        <div class="circ-label">Circonférence</div>
         <div class="model-badge" id="res-model-badge">—</div>
       </div>
       <div class="summary-right" id="res-stats"></div>
     </div>
 
     <div class="zone-legend">
-      <div class="zone-chip too-large"><div class="dot"></div>Too large</div>
+      <div class="zone-chip too-large"><div class="dot"></div>Trop large</div>
       <div class="zone-chip comfort"><div class="dot"></div>Comfort fit</div>
       <div class="zone-chip perfect"><div class="dot"></div>✦ Perfect fit</div>
       <div class="zone-chip snug"><div class="dot"></div>Snug fit</div>
-      <div class="zone-chip too-tight"><div class="dot"></div>Too tight</div>
+      <div class="zone-chip too-tight"><div class="dot"></div>Trop étroit</div>
     </div>
 
     <div class="bar-chart-card">
-      <div class="card-title">Pressure ΔP by nominal width</div>
+      <div class="card-title">Pression ΔP par largeur nominale</div>
       <div id="bar-chart"></div>
       <div id="bar-legend" style="margin-top:14px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);line-height:2;"></div>
     </div>
@@ -459,8 +459,8 @@
 </div>
 
 <footer>
-  For informational purposes only · Neo-Hookean biomechanical model + Laplace's Law<br>
-  Sources: ISO 4074 · Gerofi et al. · TheyFit FitKit · Cooper et al. 2018
+  Outil informatif uniquement · Modèle biomécanique néo-hookéen + Loi de Laplace<br>
+  Sources : ISO 4074 · Gerofi et al. · TheyFit FitKit · Cooper et al. 2018
 </footer>
 
 <script>
@@ -579,6 +579,250 @@ const BRAND_NAMES = {
   mysize: 'My.Size PRO',
 };
 
+const BRANDS_DATA_FREE = {
+  skyn: [
+  ['Skyn close feel',51,0.065,1.69],
+  ['Skyn original',53,0.065,1.69],
+  ['Skyn elite',53,0.055,1.8],
+  ['Skyn supreme feel',53,0.04,2.4],
+  ['Skyn XL king size',56,0.065,1.69],
+  ['Skyn elite XL king size',56,0.055,1.8],
+  ['Skyn XXL mega large',60,0.065,1.5]
+],
+  durex: [
+  ['Durex Feeling Extra close fit',52.5,0.054,2.4],
+  ['Durex Love',52.5,0.065,2.7],
+  ['Durex Nude',56,0.048,2.2],
+  ['Durex Feeling Extra',56,0.054,1.8],
+  ['Durex Thin Feel Feeling Sensitive',56,0.06,1.8],
+  ['Durex Classic Protect',56,0.075,1.69],
+  ['Durex Nude — Sans latex (polyisoprene)',56,0.075,1.69],
+  ['Durex originals classic natural',56,0.065,1.9],
+  ['Durex Nude XL',60,0.057,1.85],
+  ['Durex Feeling XL',60,0.062,1.8],
+  ['Durex Classic Jeans XL',60,0.065,1.8]
+],
+  pasante: [
+  ['Pasante trim',49,0.07,1.69],
+  ['Pasante silk thin',53,0.04,2.4],
+  ['Pasante naturelle',54,0.075,1.69],
+  ['Pasante regular',54,0.07,1.69],
+  ['Pasante king size',60,0.07,1.69],
+  ['Pasante super king',69,0.07,2.4]
+],
+  glyde: [
+  ['Glyde slimfit',49,0.062,1.8],
+  ['Glyde ultra',53,0.062,2.0],
+  ['Glyde maxi',56,0.062,2.0],
+  ['Glyde supermax',60,0.062,2.0]
+],
+  lelo: [
+  ['Lelo hex Standard',54,0.055,2.1],
+  ['Lelo hex respect xl',58,0.057,1.69]
+],
+  mylubie: [
+  ['My Lubie ultra fin Standard',53,0.05,2.1],
+  ['My Lubie fin large',57,0.065,1.69],
+  ['My Lubie fin extra large',60,0.068,1.69]
+],
+  rfsu: [
+  ['RFSU Tight',49,0.06,2.7],
+  ['RFSU Beyond thin',52,0.04,3.0],
+  ['RFSU 17006',52,0.06,2.7],
+  ['RFSU Profil',53,0.06,2.4],
+  ['RFSU Thin',53,0.05,2.4],
+  ['RFSU Grande',55,0.07,1.8],
+  ['RFSU Grande XL',60,0.07,2.1]
+],
+  myone: [
+  ['MyOne 45',45,0.055,3.0],
+  ['MyOne 47',47,0.055,3.0],
+  ['MyOne 49',49,0.055,2.1],
+  ['MyOne 51',51,0.055,2.1],
+  ['MyOne 53',53,0.055,1.8],
+  ['MyOne 55',55,0.055,1.69],
+  ['MyOne 57',57,0.055,1.69],
+  ['MyOne 60',60,0.055,1.69],
+  ['MyOne 64',64,0.062,1.69],
+  ['MyOne 69',69,0.062,1.69]
+],
+  exs: [
+  ['Exs snug fit',49,0.069,2.7],
+  ['Exs nano thin',53,0.05,3.6],
+  ['Exs regular',54,0.073,1.69],
+  ['Exs Ribbed texture, Flared head, Teat tip',56,0.075,1.69],
+  ['Exs extra safe',56,0.08,1.69],
+  ['Exs magnum',60,0.069,1.8],
+  ['Exs 64 (upcoming)',64,0.069,1.69],
+  ['Exs jumbo',69,0.069,1.69]
+],
+  intimy: [
+  ['Intimy Classic',53,0.065,1.69],
+  ['Intimy XL',56,0.065,1.69],
+  ['Intimy XXL',60,0.065,1.69]
+],
+  mysize: [
+  ['My.Size PRO 45',45,0.05,2.4],
+  ['My.Size PRO 47',47,0.05,1.8],
+  ['My.Size PRO 49',49,0.05,1.69],
+  ['My.Size PRO 53',53,0.05,2.4],
+  ['My.Size PRO 57',57,0.06,2.4],
+  ['My.Size PRO 60',60,0.06,2.1],
+  ['My.Size PRO 64',64,0.06,2.4],
+  ['My.Size PRO 69',69,0.06,2.4],
+  ['My.Size PRO 72',72,0.06,2.4]
+],
+  eden: [
+  ['Eden Feel texturé',53,0.07,1.69],
+  ['Eden extra-fin',54,0.052,2.7],
+  ['Eden Fruits',54,0.07,1.69],
+  ['Eden absolu ultra-finesse',54,0.04,2.7],
+  ['Eden extra-large',57,0.065,1.69]
+],
+  cautionwear: [
+  ['Caution Wear iron grip snugger fit',49,0.07,1.8],
+  ['Caution Wear black ice ultra thin',53,0.06,2.1],
+  ['Caution Wear grande large fit',56,0.07,1.5]
+],
+  trojan: [
+  ['Trojan ENZ',53,0.07,1.69],
+  ['Trojan magnum thin',55,0.06,1.69],
+  ['Trojan magnum',55,0.07,1.69],
+  ['Trojan magnum xl',58,0.07,1.69]
+],
+  lifestyles: [
+  ['Lifestyles snugger fit',49,0.07,1.69],
+  ['Lifestyles lubricated original',52,0.07,1.69],
+  ['Lifestyles tough',52,0.09,1.69],
+  ['Lifestyles ultra thin',53,0.05,2.1],
+  ['Lifestyles tuxedo black',53,0.07,1.69],
+  ['Lifestyles ultra sensitive',53,0.066,1.69],
+  ['Lifestyles large',56,0.07,1.5]
+],
+};
+
+const BRANDS_DATA_BLOCKED = {
+  skyn: [
+  ['Skyn close feel',51,0.065,1.69],
+  ['Skyn original',53,0.065,1.69],
+  ['Skyn elite',53,0.055,1.9],
+  ['Skyn supreme feel',53,0.04,2.7],
+  ['Skyn XL king size',56,0.065,1.69],
+  ['Skyn elite XL king size',56,0.055,1.8],
+  ['Skyn XXL mega large',60,0.065,1.5]
+],
+  durex: [
+  ['Durex Feeling Extra close fit',52.5,0.054,2.4],
+  ['Durex Love',52.5,0.065,2.7],
+  ['Durex Nude',56,0.048,2.4],
+  ['Durex Feeling Extra',56,0.054,2.2],
+  ['Durex Thin Feel Feeling Sensitive',56,0.06,2.1],
+  ['Durex Classic Protect',56,0.075,1.69],
+  ['Durex Nude — Sans latex (polyisoprene)',56,0.075,1.69],
+  ['Durex originals classic natural',56,0.065,1.9],
+  ['Durex Nude XL',60,0.057,1.9],
+  ['Durex Feeling XL',60,0.062,1.8],
+  ['Durex Classic Jeans XL',60,0.065,1.8]
+],
+  pasante: [
+  ['Pasante trim',49,0.07,2.1],
+  ['Pasante silk thin',53,0.04,2.4],
+  ['Pasante naturelle',54,0.075,1.8],
+  ['Pasante regular',54,0.07,2.1],
+  ['Pasante king size',60,0.07,1.8],
+  ['Pasante super king',69,0.07,2.7]
+],
+  glyde: [
+  ['Glyde slimfit',49,0.062,1.69],
+  ['Glyde ultra',53,0.062,2.0],
+  ['Glyde maxi',56,0.062,2.0],
+  ['Glyde supermax',60,0.062,2.0]
+],
+  lelo: [
+  ['Lelo hex Standard',54,0.055,2.1],
+  ['Lelo hex respect xl',58,0.057,1.8]
+],
+  mylubie: [
+  ['My Lubie ultra fin Standard',53,0.05,2.4],
+  ['My Lubie fin large',57,0.065,1.8],
+  ['My Lubie fin extra large',60,0.068,1.69]
+],
+  rfsu: [
+  ['RFSU Tight',49,0.06,2.7],
+  ['RFSU Beyond thin',52,0.04,3.0],
+  ['RFSU 17006',52,0.06,2.7],
+  ['RFSU Profil',53,0.06,2.4],
+  ['RFSU Thin',53,0.05,2.4],
+  ['RFSU Grande',55,0.07,1.8],
+  ['RFSU Grande XL',60,0.07,2.1]
+],
+  myone: [
+  ['MyOne 45',45,0.055,3.0],
+  ['MyOne 47',47,0.055,2.6],
+  ['MyOne 49',49,0.055,2.1],
+  ['MyOne 51',51,0.055,2.1],
+  ['MyOne 53',53,0.055,1.8],
+  ['MyOne 55',55,0.055,1.8],
+  ['MyOne 57',57,0.055,1.8],
+  ['MyOne 60',60,0.055,1.8],
+  ['MyOne 64',64,0.062,1.8],
+  ['MyOne 69',69,0.062,1.8]
+],
+  exs: [
+  ['Exs snug fit',49,0.069,2.7],
+  ['Exs nano thin',53,0.05,3.6],
+  ['Exs regular',54,0.073,1.69],
+  ['Exs Ribbed texture, Flared head, Teat tip',56,0.075,1.69],
+  ['Exs extra safe',56,0.08,1.69],
+  ['Exs magnum',60,0.069,1.8],
+  ['Exs 64 (upcoming)',64,0.069,1.69],
+  ['Exs jumbo',69,0.069,1.69]
+],
+  intimy: [
+  ['Intimy Classic',53,0.065,1.69],
+  ['Intimy XL',56,0.065,1.69],
+  ['Intimy XXL',60,0.065,1.69]
+],
+  mysize: [
+  ['My.Size PRO 45',45,0.05,2.7],
+  ['My.Size PRO 47',47,0.05,2.4],
+  ['My.Size PRO 49',49,0.05,2.1],
+  ['My.Size PRO 53',53,0.05,2.4],
+  ['My.Size PRO 57',57,0.06,2.7],
+  ['My.Size PRO 60',60,0.06,2.4],
+  ['My.Size PRO 64',64,0.06,2.4],
+  ['My.Size PRO 69',69,0.06,2.7],
+  ['My.Size PRO 72',72,0.06,2.4]
+],
+  eden: [
+  ['Eden Feel texturé',53,0.07,1.69],
+  ['Eden extra-fin',54,0.052,2.4],
+  ['Eden Fruits',54,0.07,1.69],
+  ['Eden absolu ultra-finesse',54,0.04,2.7],
+  ['Eden extra-large',57,0.065,1.69]
+],
+  cautionwear: [
+  ['Caution Wear iron grip snugger fit',49,0.07,1.8],
+  ['Caution Wear black ice ultra thin',53,0.06,2.1],
+  ['Caution Wear grande large fit',56,0.07,1.5]
+],
+  trojan: [
+  ['Trojan ENZ',53,0.07,1.69],
+  ['Trojan magnum thin',55,0.06,1.69],
+  ['Trojan magnum',55,0.07,1.69],
+  ['Trojan magnum xl',58,0.07,1.69]
+],
+  lifestyles: [
+  ['Lifestyles snugger fit',49,0.07,1.69],
+  ['Lifestyles lubricated original',52,0.07,1.69],
+  ['Lifestyles tough',52,0.09,1.69],
+  ['Lifestyles ultra thin',53,0.05,2.1],
+  ['Lifestyles tuxedo black',53,0.07,1.69],
+  ['Lifestyles ultra sensitive',53,0.066,1.69],
+  ['Lifestyles large',56,0.07,1.5]
+],
+};
+
 // ═══ ÉTAT ═══
 let currentModel='free', currentModelBrand='free', currentBrandKey=null;
 
@@ -609,15 +853,40 @@ function toggleProduct(btn) {
 function selectModelBrand(m) {
   currentModelBrand=m;
   ['free','blocked'].forEach(k=>document.getElementById('btn-'+k+'-brand').classList.toggle('active',k===m));
+  rebuildBrandGroups();
+}
+
+function rebuildBrandGroups() {
+  const data = currentModelBrand==='free' ? BRANDS_DATA_FREE : BRANDS_DATA_BLOCKED;
+  document.querySelectorAll('.brand-group').forEach(grp=>{
+    const key=grp.id.replace('group-','');
+    if(!data[key]) return;
+    // Garder le sous-titre, remplacer les boutons
+    const sub=grp.querySelector('div');
+    // Supprimer tous les brand-btn
+    grp.querySelectorAll('.brand-btn').forEach(b=>b.remove());
+    // Recréer les boutons triés par w puis E*t0
+    const prods=[...data[key]].sort((a,b)=>a[1]!==b[1]?a[1]-b[1]:-(a[2]*a[3])+(b[2]*b[3]));
+    prods.forEach(([label,w,t0,E])=>{
+      const btn=document.createElement('button');
+      btn.type='button'; btn.className='brand-btn';
+      btn.dataset.brand=key; btn.dataset.label=label;
+      btn.dataset.w=w; btn.dataset.t0=t0; btn.dataset.e=E;
+      btn.onclick=function(){toggleProduct(this);};
+      btn.innerHTML=`<span class="brand-name">${label}</span>`+
+        `<span class="brand-spec">w=${w}mm · t₀=${t0.toFixed(3)}mm · E=${E.toFixed(2)}MPa</span>`;
+      grp.appendChild(btn);
+    });
+  });
 }
 
 // ═══ ZONE ═══
 function getZone(dP, ref) {
-  if(dP<ref.Pmin_060)  return {key:'too-large', label:'Too large',  icon:'⚠️'};
+  if(dP<ref.Pmin_060)  return {key:'too-large', label:'Trop large',  icon:'⚠️'};
   if(dP<ref.Pmin_065)  return {key:'comfort',   label:'Comfort fit', icon:'😌'};
   if(dP<=ref.Pmax_065) return {key:'perfect',   label:'Perfect fit', icon:'✅'};
   if(dP<=ref.Pmax_070) return {key:'snug',      label:'Snug fit',    icon:'🤏'};
-  return                      {key:'too-tight', label:'Too tight', icon:'❌'};
+  return                      {key:'too-tight', label:'Trop étroit', icon:'❌'};
 }
 
 // ═══ GRAPHIQUE BARRES ═══
@@ -670,7 +939,7 @@ function calculateBrand() {
   let rows=active.map(btn=>{
     const w=parseFloat(btn.dataset.w), t0=parseFloat(btn.dataset.t0), E=parseFloat(btn.dataset.e);
     const label=btn.dataset.label;
-    if(circ<=2*w) return {label, w, dP:null, lambda:null, zone:null, note:'Condom larger than the penis'};
+    if(circ<=2*w) return {label, w, dP:null, lambda:null, zone:null, note:'Préservatif plus grand que le pénis'};
     const res=fn(circ,w,t0,E);
     return {label, w, t0, E, dP:res.dP, lambda:res.lambda, zone:getZone(res.dP,ref), note:''};
   });
@@ -679,7 +948,7 @@ function calculateBrand() {
 
   // Summary
   document.getElementById('brand-circ-val').textContent=circ.toFixed(1)+' mm';
-  document.getElementById('brand-model-badge').textContent=currentModelBrand==='free'?'🔓 Free model':'🔒 Blocked model';
+  document.getElementById('brand-model-badge').textContent=currentModelBrand==='free'?'🔓 Modèle libre':'🔒 Modèle bloqué';
   const perfect=rows.filter(r=>r.zone?.key==='perfect');
   const comfort=rows.filter(r=>r.zone?.key==='comfort');
   const snug=rows.filter(r=>r.zone?.key==='snug');
@@ -687,7 +956,7 @@ function calculateBrand() {
   if(perfect.length) html+=`<div><span style="color:var(--ok)">✦ Perfect fit</span> : ${perfect.map(r=>r.label).join(', ')}</div>`;
   if(comfort.length) html+=`<div><span style="color:var(--comfort)">😌 Comfort fit</span> : ${comfort.map(r=>r.label).join(', ')}</div>`;
   if(snug.length)    html+=`<div><span style="color:var(--snug)">🤏 Snug fit</span> : ${snug.map(r=>r.label).join(', ')}</div>`;
-  if(!html) html=`<div style="color:var(--text-muted)">No compatible product.</div>`;
+  if(!html) html=`<div style="color:var(--text-muted)">Aucun article compatible.</div>`;
   document.getElementById('brand-stats').innerHTML=html;
 
   // Tableau
@@ -711,10 +980,10 @@ function calculateBrand() {
   const refNums=`P_min(E=1,48)=${(ref.Pmin_060/1000).toFixed(3)} · P_min(E=1,69)=${(ref.Pmin_065/1000).toFixed(3)} · P_max(E=1,69)=${(ref.Pmax_065/1000).toFixed(3)} · P_max(E=1,90)=${(ref.Pmax_070/1000).toFixed(3)} kPa`;
   const fb=document.getElementById('formula-box-brand');
   fb.innerHTML=currentModelBrand==='free'
-    ?`<div class="formula-title">Free model — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
-    :`<div class="formula-title">Blocked model — référentiel w=52mm</div>λ_z=1 · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
+    ?`<div class="formula-title">Modèle libre — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
+    :`<div class="formula-title">Modèle bloqué — référentiel w=52mm</div>λ_z=1 · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
 
-  // Manufacturer size guide
+  // Guide des tailles fabricant
   const resDiv=document.getElementById('results-brand');
   resDiv.style.display='block';
   void resDiv.offsetHeight;
@@ -733,7 +1002,7 @@ function buildSizeGuide(brandKey, userCirc) {
   }
   card.style.display='block';
   document.getElementById('size-guide-title').textContent=
-    (BRAND_NAMES[brandKey]||brandKey)+' — Official size guide';
+    (BRAND_NAMES[brandKey]||brandKey)+' — Guide officiel des tailles';
 
   const canvas=document.getElementById('sizeGuideCanvas');
   if(!canvas) return;
@@ -761,7 +1030,7 @@ function buildSizeGuide(brandKey, userCirc) {
     ctx.fillText(c,x,H-mb+14);
   });
   ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
-  ctx.fillText('Erect circumference (mm)',ml+pw/2,H-2);
+  ctx.fillText('Circonférence érectile (mm)',ml+pw/2,H-2);
 
   // Barre correspondant à userCirc
   const matchRow=guide.find(r=>userCirc>=r.cMin&&userCirc<=r.cMax);
@@ -803,8 +1072,8 @@ function buildSizeGuide(brandKey, userCirc) {
   }
 
   document.getElementById('size-guide-legend').innerHTML=
-    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Manufacturer recommended range</span></div>'+
-    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your circumference ('+userCirc+'mm)</span></div>';
+    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Plage recommandée fabricant</span></div>'+
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Votre circonférence ('+userCirc+'mm)</span></div>';
 }
 
 // ═══ CALCUL PARAMÉTRABLE ═══
@@ -815,7 +1084,7 @@ function selectModel(m) {
 function toggleParams(btn) {
   const p=document.getElementById('params-panel');
   p.classList.toggle('open');
-  btn.textContent=p.classList.contains('open')?'⚙ Physical parameters (optional) ▴':'⚙ Physical parameters (optional) ▾';
+  btn.textContent=p.classList.contains('open')?'⚙ Paramètres physiques (optionnel) ▴':'⚙ Paramètres physiques (optionnel) ▾';
 }
 function calculate() {
   const circ=parseFloat(document.getElementById('circ').value);
@@ -831,13 +1100,13 @@ function calculate() {
 
   const rows=WIDTHS.map(w=>{
     const label=w===52?'52 ★':String(w);
-    if(circ<=2*w) return {w,label,lambda:null,dP:null,zone:null,note:'Condom larger than the penis'};
+    if(circ<=2*w) return {w,label,lambda:null,dP:null,zone:null,note:'Préservatif plus grand que le pénis'};
     const res=fn(circ,w,t0,E);
     return {w,label,lambda:res.lambda,dP:res.dP,zone:getZone(res.dP,ref),note:''};
   });
 
   document.getElementById('res-circ-val').textContent=circ.toFixed(1)+' mm';
-  document.getElementById('res-model-badge').textContent=currentModel==='free'?'🔓 Free model':'🔒 Blocked model';
+  document.getElementById('res-model-badge').textContent=currentModel==='free'?'🔓 Modèle libre':'🔒 Modèle bloqué';
 
   const perfect=rows.filter(r=>r.zone?.key==='perfect');
   const comfort=rows.filter(r=>r.zone?.key==='comfort');
@@ -846,7 +1115,7 @@ function calculate() {
   if(perfect.length) html+=`<div><span style="color:var(--ok)">✦ Perfect fit</span> : w = ${perfect.map(r=>r.w).join(', ')} mm</div>`;
   if(comfort.length) html+=`<div><span style="color:var(--comfort)">😌 Comfort fit</span> : w = ${comfort.map(r=>r.w).join(', ')} mm</div>`;
   if(snug.length)    html+=`<div><span style="color:var(--snug)">🤏 Snug fit</span> : w = ${snug.map(r=>r.w).join(', ')} mm</div>`;
-  if(!html) html=`<div style="color:var(--text-muted)">No compatible standard width.</div>`;
+  if(!html) html=`<div style="color:var(--text-muted)">Aucune largeur standard compatible.</div>`;
   document.getElementById('res-stats').innerHTML=html;
 
   const tbody=document.getElementById('results-tbody'); tbody.innerHTML='';
@@ -857,7 +1126,7 @@ function calculate() {
       tr.innerHTML=`<td style="color:var(--text-muted)">${r.label}</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td><span class="zone-badge too-large">—</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.note}</td>`;
     } else {
       const dc={'too-large':'warn','comfort':'comfort','perfect':'ok','snug':'snug','too-tight':'err'}[r.zone.key];
-      tr.innerHTML=`<td style="color:var(--text)">${r.label}</td><td style="color:var(--text-muted)">${r.lambda.toFixed(4)}</td><td><span class="dp-val ${dc}">${(r.dP/1000).toFixed(3)}</span></td><td><span class="zone-badge ${r.zone.key}">${r.zone.icon} ${r.zone.label}</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.w===52?'ISO 4074 reference':''}</td>`;
+      tr.innerHTML=`<td style="color:var(--text)">${r.label}</td><td style="color:var(--text-muted)">${r.lambda.toFixed(4)}</td><td><span class="dp-val ${dc}">${(r.dP/1000).toFixed(3)}</span></td><td><span class="zone-badge ${r.zone.key}">${r.zone.icon} ${r.zone.label}</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.w===52?'ISO 4074 référence':''}</td>`;
     }
     tbody.appendChild(tr);
   });
@@ -867,8 +1136,8 @@ function calculate() {
   const refNums=`P_min(E=1,48)=${(ref.Pmin_060/1000).toFixed(3)} · P_min(E=1,69)=${(ref.Pmin_065/1000).toFixed(3)} · P_max(E=1,69)=${(ref.Pmax_065/1000).toFixed(3)} · P_max(E=1,90)=${(ref.Pmax_070/1000).toFixed(3)} kPa`;
   const fb=document.getElementById('formula-box');
   fb.innerHTML=currentModel==='free'
-    ?`<div class="formula-title">Free model (σ_z=0) — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
-    :`<div class="formula-title">Blocked model (λ_z=1) — référentiel w=52mm</div>λ_r=λ_θ<sup>−1</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
+    ?`<div class="formula-title">Modèle libre (σ_z=0) — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
+    :`<div class="formula-title">Modèle bloqué (λ_z=1) — référentiel w=52mm</div>λ_r=λ_θ<sup>−1</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
 
   const resDiv=document.getElementById('results-custom');
   resDiv.style.display='block';

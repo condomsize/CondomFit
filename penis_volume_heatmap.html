@@ -63,7 +63,7 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 </head>
 <body>
 
-<h1>Penile Volume Heatmap — Schneider et al. (2000) · Monte Carlo (ρ = 0.55, n = 100,000)</h1>
+<h1 id="page-title">Penile Volume Heatmap — Schneider et al. (2000) · Monte Carlo (ρ = 0.55, n = 100,000)</h1>
 
 <div class="panel">
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
@@ -90,17 +90,17 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 <div id="status">>Ready.</div>
 <div id="canvas-wrap"><canvas id="heatCanvas"></canvas><div id="tip"></div></div>
 <div class="legend" id="leg"></div>
-<p class="ref">Schneider T. et al. (2000) — data in mm. Cylinder model: V=π(C/2π)²L. Axes ±3.5 SD rounded to 5 mm. Hover dots for details.</p>
+<p class="ref" id="study-info">Schneider et al. (2000) · young cohort · n=111 · C̄=124.1 mm (SD=11.9) · L̄=144.8 mm (SD=19.9) · measurement: os pubis · ρ=0.55 · Cylinder model: V=π(C/2π)²L. Hover dots for details.</p>
 
 <script>
 const ST=[
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4},
-  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2},
-  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0},
-  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3},
-  {grp:"TheyFit",                 lb:"TheyFit",                 n:20000,cm:119.6, cs:15.1, lm:130.0, ls:20.0},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",  n:111,  cm:124.1, cs:11.9, lm:144.8, ls:19.9, rho:0.55, meas:"os pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",  n:32,   cm:110.0, cs:10.1, lm:141.8, ls:18.3, rho:0.55, meas:"os pubis"},
+  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled", n:143,  cm:120.9, cs:11.5, lm:144.1, ls:19.4, rho:0.55, meas:"os pubis"},
+  {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",  n:80,   cm:123.0, cs:13.1, lm:157.4, ls:26.2, rho:0.55, meas:"os pubis"},
+  {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",    n:150,  cm:119.2, cs:16.5, lm:143.1, ls:20.0, rho:0.55, meas:"os pubis"},
+  {grp:"Compiled studies",        lb:"Compiled studies",        n:373,  cm:120.7, cs:14.0, lm:146.6, ls:21.3, rho:0.55, meas:"os pubis"},
+  {grp:"TheyFit",                 lb:"TheyFit",                 n:20000,cm:119.6, cs:15.1, lm:130.0, ls:20.0, rho:0.46, meas:"symphise pubis"},
 ];
 let cur=0, lastState=null, gpts=[];
 
@@ -116,9 +116,16 @@ function pr(v,m,s){return normCDF((v-m)/s)*100;}
 function prMC(v,sorted){let lo=0,hi=sorted.length-1;while(lo<hi){const m=(lo+hi)>>1;sorted[m]<v?lo=m+1:hi=m;}return lo/sorted.length*100;}
 function ord(p){const n=Math.round(p);if(n>=11&&n<=13)return n+'th';switch(n%10){case 1:return n+'st';case 2:return n+'nd';case 3:return n+'rd';default:return n+'th';}}
 
-function sel(i){cur=i;document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6').forEach((b,j)=>b.classList.toggle('active',j===i));go();}
+function sel(i){
+  cur=i;
+  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const st=ST[i];
+  document.getElementById('study-info').textContent=
+    st.lb+' · n='+st.n+' · C̅='+(st.cm).toFixed(1)+' mm (SD='+(st.cs).toFixed(1)+') · L̅='+(st.lm).toFixed(1)+' mm (SD='+(st.ls).toFixed(1)+') · measurement: '+st.meas+' · ρ='+st.rho+' · Cylinder model: V=π(C/2π)²L. Hover dots for details.';
+  go();
+}
 
-function runMC(st,N=100000,rho=0.55){
+function runMC(st,N=100000){const rho=st.rho||0.55;
   const vols=new Float64Array(N);
   for(let i=0;i<N;i++){
     const z1=randn(),z2=randn();
@@ -131,7 +138,7 @@ function runMC(st,N=100000,rho=0.55){
   return{s,mn,sd,p25:pct(.25),p50:pct(.5),p75:pct(.75),pm1:mn-sd,pp1:mn+sd,pm2:mn-2*sd,pp2:mn+2*sd};
 }
 
-function dens(c,l,st,rho=0.55){
+function dens(c,l,st){const rho=st.rho||0.55;
   const zc=(c-st.cm)/st.cs,zl=(l-st.lm)/st.ls,r2=1-rho*rho;
   return Math.exp(-1/(2*r2)*(zc*zc-2*rho*zc*zl+zl*zl));
 }
