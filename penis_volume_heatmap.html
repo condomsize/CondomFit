@@ -84,6 +84,7 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
     <button id="btn9"  onclick="sel(9)">Promodu et al. (2007) (n=301)</button>
     <button id="btn10" onclick="sel(10)">Cuntong Wang (2024) (n=34,060)</button>
     <button id="btn11" onclick="sel(11)">Salama (2015) (n=105)</button>
+    <button id="btn12" onclick="sel(12)">Compilation of all studies (n=2120)</button>
   </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:2px;border-top:0.5px solid #2a2a4a;margin-top:2px;">
     <label>Circ. (mm):</label>
@@ -113,6 +114,7 @@ const ST=[
   {grp:"Promodu et al. (2007)",   lb:"Promodu et al. (2007)",     n:301,   cm:114.6, cs:13.5, lm:129.3, ls:16.3, rho:0.46, meas:"penile skin junction"},
   {grp:"Cuntong Wang (2024)",     lb:"Cuntong Wang (2024)",       n:34060, cm:107.5, cs:13.4, lm:124.2, ls:16.3, rho:0.55, meas:"symphisis pubis"},
   {grp:"Salama (2015)",           lb:"Salama (2015)",             n:105,   cm:119.2, cs:10.6, lm:150.4, ls:15.1, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Compilation of all studies", lb:"Compilation of all studies", n:2120, cm:117.4, cs:14.1, lm:141.8, ls:17.5, rho:0.55, meas:"symphisis pubis"},
 ];
 let cur=0, lastState=null, gpts=[];
 
@@ -130,7 +132,7 @@ function ord(p){const n=Math.round(p);if(n>=11&&n<=13)return n+'th';switch(n%10)
 
 function sel(i){
   cur=i;
-  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6,#btn7,#btn8,#btn9,#btn10,#btn11').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6,#btn7,#btn8,#btn9,#btn10,#btn11,#btn12').forEach((b,j)=>b.classList.toggle('active',j===i));
   const st=ST[i];
   document.getElementById('study-info').textContent=
     st.lb+' · n='+st.n+' · C\u0305='+(st.cm).toFixed(1)+' mm (SD='+(st.cs).toFixed(1)+') · L\u0305='+(st.lm).toFixed(1)+' mm (SD='+(st.ls).toFixed(1)+') · measurement: '+st.meas+' · \u03c1='+st.rho+' · Cylinder model: V=\u03c0(C/2\u03c0)\u00b2L. Hover dots for details.';
