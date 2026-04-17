@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CondomFit — Recherche par circonférence</title>
+<title>CondomFit — Size finder</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0d0f14;--surface:#161a23;--surface2:#1e2330;--border:#2a3045;--accent:#4fffb0;--text:#e8ecf4;--text-muted:#7a8299;--ok:#4fffb0;--warn:#ffd166;--err:#ff6b6b;--comfort:#74c0fc;--snug:#f783ac;}
@@ -58,7 +58,7 @@
   .brand-spec{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);}
   .brand-btn.active .brand-name{color:var(--accent);}
 
-  /* Modèle mécanique */
+  /* Mechanical model */
   .model-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
   .model-btn{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;font-family:'Syne',sans-serif;text-align:left;transition:all .2s;color:var(--text-muted);width:100%;}
   .model-btn:hover{border-color:rgba(79,255,176,.4);color:var(--text);}
@@ -68,7 +68,7 @@
   .model-btn .mb-desc{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--text-muted);line-height:1.55;}
   .model-btn.active .mb-desc{color:rgba(79,255,176,.65);}
 
-  /* Paramètres physiques */
+  /* Physical parameters */
   .params-toggle{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;cursor:pointer;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--text-muted);width:100%;text-align:left;transition:all .2s;margin-bottom:4px;}
   .params-toggle:hover{border-color:var(--accent);color:var(--accent);}
   .params-panel{display:none;padding-top:16px;}
@@ -134,31 +134,31 @@
 </head>
 <body>
 
-<a href="index.html" class="back-link">← Retour à l'accueil</a>
+<a href="index.html" class="back-link">← Back to home</a>
 
 <header>
-  <span class="tag">CondomFit · Calcul inversé</span>
-  <h1>Quelle <span>taille</span> me convient ?</h1>
-  <p>Entrez votre circonférence. La page calcule la pression pour chaque préservatif ou largeur nominale et identifie les tailles compatibles.</p>
+  <span class="tag">CondomFit · Reverse calculator</span>
+  <h1>Which <span>size</span> fits me?</h1>
+  <p>Enter your circumference. The page calculates pressure for each condom or nominal width and identifies compatible sizes.</p>
 </header>
 
-<!-- Circonférence — commune -->
+<!-- Circumference — commune -->
 <div class="card">
-  <div class="card-title">Votre morphologie</div>
+  <div class="card-title">Your anatomy</div>
   <div class="field">
-    <label><strong>Circonférence pénienne C</strong> — mesurée à la base ou au point le plus large</label>
+    <label><strong>Penile circumference C</strong> — measured at the base or widest point</label>
     <div class="input-unit">
       <input type="number" id="circ" min="80" max="200" step="0.5" placeholder="ex : 119">
       <span class="unit">mm</span>
     </div>
-    <div class="error-msg" id="err-circ">Valeur attendue entre 80 et 200 mm.</div>
+    <div class="error-msg" id="err-circ">Expected value between 80 and 200 mm.</div>
   </div>
 </div>
 
 <!-- Onglets -->
 <div class="chapter-tabs">
-  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 Par marque</button>
-  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Paramétrable</button>
+  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 By brand</button>
+  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Custom</button>
 </div>
 
 <!-- ══════════════════════════
@@ -166,7 +166,7 @@
 ══════════════════════════ -->
 <div class="chapter active" id="chapter-brand">
   <div class="card top-join">
-    <div class="card-title">Sélectionner une marque</div>
+    <div class="card-title">Select a brand</div>
 
     <div class="brand-filter">
       <button type="button" class="brand-filter-btn" onclick="filterBrand('skyn',this)">Skyn</button>
@@ -268,7 +268,7 @@
       <button type="button" class="brand-btn" data-brand="exs" data-label="Exs extra safe" data-w="56" data-t0="0.08" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Exs extra safe</span><span class="brand-spec">w=56mm · t₀=0.080mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-brand="exs" data-label="Exs Ribbed texture, Flared head, Teat tip" data-w="56" data-t0="0.075" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Exs Ribbed texture, Flared head, Teat tip</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-brand="exs" data-label="Exs magnum" data-w="60" data-t0="0.069" data-e="1.8" onclick="toggleProduct(this)"><span class="brand-name">Exs magnum</span><span class="brand-spec">w=60mm · t₀=0.069mm · E=1.80MPa</span></button>
-      <button type="button" class="brand-btn" data-brand="exs" data-label="Exs 64 (à venir)" data-w="64" data-t0="0.069" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Exs 64 (à venir)</span><span class="brand-spec">w=64mm · t₀=0.069mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-brand="exs" data-label="Exs 64 (upcoming)" data-w="64" data-t0="0.069" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Exs 64 (upcoming)</span><span class="brand-spec">w=64mm · t₀=0.069mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-brand="exs" data-label="Exs jumbo" data-w="69" data-t0="0.069" data-e="1.69" onclick="toggleProduct(this)"><span class="brand-name">Exs jumbo</span><span class="brand-spec">w=69mm · t₀=0.069mm · E=1.69MPa</span></button>
     </div>
     <div class="brand-group" id="group-intimy">
@@ -322,18 +322,18 @@
 
 
     <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);margin-bottom:12px;line-height:1.6;">
-      Sélectionnez un ou plusieurs articles à comparer. Le modèle mécanique s'applique à tous.
+      Select one or more products to compare. The mechanical model applies to all.
     </div>
 
-    <span class="field-label"><strong>Modèle mécanique</strong></span>
+    <span class="field-label"><strong>Mechanical model</strong></span>
     <div class="model-selector">
       <button type="button" class="model-btn active" id="btn-free-brand" onclick="selectModelBrand('free')">
-        <span class="mb-icon">🔓</span><span class="mb-title">Modèle libre</span>
-        <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Borne basse</span>
+        <span class="mb-icon">🔓</span><span class="mb-title">Free model</span>
+        <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Lower bound</span>
       </button>
       <button type="button" class="model-btn" id="btn-blocked-brand" onclick="selectModelBrand('blocked')">
-        <span class="mb-icon">🔒</span><span class="mb-title">Modèle bloqué</span>
-        <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Borne haute</span>
+        <span class="mb-icon">🔒</span><span class="mb-title">Blocked model</span>
+        <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Upper bound</span>
       </button>
     </div>
 
@@ -368,8 +368,8 @@
       <button type="button" class="brand-btn" data-brand="lifestyles" data-label="Lifestyles ultra thin" data-w="53" data-t0="0.05" data-e="2.1" onclick="toggleProduct(this)"><span class="brand-name">Lifestyles ultra thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.10MPa</span></button>
       <button type="button" class="brand-btn" data-brand="lifestyles" data-label="Lifestyles large" data-w="56" data-t0="0.07" data-e="1.5" onclick="toggleProduct(this)"><span class="brand-name">Lifestyles large</span><span class="brand-spec">w=56mm · t₀=0.070mm · E=1.50MPa</span></button>
     </div>
-    <div class="error-msg" id="err-brand">Veuillez sélectionner au moins un article.</div>
-    <button type="button" class="calc-btn" onclick="calculateBrand()">Comparer les articles →</button>
+    <div class="error-msg" id="err-brand">Please select at least one product.</div>
+    <button type="button" class="calc-btn" onclick="calculateBrand()">Compare products →</button>
   </div>
 
   <!-- Résultats marque -->
@@ -377,35 +377,35 @@
     <div class="summary-bar">
       <div class="summary-left">
         <div class="circ-val" id="brand-circ-val">— mm</div>
-        <div class="circ-label">Circonférence</div>
+        <div class="circ-label">Circumference</div>
         <div class="model-badge" id="brand-model-badge">—</div>
       </div>
       <div class="summary-right" id="brand-stats"></div>
     </div>
 
     <div class="zone-legend">
-      <div class="zone-chip too-large"><div class="dot"></div>Trop large</div>
+      <div class="zone-chip too-large"><div class="dot"></div>Too large</div>
       <div class="zone-chip comfort"><div class="dot"></div>Comfort fit</div>
       <div class="zone-chip perfect"><div class="dot"></div>✦ Perfect fit</div>
       <div class="zone-chip snug"><div class="dot"></div>Snug fit</div>
-      <div class="zone-chip too-tight"><div class="dot"></div>Trop étroit</div>
+      <div class="zone-chip too-tight"><div class="dot"></div>Too tight</div>
     </div>
 
     <div class="bar-chart-card" id="size-guide-card" style="display:none;">
-      <div class="card-title" id="size-guide-title">Guide des tailles fabricant</div>
+      <div class="card-title" id="size-guide-title">Manufacturer size guide</div>
       <canvas id="sizeGuideCanvas" style="display:block;width:100%;"></canvas>
       <div class="chart-legend" id="size-guide-legend" style="margin-top:10px;"></div>
     </div>
 
     <div class="bar-chart-card">
-      <div class="card-title">Pression ΔP par article</div>
+      <div class="card-title">Pressure ΔP by product</div>
       <div id="bar-chart-brand"></div>
       <div id="bar-legend-brand" style="margin-top:14px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);line-height:2;"></div>
     </div>
 
     <div class="results-table-wrap">
       <table>
-        <thead><tr><th>Article</th><th>w (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Zone</th></tr></thead>
+        <thead><tr><th>Product</th><th>w (mm)</th><th>λ_θ</th><th>ΔP (kPa)</th><th>Zone</th></tr></thead>
         <tbody id="results-tbody-brand"></tbody>
       </table>
     </div>
@@ -420,37 +420,37 @@
   <div class="card top-join" style="max-width:640px;">
     <div class="card-title">Paramètres</div>
 
-    <span class="field-label"><strong>Modèle mécanique</strong></span>
+    <span class="field-label"><strong>Mechanical model</strong></span>
     <div class="model-selector">
       <button type="button" class="model-btn active" id="btn-free" onclick="selectModel('free')">
-        <span class="mb-icon">🔓</span><span class="mb-title">Modèle libre</span>
-        <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Borne basse</span>
+        <span class="mb-icon">🔓</span><span class="mb-title">Free model</span>
+        <span class="mb-desc">σ_z = 0 · λ_z = λ_θ⁻½<br>Lower bound</span>
       </button>
       <button type="button" class="model-btn" id="btn-blocked" onclick="selectModel('blocked')">
-        <span class="mb-icon">🔒</span><span class="mb-title">Modèle bloqué</span>
-        <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Borne haute</span>
+        <span class="mb-icon">🔒</span><span class="mb-title">Blocked model</span>
+        <span class="mb-desc">λ_z = 1 · t = t₀/λ_θ<br>Upper bound</span>
       </button>
     </div>
 
-    <button type="button" class="params-toggle" onclick="toggleParams(this)">⚙ Paramètres physiques (optionnel) ▾</button>
+    <button type="button" class="params-toggle" onclick="toggleParams(this)">⚙ Physical parameters (optional) ▾</button>
     <div class="params-panel" id="params-panel">
       <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);margin:12px 0 14px;line-height:1.6;">
-        Ces valeurs s'appliquent uniformément à toutes les largeurs nominales testées.
+        These values apply uniformly to all nominal widths tested.
       </div>
       <div class="row-2">
         <div class="field">
-          <label><strong>Épaisseur t₀</strong></label>
+          <label><strong>Thickness t₀</strong></label>
           <div class="input-unit"><input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065"><span class="unit">mm</span></div>
         </div>
         <div class="field">
-          <label><strong>Module de Young E</strong></label>
+          <label><strong>Young's modulus E</strong></label>
           <div class="input-unit"><input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.69"><span class="unit">MPa</span></div>
         </div>
       </div>
-      <div class="error-msg" id="err-params">Veuillez vérifier les paramètres.</div>
+      <div class="error-msg" id="err-params">Please check the parameters.</div>
     </div>
 
-    <button type="button" class="calc-btn" onclick="calculate()">Trouver mes tailles compatibles →</button>
+    <button type="button" class="calc-btn" onclick="calculate()">Find my compatible sizes →</button>
   </div>
 
   <!-- Résultats paramétrable -->
@@ -458,22 +458,22 @@
     <div class="summary-bar">
       <div class="summary-left">
         <div class="circ-val" id="res-circ-val">— mm</div>
-        <div class="circ-label">Circonférence</div>
+        <div class="circ-label">Circumference</div>
         <div class="model-badge" id="res-model-badge">—</div>
       </div>
       <div class="summary-right" id="res-stats"></div>
     </div>
 
     <div class="zone-legend">
-      <div class="zone-chip too-large"><div class="dot"></div>Trop large</div>
+      <div class="zone-chip too-large"><div class="dot"></div>Too large</div>
       <div class="zone-chip comfort"><div class="dot"></div>Comfort fit</div>
       <div class="zone-chip perfect"><div class="dot"></div>✦ Perfect fit</div>
       <div class="zone-chip snug"><div class="dot"></div>Snug fit</div>
-      <div class="zone-chip too-tight"><div class="dot"></div>Trop étroit</div>
+      <div class="zone-chip too-tight"><div class="dot"></div>Too tight</div>
     </div>
 
     <div class="bar-chart-card">
-      <div class="card-title">Pression ΔP par largeur nominale</div>
+      <div class="card-title">Pressure ΔP by nominal width</div>
       <div id="bar-chart"></div>
       <div id="bar-legend" style="margin-top:14px;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);line-height:2;"></div>
     </div>
@@ -489,8 +489,8 @@
 </div>
 
 <footer>
-  Outil informatif uniquement · Modèle biomécanique néo-hookéen + Loi de Laplace<br>
-  Sources : ISO 4074 · Gerofi et al. · TheyFit FitKit · Cooper et al. 2018
+  For informational purposes only · Neo-Hookean biomechanical model + Laplace's Law<br>
+  Sources: ISO 4074 · Gerofi et al. · TheyFit FitKit · Cooper et al. 2018
 </footer>
 
 <script>
@@ -512,7 +512,7 @@ function buildRef(fn) {
   return {
     Pmin_060: fn(114.4,REF_W,REF_T0,E_low).dP,
     Pmin_065: fn(114.4,REF_W,REF_T0,E_ref).dP,
-    Pmoy_065: fn(119.6,REF_W,REF_T0,E_ref).dP,
+    Pmoy_065: fn(119.9,REF_W,REF_T0,E_ref).dP,
     Pmax_065: fn(124.8,REF_W,REF_T0,E_ref).dP,
     Pmax_070: fn(124.8,REF_W,REF_T0,E_high).dP,
   };
@@ -683,7 +683,7 @@ const BRANDS_DATA_FREE = {
   ['Exs Ribbed texture, Flared head, Teat tip',56,0.075,1.69],
   ['Exs extra safe',56,0.08,1.69],
   ['Exs magnum',60,0.069,1.8],
-  ['Exs 64 (à venir)',64,0.069,1.69],
+  ['Exs 64 (upcoming)',64,0.069,1.69],
   ['Exs jumbo',69,0.069,1.69]
 ],
   intimy: [
@@ -804,7 +804,7 @@ const BRANDS_DATA_BLOCKED = {
   ['Exs Ribbed texture, Flared head, Teat tip',56,0.075,1.5],
   ['Exs extra safe',56,0.08,1.5],
   ['Exs magnum',60,0.069,1.8],
-  ['Exs 64 (à venir)',64,0.069,1.69],
+  ['Exs 64 (upcoming)',64,0.069,1.69],
   ['Exs jumbo',69,0.069,1.8]
 ],
   intimy: [
@@ -910,11 +910,11 @@ function rebuildBrandGroups() {
 
 // ═══ ZONE ═══
 function getZone(dP, ref) {
-  if(dP<ref.Pmin_060)  return {key:'too-large', label:'Trop large',  icon:'⚠️'};
+  if(dP<ref.Pmin_060)  return {key:'too-large', label:'Too large',  icon:'⚠️'};
   if(dP<ref.Pmin_065)  return {key:'comfort',   label:'Comfort fit', icon:'😌'};
   if(dP<=ref.Pmax_065) return {key:'perfect',   label:'Perfect fit', icon:'✅'};
   if(dP<=ref.Pmax_070) return {key:'snug',      label:'Snug fit',    icon:'🤏'};
-  return                      {key:'too-tight', label:'Trop étroit', icon:'❌'};
+  return                      {key:'too-tight', label:'Too tight', icon:'❌'};
 }
 
 // ═══ GRAPHIQUE BARRES ═══
@@ -967,7 +967,7 @@ function calculateBrand() {
   let rows=active.map(btn=>{
     const w=parseFloat(btn.dataset.w), t0=parseFloat(btn.dataset.t0), E=parseFloat(btn.dataset.e);
     const label=btn.dataset.label;
-    if(circ<=2*w) return {label, w, dP:null, lambda:null, zone:null, note:'Préservatif plus grand que le pénis'};
+    if(circ<=2*w) return {label, w, dP:null, lambda:null, zone:null, note:'Condom larger than the penis'};
     const res=fn(circ,w,t0,E);
     return {label, w, t0, E, dP:res.dP, lambda:res.lambda, zone:getZone(res.dP,ref), note:''};
   });
@@ -976,7 +976,7 @@ function calculateBrand() {
 
   // Summary
   document.getElementById('brand-circ-val').textContent=circ.toFixed(1)+' mm';
-  document.getElementById('brand-model-badge').textContent=currentModelBrand==='free'?'🔓 Modèle libre':'🔒 Modèle bloqué';
+  document.getElementById('brand-model-badge').textContent=currentModelBrand==='free'?'🔓 Free model':'🔒 Blocked model';
   const perfect=rows.filter(r=>r.zone?.key==='perfect');
   const comfort=rows.filter(r=>r.zone?.key==='comfort');
   const snug=rows.filter(r=>r.zone?.key==='snug');
@@ -984,7 +984,7 @@ function calculateBrand() {
   if(perfect.length) html+=`<div><span style="color:var(--ok)">✦ Perfect fit</span> : ${perfect.map(r=>r.label).join(', ')}</div>`;
   if(comfort.length) html+=`<div><span style="color:var(--comfort)">😌 Comfort fit</span> : ${comfort.map(r=>r.label).join(', ')}</div>`;
   if(snug.length)    html+=`<div><span style="color:var(--snug)">🤏 Snug fit</span> : ${snug.map(r=>r.label).join(', ')}</div>`;
-  if(!html) html=`<div style="color:var(--text-muted)">Aucun article compatible.</div>`;
+  if(!html) html=`<div style="color:var(--text-muted)">No compatible product.</div>`;
   document.getElementById('brand-stats').innerHTML=html;
 
   // Tableau
@@ -1008,10 +1008,10 @@ function calculateBrand() {
   const refNums=`P_min(E=1,48)=${(ref.Pmin_060/1000).toFixed(3)} · P_min(E=1,69)=${(ref.Pmin_065/1000).toFixed(3)} · P_max(E=1,69)=${(ref.Pmax_065/1000).toFixed(3)} · P_max(E=1,90)=${(ref.Pmax_070/1000).toFixed(3)} kPa`;
   const fb=document.getElementById('formula-box-brand');
   fb.innerHTML=currentModelBrand==='free'
-    ?`<div class="formula-title">Modèle libre — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
-    :`<div class="formula-title">Modèle bloqué — référentiel w=52mm</div>λ_z=1 · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
+    ?`<div class="formula-title">Free model — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
+    :`<div class="formula-title">Blocked model — référentiel w=52mm</div>λ_z=1 · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
 
-  // Guide des tailles fabricant
+  // Manufacturer size guide
   const resDiv=document.getElementById('results-brand');
   resDiv.style.display='block';
   void resDiv.offsetHeight;
@@ -1030,7 +1030,7 @@ function buildSizeGuide(brandKey, userCirc) {
   }
   card.style.display='block';
   document.getElementById('size-guide-title').textContent=
-    (BRAND_NAMES[brandKey]||brandKey)+' — Guide officiel des tailles';
+    (BRAND_NAMES[brandKey]||brandKey)+' — Official size guide';
 
   const canvas=document.getElementById('sizeGuideCanvas');
   if(!canvas) return;
@@ -1058,7 +1058,7 @@ function buildSizeGuide(brandKey, userCirc) {
     ctx.fillText(c,x,H-mb+14);
   });
   ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
-  ctx.fillText('Circonférence érectile (mm)',ml+pw/2,H-2);
+  ctx.fillText('Erect circumference (mm)',ml+pw/2,H-2);
 
   // Barre correspondant à userCirc
   const matchRow=guide.find(r=>userCirc>=r.cMin&&userCirc<=r.cMax);
@@ -1100,8 +1100,8 @@ function buildSizeGuide(brandKey, userCirc) {
   }
 
   document.getElementById('size-guide-legend').innerHTML=
-    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Plage recommandée fabricant</span></div>'+
-    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Votre circonférence ('+userCirc+'mm)</span></div>';
+    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Manufacturer recommended range</span></div>'+
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your circumference ('+userCirc+'mm)</span></div>';
 }
 
 // ═══ CALCUL PARAMÉTRABLE ═══
@@ -1112,7 +1112,7 @@ function selectModel(m) {
 function toggleParams(btn) {
   const p=document.getElementById('params-panel');
   p.classList.toggle('open');
-  btn.textContent=p.classList.contains('open')?'⚙ Paramètres physiques (optionnel) ▴':'⚙ Paramètres physiques (optionnel) ▾';
+  btn.textContent=p.classList.contains('open')?'⚙ Physical parameters (optional) ▴':'⚙ Physical parameters (optional) ▾';
 }
 function calculate() {
   const circ=parseFloat(document.getElementById('circ').value);
@@ -1128,13 +1128,13 @@ function calculate() {
 
   const rows=WIDTHS.map(w=>{
     const label=w===52?'52 ★':String(w);
-    if(circ<=2*w) return {w,label,lambda:null,dP:null,zone:null,note:'Préservatif plus grand que le pénis'};
+    if(circ<=2*w) return {w,label,lambda:null,dP:null,zone:null,note:'Condom larger than the penis'};
     const res=fn(circ,w,t0,E);
     return {w,label,lambda:res.lambda,dP:res.dP,zone:getZone(res.dP,ref),note:''};
   });
 
   document.getElementById('res-circ-val').textContent=circ.toFixed(1)+' mm';
-  document.getElementById('res-model-badge').textContent=currentModel==='free'?'🔓 Modèle libre':'🔒 Modèle bloqué';
+  document.getElementById('res-model-badge').textContent=currentModel==='free'?'🔓 Free model':'🔒 Blocked model';
 
   const perfect=rows.filter(r=>r.zone?.key==='perfect');
   const comfort=rows.filter(r=>r.zone?.key==='comfort');
@@ -1143,7 +1143,7 @@ function calculate() {
   if(perfect.length) html+=`<div><span style="color:var(--ok)">✦ Perfect fit</span> : w = ${perfect.map(r=>r.w).join(', ')} mm</div>`;
   if(comfort.length) html+=`<div><span style="color:var(--comfort)">😌 Comfort fit</span> : w = ${comfort.map(r=>r.w).join(', ')} mm</div>`;
   if(snug.length)    html+=`<div><span style="color:var(--snug)">🤏 Snug fit</span> : w = ${snug.map(r=>r.w).join(', ')} mm</div>`;
-  if(!html) html=`<div style="color:var(--text-muted)">Aucune largeur standard compatible.</div>`;
+  if(!html) html=`<div style="color:var(--text-muted)">No compatible standard width.</div>`;
   document.getElementById('res-stats').innerHTML=html;
 
   const tbody=document.getElementById('results-tbody'); tbody.innerHTML='';
@@ -1154,7 +1154,7 @@ function calculate() {
       tr.innerHTML=`<td style="color:var(--text-muted)">${r.label}</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td><span class="zone-badge too-large">—</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.note}</td>`;
     } else {
       const dc={'too-large':'warn','comfort':'comfort','perfect':'ok','snug':'snug','too-tight':'err'}[r.zone.key];
-      tr.innerHTML=`<td style="color:var(--text)">${r.label}</td><td style="color:var(--text-muted)">${r.lambda.toFixed(4)}</td><td><span class="dp-val ${dc}">${(r.dP/1000).toFixed(3)}</span></td><td><span class="zone-badge ${r.zone.key}">${r.zone.icon} ${r.zone.label}</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.w===52?'ISO 4074 référence':''}</td>`;
+      tr.innerHTML=`<td style="color:var(--text)">${r.label}</td><td style="color:var(--text-muted)">${r.lambda.toFixed(4)}</td><td><span class="dp-val ${dc}">${(r.dP/1000).toFixed(3)}</span></td><td><span class="zone-badge ${r.zone.key}">${r.zone.icon} ${r.zone.label}</span></td><td style="color:var(--text-muted);font-size:.7rem">${r.w===52?'ISO 4074 reference':''}</td>`;
     }
     tbody.appendChild(tr);
   });
@@ -1164,8 +1164,8 @@ function calculate() {
   const refNums=`P_min(E=1,48)=${(ref.Pmin_060/1000).toFixed(3)} · P_min(E=1,69)=${(ref.Pmin_065/1000).toFixed(3)} · P_max(E=1,69)=${(ref.Pmax_065/1000).toFixed(3)} · P_max(E=1,90)=${(ref.Pmax_070/1000).toFixed(3)} kPa`;
   const fb=document.getElementById('formula-box');
   fb.innerHTML=currentModel==='free'
-    ?`<div class="formula-title">Modèle libre (σ_z=0) — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
-    :`<div class="formula-title">Modèle bloqué (λ_z=1) — référentiel w=52mm</div>λ_r=λ_θ<sup>−1</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
+    ?`<div class="formula-title">Free model (σ_z=0) — référentiel w=52mm</div>λ_z=λ_θ<sup>−½</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−1</sup>) · ΔP=σ_θ·t/R<br>${refNums}`
+    :`<div class="formula-title">Blocked model (λ_z=1) — référentiel w=52mm</div>λ_r=λ_θ<sup>−1</sup> · σ_θ=2C₁(λ_θ²−λ_θ<sup>−2</sup>) · ΔP=σ_θ·t/R<br>${refNums}`;
 
   const resDiv=document.getElementById('results-custom');
   resDiv.style.display='block';

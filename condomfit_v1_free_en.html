@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CondomFit — Calculateur (modèle libre)</title>
+<title>CondomFit — Calculator (free model)</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0d0f14;--surface:#161a23;--surface2:#1e2330;--border:#2a3045;--accent:#4fffb0;--text:#e8ecf4;--text-muted:#7a8299;--ok:#4fffb0;--warn:#ffd166;--err:#ff6b6b;}
@@ -93,34 +93,34 @@
 <body>
 
 <div style="text-align:center;padding:20px 0 0;">
-  <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:.75rem;color:#7a8299;text-decoration:none;padding:6px 14px;border:1px solid #2a3045;border-radius:100px;background:#161a23;transition:color .2s;" onmouseover="this.style.color='#4fffb0';this.style.borderColor='#4fffb0'" onmouseout="this.style.color='#7a8299';this.style.borderColor='#2a3045'">← Retour à l'accueil</a>
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:.75rem;color:#7a8299;text-decoration:none;padding:6px 14px;border:1px solid #2a3045;border-radius:100px;background:#161a23;transition:color .2s;" onmouseover="this.style.color='#4fffb0';this.style.borderColor='#4fffb0'" onmouseout="this.style.color='#7a8299';this.style.borderColor='#2a3045'">← Back to home</a>
 </div>
 
 <header>
-  <span class="tag">Biomécanique · Modèle néo-hookéen · Membrane libre · σ_z = 0</span>
+  <span class="tag">Biomechanics · Neo-Hookean model · Free membrane · σ_z = 0</span>
   <h1>Condom<span>Fit</span></h1>
-  <p>Calcule la pression exercée par un préservatif sur un pénis en érection et vérifie si le préservatif est adapté à votre morphologie.</p>
-  <a href="demo_libre_fr.html" class="demo-link" target="_blank">📐 Démonstration mathématique</a>
-  <a href="context_w52_fr.html" class="demo-link" target="_blank">📊 Contexte &amp; statistiques</a>
+  <p>Calculates the pressure exerted by a condom on an erect penis and checks whether the condom fits your anatomy.</p>
+  <a href="demo_libre_fr.html" class="demo-link" target="_blank">📐 Mathematical demonstration</a>
+  <a href="context_w52_fr.html" class="demo-link" target="_blank">📊 Context &amp; statistics</a>
 </header>
 
-<!-- Circonférence — commune aux deux chapitres -->
+<!-- Circumference — commune aux deux chapitres -->
 <div class="card">
-  <div class="card-title">Votre morphologie</div>
+  <div class="card-title">Your anatomy</div>
   <div class="field">
-    <label><strong>Circonférence du pénis en érection</strong><br>Mesure à l'endroit le plus large, en mm</label>
+    <label><strong>Erect penile circumference</strong><br>Measured at the widest point, in mm</label>
     <div class="input-unit">
-      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="ex : 119.6">
+      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="ex : 119.9">
       <span class="unit">mm</span>
     </div>
-    <div class="error-msg" id="err-circ">Valeur hors plage (80–180 mm)</div>
+    <div class="error-msg" id="err-circ">Value out of range (80–180 mm)</div>
   </div>
 </div>
 
 <!-- Onglets -->
 <div class="chapter-tabs">
-  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 Par marque</button>
-  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Paramétrable</button>
+  <button type="button" class="chapter-tab active" onclick="switchChapter('brand',this)">🏷 By brand</button>
+  <button type="button" class="chapter-tab" onclick="switchChapter('custom',this)">⚙️ Custom</button>
 </div>
 
 <!-- ══════════════════════
@@ -128,7 +128,7 @@
 ══════════════════════ -->
 <div class="chapter active" id="chapter-brand">
   <div class="card top-join">
-    <div class="card-title">Sélectionner un préservatif</div>
+    <div class="card-title">Select a condom</div>
     <div class="brand-filter">
       <button type="button" class="brand-filter-btn" onclick="filterBrand('skyn',this)">Skyn</button>
       <button type="button" class="brand-filter-btn" onclick="filterBrand('durex',this)">Durex</button>
@@ -228,7 +228,7 @@
       <button type="button" class="brand-btn" data-w="56" data-t0="0.08" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs extra safe</span><span class="brand-spec">w=56mm · t₀=0.080mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-w="56" data-t0="0.075" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs Ribbed texture, Flared head, Teat tip</span><span class="brand-spec">w=56mm · t₀=0.075mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-w="60" data-t0="0.069" data-e="1.8" onclick="applyBrand(this)"><span class="brand-name">Exs magnum</span><span class="brand-spec">w=60mm · t₀=0.069mm · E=1.80MPa</span></button>
-      <button type="button" class="brand-btn" data-w="64" data-t0="0.069" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs 64 (à venir)</span><span class="brand-spec">w=64mm · t₀=0.069mm · E=1.69MPa</span></button>
+      <button type="button" class="brand-btn" data-w="64" data-t0="0.069" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs 64 (upcoming)</span><span class="brand-spec">w=64mm · t₀=0.069mm · E=1.69MPa</span></button>
       <button type="button" class="brand-btn" data-w="69" data-t0="0.069" data-e="1.69" onclick="applyBrand(this)"><span class="brand-name">Exs jumbo</span><span class="brand-spec">w=69mm · t₀=0.069mm · E=1.69MPa</span></button>
     </div>
     <div class="brand-group" id="group-intimy">
@@ -279,8 +279,8 @@
       <button type="button" class="brand-btn" data-w="53" data-t0="0.05" data-e="2.1" onclick="applyBrand(this)"><span class="brand-name">Lifestyles ultra thin</span><span class="brand-spec">w=53mm · t₀=0.050mm · E=2.10MPa</span></button>
       <button type="button" class="brand-btn" data-w="56" data-t0="0.07" data-e="1.5" onclick="applyBrand(this)"><span class="brand-name">Lifestyles large</span><span class="brand-spec">w=56mm · t₀=0.070mm · E=1.50MPa</span></button>
     </div>
-    <div class="error-msg" id="err-brand">Veuillez sélectionner un préservatif.</div>
-    <button type="button" class="calc-btn" onclick="calculateBrand()">Calculer →</button>
+    <div class="error-msg" id="err-brand">Please select a condom.</div>
+    <button type="button" class="calc-btn" onclick="calculateBrand()">Calculate →</button>
   </div>
 
   <div class="results-section" id="results-brand">
@@ -290,26 +290,26 @@
       <div class="verdict-sub" id="vsub-brand"></div>
     </div>
     <div class="chart-card">
-      <div class="card-title">Guide des tailles fabricant</div>
+      <div class="card-title">Manufacturer size guide</div>
       <canvas id="brandChart"></canvas>
       <div class="chart-legend" id="brand-legend"></div>
     </div>
     <div class="chart-card">
-      <div class="card-title">Courbe de pression ΔP(C)</div>
+      <div class="card-title">Pressure curve ΔP(C)</div>
       <canvas id="pressureCanvasBrand"></canvas>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — préservatif sélectionné</span></div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Votre position</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — selected condom</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your position</span></div>
       </div>
     </div>
     <div class="data-grid">
-      <div class="data-cell"><div class="dc-label">Pression ΔP</div><div class="dc-value" id="res-p-brand">—</div></div>
-      <div class="data-cell"><div class="dc-label">Élongation λ_θ</div><div class="dc-value" id="res-lambda-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Pressure ΔP</div><div class="dc-value" id="res-p-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Elongation λ_θ</div><div class="dc-value" id="res-lambda-brand">—</div></div>
       <div class="data-cell"><div class="dc-label">Tension T</div><div class="dc-value" id="res-T-brand">—</div></div>
-      <div class="data-cell"><div class="dc-label">Contrainte σ_θ</div><div class="dc-value" id="res-sigma-brand">—</div></div>
+      <div class="data-cell"><div class="dc-label">Stress σ_θ</div><div class="dc-value" id="res-sigma-brand">—</div></div>
     </div>
     <div class="formula-box">
-      <div class="formula-title">Modèle libre — σ_z = 0</div>
+      <div class="formula-title">Free model — σ_z = 0</div>
       λ_z = λ_θ<sup>−½</sup> · σ_θ = 2C₁(λ_θ² − λ_θ<sup>−1</sup>) · t = t₀/√λ_θ · ΔP = σ_θ·t/R
     </div>
   </div>
@@ -320,7 +320,7 @@
 ══════════════════════════ -->
 <div class="chapter" id="chapter-custom">
   <div class="card top-join">
-    <div class="card-title">Votre préservatif</div>
+    <div class="card-title">Your condom</div>
     <div class="presets" id="presets">
       <div class="preset-btn" onclick="applyPreset(45,0.065,1.69,this)">45mm</div>
       <div class="preset-btn" onclick="applyPreset(47,0.065,1.69,this)">47mm</div>
@@ -341,16 +341,16 @@
         <div class="input-unit"><input type="number" id="width" min="30" max="80" step="0.1" value="52"><span class="unit">mm</span></div>
       </div>
       <div class="field">
-        <label><strong>Épaisseur t₀</strong></label>
+        <label><strong>Thickness t₀</strong></label>
         <div class="input-unit"><input type="number" id="thick" min="0.03" max="0.15" step="0.001" value="0.065"><span class="unit">mm</span></div>
       </div>
     </div>
     <div class="field">
-      <label><strong>Module de Young E</strong> — 1,69 MPa = référence Cooper et al. 2018</label>
+      <label><strong>Young's modulus E</strong> — 1.69 MPa = reference Cooper et al. 2018</label>
       <div class="input-unit"><input type="number" id="emod" min="0.1" max="10" step="0.01" value="1.69"><span class="unit">MPa</span></div>
     </div>
-    <div class="error-msg" id="err-inputs">Veuillez vérifier les valeurs saisies.</div>
-    <button type="button" class="calc-btn" onclick="calculate()">Calculer la pression →</button>
+    <div class="error-msg" id="err-inputs">Please check the input values.</div>
+    <button type="button" class="calc-btn" onclick="calculate()">Calculate pressure →</button>
   </div>
 
   <div class="results-section" id="results-custom">
@@ -360,27 +360,27 @@
       <div class="verdict-sub" id="verdict-sub"></div>
     </div>
     <div class="chart-card">
-      <div class="card-title">Courbe de pression ΔP(C)</div>
+      <div class="card-title">Pressure curve ΔP(C)</div>
       <canvas id="pressureCanvas"></canvas>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — préservatif choisi</span></div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Votre position</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fffb0"></div><span>ΔP(C) — chosen condom</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your position</span></div>
         <div class="legend-item"><div class="legend-line" style="background:#4fffb0;opacity:.45"></div><span>P_min comfort (E=1.48MPa)</span></div>
         <div class="legend-item"><div class="legend-line" style="background:#4fffb0;opacity:.85"></div><span>P_min perfect (E=1.69MPa)</span></div>
         <div class="legend-item"><div class="legend-line" style="background:#4fffb0"></div><span>P_moy perfect</span></div>
         <div class="legend-item"><div class="legend-line" style="background:#ffd166;opacity:.75"></div><span>P_max perfect (E=1.69MPa)</span></div>
         <div class="legend-item"><div class="legend-line" style="background:#ffd166"></div><span>P_max snug (E=1.90MPa)</span></div>
-        <div class="legend-item"><div class="legend-line" style="background:rgba(160,180,255,.75)"></div><span>C̄ / ±1ET / ±2ET — TheyFit (n&gt;20 000)</span></div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(160,180,255,.75)"></div><span>C̄ / ±1SD / ±2SD — TheyFit (n&gt;20,000)</span></div>
       </div>
     </div>
     <div class="data-grid">
-      <div class="data-cell"><div class="dc-label">Pression ΔP</div><div class="dc-value" id="res-p">—</div></div>
-      <div class="data-cell"><div class="dc-label">Élongation λ_θ</div><div class="dc-value" id="res-lambda">—</div></div>
+      <div class="data-cell"><div class="dc-label">Pressure ΔP</div><div class="dc-value" id="res-p">—</div></div>
+      <div class="data-cell"><div class="dc-label">Elongation λ_θ</div><div class="dc-value" id="res-lambda">—</div></div>
       <div class="data-cell"><div class="dc-label">Tension T</div><div class="dc-value" id="res-T">—</div></div>
-      <div class="data-cell"><div class="dc-label">Contrainte σ_θ</div><div class="dc-value" id="res-sigma">—</div></div>
+      <div class="data-cell"><div class="dc-label">Stress σ_θ</div><div class="dc-value" id="res-sigma">—</div></div>
     </div>
     <div class="formula-box">
-      <div class="formula-title">Modèle libre — σ_z = 0</div>
+      <div class="formula-title">Free model — σ_z = 0</div>
       λ_z = λ_θ<sup>−½</sup> · σ_θ = 2C₁(λ_θ² − λ_θ<sup>−1</sup>) · t = t₀/√λ_θ · ΔP = σ_θ·t/R<br>
       Références : w=52mm, t₀=0.065mm, λ∈[1,10;1,20] · E=1,48/1,69/1,90 MPa (Cooper 2018 ±0,21)
     </div>
@@ -388,8 +388,8 @@
 </div>
 
 <footer>
-  Outil informatif uniquement · Modèle biomécanique néo-hookéen + Loi de Laplace<br>
-  Sources : ISO 4074 · Gerofi et al. · Cooper et al. 2018 · TheyFit FitKit
+  For informational purposes only · Neo-Hookean biomechanical model + Laplace's Law<br>
+  Sources: ISO 4074 · Gerofi et al. · Cooper et al. 2018 · TheyFit FitKit
 </footer>
 
 <script>
@@ -494,7 +494,7 @@ function computePressure(C_mm, w_mm, t0_mm, E_MPa) {
 const REF_W=52, REF_T0=0.065, E_low=1.48, E_ref=1.69, E_high=1.90;
 const Pmin_comfort=computePressure(114.4,REF_W,REF_T0,E_low).dP;
 const Pmin_perfect=computePressure(114.4,REF_W,REF_T0,E_ref).dP;
-const Pmoy_perfect=computePressure(119.6,REF_W,REF_T0,E_ref).dP;
+const Pmoy_perfect=computePressure(119.9,REF_W,REF_T0,E_ref).dP;
 const Pmax_perfect=computePressure(124.8,REF_W,REF_T0,E_ref).dP;
 const Pmax_snug   =computePressure(124.8,REF_W,REF_T0,E_high).dP;
 const Pmin_060=Pmin_comfort, Pmin_065=Pmin_perfect;
@@ -529,16 +529,16 @@ function applyBrand(btn) {
 
 // ═══ VERDICT ═══
 function getVerdict(dP) {
-  if(dP<Pmin_060)  return {cls:'low',     icon:'⚠️', title:'Trop large',  color:'yellow'};
+  if(dP<Pmin_060)  return {cls:'low',     icon:'⚠️', title:'Too large',  color:'yellow'};
   if(dP<Pmin_065)  return {cls:'comfort',  icon:'😌', title:'Comfort fit', color:'comfort'};
   if(dP<=Pmax_065) return {cls:'ok',       icon:'✅', title:'Perfect fit', color:'green'};
   if(dP<=Pmax_070) return {cls:'snug',     icon:'🤏', title:'Snug fit',    color:'snug'};
-  return                  {cls:'high',     icon:'❌', title:'Trop étroit', color:'red'};
+  return                  {cls:'high',     icon:'❌', title:'Too tight', color:'red'};
 }
 
 // ═══ CALCUL — CHAPITRE MARQUE ═══
 function calculateBrand() {
-  // 1. Circonférence
+  // 1. Circumference
   const circEl = document.getElementById('circ');
   const circ = parseFloat(circEl ? circEl.value : '');
   const errCirc = document.getElementById('err-circ');
@@ -571,7 +571,7 @@ function calculateBrand() {
   if(circ<=C0){
     vbox.className='verdict low';
     if(vicon) vicon.textContent='📏';
-    if(vtitle) vtitle.textContent='Préservatif plus grand que le pénis';
+    if(vtitle) vtitle.textContent='Condom larger than the penis';
     if(vsub) vsub.textContent='C₀='+C0+'mm > C_pénis='+circ+'mm.';
     resDiv.style.display='block';
     resDiv.scrollIntoView({behavior:'smooth',block:'start'});
@@ -586,11 +586,11 @@ function calculateBrand() {
   if(vicon) vicon.textContent=v.icon;
   if(vtitle) vtitle.textContent=v.title;
   const msgs={
-    low:'ΔP='+dP_kPa.toFixed(3)+' kPa — adhérence insuffisante, risque de glissement.',
-    comfort:'ΔP='+dP_kPa.toFixed(3)+' kPa — légèrement large, port détendu.',
-    ok:'ΔP='+dP_kPa.toFixed(3)+' kPa — taille optimale.',
-    snug:'ΔP='+dP_kPa.toFixed(3)+' kPa — légèrement serré, bonne adhérence.',
-    high:'ΔP='+dP_kPa.toFixed(3)+' kPa — constriction excessive.'
+    low:'ΔP='+dP_kPa.toFixed(3)+' kPa — insufficient grip, risk of slipping.',
+    comfort:'ΔP='+dP_kPa.toFixed(3)+' kPa — slightly large, relaxed fit.',
+    ok:'ΔP='+dP_kPa.toFixed(3)+' kPa — optimal size.',
+    snug:'ΔP='+dP_kPa.toFixed(3)+' kPa — slightly tight, good grip.',
+    high:'ΔP='+dP_kPa.toFixed(3)+' kPa — excessive constriction.'
   };
   if(vsub) vsub.textContent=msgs[v.cls]||'';
 
@@ -619,7 +619,7 @@ function drawBrandChart(userCirc, selectedW, brandKey) {
   const guide=SIZE_GUIDES[brandKey];
   if(!guide){
     canvas.style.display='none';
-    document.getElementById('brand-legend').innerHTML='<span style="color:var(--text-muted);font-size:.75rem;font-family:\'DM Mono\',monospace;">Guide des tailles non disponible pour cette marque.</span>';
+    document.getElementById('brand-legend').innerHTML='<span style="color:var(--text-muted);font-size:.75rem;font-family:\'DM Mono\',monospace;">Size guide not available for this brand.</span>';
     return;
   }
   canvas.style.display='block';
@@ -647,7 +647,7 @@ function drawBrandChart(userCirc, selectedW, brandKey) {
     ctx.fillText(c,x,H-mb+14);
   });
   ctx.fillStyle='#4fffb0'; ctx.font='10px DM Mono,monospace'; ctx.textAlign='center';
-  ctx.fillText('Circonférence érectile (mm)',ml+pw/2,H-2);
+  ctx.fillText('Erect circumference (mm)',ml+pw/2,H-2);
 
   // Barres
   guide.forEach((row,i)=>{
@@ -686,8 +686,8 @@ function drawBrandChart(userCirc, selectedW, brandKey) {
     ctx.fillText('C='+userCirc+'mm',lx,mt+10);
   }
   document.getElementById('brand-legend').innerHTML=
-    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Plage recommandée fabricant</span></div>'+
-    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Votre circonférence ('+userCirc+'mm)</span></div>';
+    '<div class="legend-item"><div class="legend-dot" style="background:#4fffb0;opacity:.6"></div><span>Manufacturer recommended range</span></div>'+
+    '<div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;width:12px;height:12px;border:2px solid #fff"></div><span>Your circumference ('+userCirc+'mm)</span></div>';
 }
 
 // ═══ GRAPHIQUE ΔP(C) ═══
@@ -708,8 +708,8 @@ function drawPressureChart(canvasId, userCirc, userDP, w_mm, t0_mm, E_MPa) {
   ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
   ctx.fillStyle='rgba(79,255,176,0.07)'; ctx.fillRect(ml,yp(refPmax/1000),pw,yp(refPmin/1000)-yp(refPmax/1000));
   for(let i=0;i<=5;i++){const dp=maxDP*i/5,y=yp(dp);ctx.strokeStyle='#2a3045';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText(dp.toFixed(2),ml-8,y+4);}
-  [90,100,110,114.4,119.6,124.8,130,140,150,160].forEach(C=>{const x=xp(C);ctx.strokeStyle='#2a3045';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,mt);ctx.lineTo(x,mt+ph);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(C%1===0?C:C.toFixed(1),x,mt+ph+16);});
-  ctx.fillStyle='#4fffb0';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText('Circonférence (mm)',ml+pw/2,H-4);
+  [90,100,110,114.4,119.9,124.8,130,140,150,160].forEach(C=>{const x=xp(C);ctx.strokeStyle='#2a3045';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,mt);ctx.lineTo(x,mt+ph);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(C%1===0?C:C.toFixed(1),x,mt+ph+16);});
+  ctx.fillStyle='#4fffb0';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText('Circumference (mm)',ml+pw/2,H-4);
   ctx.save();ctx.translate(12,mt+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('ΔP (kPa)',0,0);ctx.restore();
   const dHL=(dp,col,lbl,dash)=>{const y=yp(dp);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col;ctx.font='9px DM Mono,monospace';ctx.textAlign='left';ctx.fillText(lbl+' '+dp.toFixed(3)+' kPa',ml+4,y-5);};
   dHL(Pmin_060/1000,'rgba(79,255,176,0.45)','P_min comfort',[5,4]);
@@ -718,7 +718,7 @@ function drawPressureChart(canvasId, userCirc, userDP, w_mm, t0_mm, E_MPa) {
   dHL(Pmax_065/1000,'rgba(255,209,102,0.75)','P_max perfect',[6,3]);
   dHL(Pmax_070/1000,'rgba(255,209,102,1.0)','P_max snug',[5,4]);
   ctx.strokeStyle='#4fffb0';ctx.lineWidth=2.5;ctx.shadowColor='rgba(79,255,176,0.4)';ctx.shadowBlur=6;ctx.beginPath();pts.forEach((p,i)=>{const x=xp(p.C),y=yp(p.dP);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.shadowBlur=0;
-  const CM=119.6,CE=15.1,VC='rgba(160,180,255,0.60)';
+  const CM=119.9,CE=15.1,VC='rgba(160,180,255,0.60)';
   [{C:CM-2*CE,l:'-2ET',d:[3,5]},{C:CM-CE,l:'-1ET',d:[5,3]},{C:CM,l:'Cmoy',d:[6,2]},{C:CM+CE,l:'+1ET',d:[5,3]},{C:CM+2*CE,l:'+2ET',d:[3,5]}].forEach(sl=>{const sx=xp(sl.C);if(sx<ml||sx>ml+pw)return;ctx.strokeStyle=VC;ctx.lineWidth=sl.l==='Cmoy'?1.5:1;ctx.setLineDash(sl.d);ctx.beginPath();ctx.moveTo(sx,mt);ctx.lineTo(sx,mt+ph);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=VC;ctx.font=(sl.l==='Cmoy'?'bold ':'')+' 9px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(sl.l,sx,mt+12);ctx.font='8px DM Mono,monospace';ctx.fillText(sl.C.toFixed(1),sx,mt+ph-5);});
   const ux=xp(userCirc),uy=yp(userDP/1000);
   ctx.strokeStyle='rgba(255,107,107,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(ux,mt);ctx.lineTo(ux,mt+ph);ctx.stroke();ctx.setLineDash([]);
@@ -748,14 +748,14 @@ function calculate(){
   const C0=2*w;
   if(circ<=C0){
     const vBox=document.getElementById('verdict-box');vBox.className='verdict low';
-    document.getElementById('verdict-icon').textContent='📏';document.getElementById('verdict-title').textContent='Préservatif plus grand que le pénis';
+    document.getElementById('verdict-icon').textContent='📏';document.getElementById('verdict-title').textContent='Condom larger than the penis';
     document.getElementById('verdict-sub').textContent=`C₀=${C0}mm > C_pénis=${circ}mm.`;
     document.getElementById('results-custom').style.display='block';document.getElementById('results-custom').scrollIntoView({behavior:'smooth',block:'start'});return;
   }
   const res=computePressure(circ,w,t0,E);const dP_kPa=res.dP/1000;const v=getVerdict(res.dP);
   const vBox=document.getElementById('verdict-box');vBox.className='verdict '+v.cls;
   document.getElementById('verdict-icon').textContent=v.icon;document.getElementById('verdict-title').textContent=v.title;
-  const msgs={low:`ΔP=${dP_kPa.toFixed(3)} kPa < P_min (${(Pmin_060/1000).toFixed(3)} kPa). Adhérence insuffisante.`,comfort:`ΔP=${dP_kPa.toFixed(3)} kPa — légèrement large.`,ok:`ΔP=${dP_kPa.toFixed(3)} kPa ∈ [${(Pmin_065/1000).toFixed(3)} ; ${(Pmax_065/1000).toFixed(3)}] kPa. Taille optimale.`,snug:`ΔP=${dP_kPa.toFixed(3)} kPa — légèrement serré.`,high:`ΔP=${dP_kPa.toFixed(3)} kPa > P_max (${(Pmax_070/1000).toFixed(3)} kPa). Constriction excessive.`};
+  const msgs={low:`ΔP=${dP_kPa.toFixed(3)} kPa < P_min (${(Pmin_060/1000).toFixed(3)} kPa). Insufficient grip.`,comfort:`ΔP=${dP_kPa.toFixed(3)} kPa — slightly large.`,ok:`ΔP=${dP_kPa.toFixed(3)} kPa ∈ [${(Pmin_065/1000).toFixed(3)} ; ${(Pmax_065/1000).toFixed(3)}] kPa. Optimal size.`,snug:`ΔP=${dP_kPa.toFixed(3)} kPa — slightly tight.`,high:`ΔP=${dP_kPa.toFixed(3)} kPa > P_max (${(Pmax_070/1000).toFixed(3)} kPa). Excessive constriction.`};
   document.getElementById('verdict-sub').textContent=msgs[v.cls]||'';
   document.getElementById('res-p').className=`dc-value ${v.color}`;document.getElementById('res-p').textContent=dP_kPa.toFixed(3)+' kPa';
   document.getElementById('res-lambda').textContent=res.lambda.toFixed(4);document.getElementById('res-T').textContent=res.T.toFixed(3)+' N/m';document.getElementById('res-sigma').textContent=(res.sigma*1e3).toFixed(2)+' kPa';

@@ -110,7 +110,7 @@
   <div class="field">
     <label><strong>Circonférence du pénis en érection</strong><br>Mesure à l'endroit le plus large, en mm</label>
     <div class="input-unit">
-      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="ex : 119.6">
+      <input type="number" id="circ" min="80" max="180" step="0.1" placeholder="ex : 119.9">
       <span class="unit">mm</span>
     </div>
     <div class="error-msg" id="err-circ">Valeur hors plage (80–180 mm)</div>
@@ -494,7 +494,7 @@ function computePressure(C_mm, w_mm, t0_mm, E_MPa) {
 const REF_W=52, REF_T0=0.065, E_low=1.48, E_ref=1.69, E_high=1.90;
 const Pmin_comfort=computePressure(114.4,REF_W,REF_T0,E_low).dP;
 const Pmin_perfect=computePressure(114.4,REF_W,REF_T0,E_ref).dP;
-const Pmoy_perfect=computePressure(119.6,REF_W,REF_T0,E_ref).dP;
+const Pmoy_perfect=computePressure(119.9,REF_W,REF_T0,E_ref).dP;
 const Pmax_perfect=computePressure(124.8,REF_W,REF_T0,E_ref).dP;
 const Pmax_snug   =computePressure(124.8,REF_W,REF_T0,E_high).dP;
 const Pmin_060=Pmin_comfort, Pmin_065=Pmin_perfect;
@@ -708,7 +708,7 @@ function drawPressureChart(canvasId, userCirc, userDP, w_mm, t0_mm, E_MPa) {
   ctx.fillStyle='#161a23'; ctx.fillRect(0,0,W,H);
   ctx.fillStyle='rgba(79,255,176,0.07)'; ctx.fillRect(ml,yp(refPmax/1000),pw,yp(refPmin/1000)-yp(refPmax/1000));
   for(let i=0;i<=5;i++){const dp=maxDP*i/5,y=yp(dp);ctx.strokeStyle='#2a3045';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='right';ctx.fillText(dp.toFixed(2),ml-8,y+4);}
-  [90,100,110,114.4,119.6,124.8,130,140,150,160].forEach(C=>{const x=xp(C);ctx.strokeStyle='#2a3045';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,mt);ctx.lineTo(x,mt+ph);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(C%1===0?C:C.toFixed(1),x,mt+ph+16);});
+  [90,100,110,114.4,119.9,124.8,130,140,150,160].forEach(C=>{const x=xp(C);ctx.strokeStyle='#2a3045';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,mt);ctx.lineTo(x,mt+ph);ctx.stroke();ctx.fillStyle='#7a8299';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(C%1===0?C:C.toFixed(1),x,mt+ph+16);});
   ctx.fillStyle='#4fffb0';ctx.font='10px DM Mono,monospace';ctx.textAlign='center';ctx.fillText('Circonférence (mm)',ml+pw/2,H-4);
   ctx.save();ctx.translate(12,mt+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('ΔP (kPa)',0,0);ctx.restore();
   const dHL=(dp,col,lbl,dash)=>{const y=yp(dp);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(ml,y);ctx.lineTo(ml+pw,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col;ctx.font='9px DM Mono,monospace';ctx.textAlign='left';ctx.fillText(lbl+' '+dp.toFixed(3)+' kPa',ml+4,y-5);};
@@ -718,7 +718,7 @@ function drawPressureChart(canvasId, userCirc, userDP, w_mm, t0_mm, E_MPa) {
   dHL(Pmax_065/1000,'rgba(255,209,102,0.75)','P_max perfect',[6,3]);
   dHL(Pmax_070/1000,'rgba(255,209,102,1.0)','P_max snug',[5,4]);
   ctx.strokeStyle='#4fffb0';ctx.lineWidth=2.5;ctx.shadowColor='rgba(79,255,176,0.4)';ctx.shadowBlur=6;ctx.beginPath();pts.forEach((p,i)=>{const x=xp(p.C),y=yp(p.dP);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();ctx.shadowBlur=0;
-  const CM=119.6,CE=15.1,VC='rgba(160,180,255,0.60)';
+  const CM=119.9,CE=15.1,VC='rgba(160,180,255,0.60)';
   [{C:CM-2*CE,l:'-2ET',d:[3,5]},{C:CM-CE,l:'-1ET',d:[5,3]},{C:CM,l:'Cmoy',d:[6,2]},{C:CM+CE,l:'+1ET',d:[5,3]},{C:CM+2*CE,l:'+2ET',d:[3,5]}].forEach(sl=>{const sx=xp(sl.C);if(sx<ml||sx>ml+pw)return;ctx.strokeStyle=VC;ctx.lineWidth=sl.l==='Cmoy'?1.5:1;ctx.setLineDash(sl.d);ctx.beginPath();ctx.moveTo(sx,mt);ctx.lineTo(sx,mt+ph);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=VC;ctx.font=(sl.l==='Cmoy'?'bold ':'')+' 9px DM Mono,monospace';ctx.textAlign='center';ctx.fillText(sl.l,sx,mt+12);ctx.font='8px DM Mono,monospace';ctx.fillText(sl.C.toFixed(1),sx,mt+ph-5);});
   const ux=xp(userCirc),uy=yp(userDP/1000);
   ctx.strokeStyle='rgba(255,107,107,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(ux,mt);ctx.lineTo(ux,mt+ph);ctx.stroke();ctx.setLineDash([]);
