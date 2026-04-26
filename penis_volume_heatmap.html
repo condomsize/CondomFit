@@ -72,26 +72,25 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
     <span style="font-size:11px;color:#8898b8;font-weight:500;flex-shrink:0">Cohort:</span>
     <button id="btn0" class="active" onclick="sel(0)">Schneider et al. (2000) — young (n=111)</button>
-    <button id="btn1"               onclick="sel(1)">Schneider et al. (2000) — older (n=32)</button>
-    <button id="btn2"               onclick="sel(2)">Schneider et al. (2000) — pooled (n=143)</button>
+    <button id="btn3" onclick="sel(1)">Wessells et al. (1996) (n=80)</button>
+    <button id="btn4" onclick="sel(2)">Da Ros et al. (1993) (n=150)</button>
+    <button id="btn5" onclick="sel(3)">Compiled studies (n=373)</button>
   </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
-    <button id="btn3" onclick="sel(3)">Wessells et al. (1996) (n=80)</button>
-    <button id="btn4" onclick="sel(4)">Da Ros et al. (1993) (n=150)</button>
-    <button id="btn5" onclick="sel(5)">Compiled studies (n=373)</button>
-    <button id="btn6" onclick="sel(6)">TheyFit (n=20,000)</button>
+    <button id="btn7"  onclick="sel(4)">Kwanjin Park et al. (1998) (n=287)</button>
+    <button id="btn10" onclick="sel(5)">Wang & Li (1988) (n=200)</button>
+    <button id="btn11" onclick="sel(6)">Chen et al. (2014) (n=311)</button>
+    <button id="btn9"  onclick="sel(7)">Promodu et al. (2007) (n=301)</button>
   </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
-    <button id="btn7"  onclick="sel(7)">Kwanjin Park et al. (1998) (n=287)</button>
-    <button id="btn8"  onclick="sel(8)">Habous et al. (2015) (n=778) + Ali & Ali (2012) (200)</button>
-    <button id="btn9"  onclick="sel(9)">Promodu et al. (2007) (n=301)</button>
-    <button id="btn10" onclick="sel(10)">Wang & Li (1988) (n=200)</button>
-    <button id="btn11" onclick="sel(11)">Chen et al. (2014) (n=311)</button>
-    <button id="btn12" onclick="sel(12)">Salama (2015) (n=105)</button>
-    <button id="btn13" onclick="sel(13)">Oshakbayev et al. (2022) (n=282)</button>
-  </div>
+    <button id="btn13" onclick="sel(8)">Oshakbayev et al. (2022) (n=282)</button>
+    <button id="btn8"  onclick="sel(9)">Habous et al. (2015) (n=778)</button>
+    <button id="btn8"  onclick="sel(10)">Ali & Ali (2012) (200)</button>
+    <button id="btn12" onclick="sel(11)">Salama (2015) (n=105)</button>
+    </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:5px 6px;">
-    <button id="btn14" onclick="sel(14)">Compilation of all studies (n=2837)</button>
+    <button id="btn14" onclick="sel(12)">Compilation of all studies (n=2837)</button>
+    <button id="btn6" onclick="sel(13)">TheyFit (n=20,000)</button>
   </div>
   <div style="width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:2px;border-top:0.5px solid #2a2a4a;margin-top:2px;">
     <label>Circ. (mm):</label>
@@ -110,20 +109,19 @@ h1 { font-size: 12px; font-weight: 500; color: #b8c8e0; margin-bottom: 4px; flex
 <script>
 const ST=[
   {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – young",    n:111,   cm:124.1, cs:11.9, lm:144.8, ls:19.9, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – older",    n:32,    cm:110.0, cs:10.1, lm:141.8, ls:18.3, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Schneider et al. (2000)", lb:"Schneider 2000 – pooled",   n:143,   cm:120.9, cs:11.5, lm:144.1, ls:19.4, rho:0.55, meas:"symphisis pubis"},
   {grp:"Wessells et al. (1996)",  lb:"Wessells et al. (1996)",    n:80,    cm:123.0, cs:13.1, lm:157.4, ls:26.2, rho:0.55, meas:"symphisis pubis"},
   {grp:"Da Ros et al. (1993)",    lb:"Da Ros et al. (1993)",      n:150,   cm:119.2, cs:16.5, lm:143.1, ls:20.0, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Compiled studies",        lb:"Compiled studies",          n:373,   cm:120.7, cs:14.0, lm:146.6, ls:21.3, rho:0.55, meas:"symphisis pubis"},
-  {grp:"TheyFit",                 lb:"TheyFit",                   n:20000, cm:119.9, cs:15.1, lm:130.0, ls:20.0, rho:0.46, meas:"penile skin junction"},
+  {grp:"Compiled studies",        lb:"Compiled studies",          n:341,   cm:121.7, cs:14.4, lm:147.0, ls:21.6, rho:0.55, meas:"symphisis pubis"},
   {grp:"Kwanjin Park et al. (1998)", lb:"Kwanjin Park et al. (1998)", n:287, cm:121.1, cs:11.0, lm:140.6, ls:14.9, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Habous et al. (2015) + Ali & Ali (2012)", lb:"Habous et al. (2015) + Ali & Ali (2012)", n:978,   cm:117.2, cs:16.9, lm:146.0, ls:19.1, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Promodu et al. (2007)",   lb:"Promodu et al. (2007)",     n:301,   cm:114.6, cs:13.5, lm:129.3, ls:16.3, rho:0.46, meas:"penile skin junction"},
   {grp:"Wang & Li (1988)",        lb:"Wang & Li (1988)",          n:200, cm:111.8, cs:10.6, lm:130.1, ls:13.0, rho:0.55, meas:"symphisis pubis"},
   {grp:"Chen et al. (2014)",      lb:"Chen et al. (2014)",        n:311, cm:105.8, cs:10.0, lm:129.0, ls:13.0, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Salama (2015)",           lb:"Salama (2015)",             n:105,   cm:119.2, cs:10.6, lm:150.4, ls:15.1, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Promodu et al. (2007)",   lb:"Promodu et al. (2007)",     n:301,   cm:114.6, cs:13.5, lm:129.3, ls:16.3, rho:0.46, meas:"penile skin junction"},
   {grp:"Oshakbayev et al. (2022)", lb:"Oshakbayev et al. (2022)", n:282,   cm:116.2, cs:9.1, lm:134.1, ls:10.4, rho:0.55, meas:"symphisis pubis"},
-  {grp:"Compilation of all studies", lb:"Compilation of all studies", n:2837, cm:116.0, cs:13.7, lm:141.0, ls:17.0, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Habous et al. (2015)",    lb:"Habous et al. (2015)",      n:778,   cm:115.0, cs:17.4, lm:143.4, ls:18.6, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Ali & Ali (2012)",        lb:"Ali & Ali (2012)",          n:200,   cm:126.0, cs:15.0, lm:156.0, ls:21.0, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Salama (2015)",           lb:"Salama (2015)",             n:105,   cm:119.2, cs:10.6, lm:150.4, ls:15.1, rho:0.55, meas:"symphisis pubis"},
+  {grp:"Compilation of all studies", lb:"Compilation of all studies", n:2805, cm:116.1, cs:13.7, lm:141.0, ls:17.0, rho:0.55, meas:"symphisis pubis"},
+  {grp:"TheyFit",                 lb:"TheyFit",                   n:20000, cm:119.9, cs:15.1, lm:130.0, ls:20.0, rho:0.46, meas:"penile skin junction"},
 ];
 let cur=0, lastState=null, gpts=[];
 
@@ -141,7 +139,7 @@ function ord(p){const n=Math.round(p);if(n>=11&&n<=13)return n+'th';switch(n%10)
 
 function sel(i){
   cur=i;
-  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6,#btn7,#btn8,#btn9,#btn10,#btn11,#btn12,#btn13,#btn14').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('#btn0,#btn1,#btn2,#btn3,#btn4,#btn5,#btn6,#btn7,#btn8,#btn9,#btn10,#btn11,#btn12,#btn13').forEach((b,j)=>b.classList.toggle('active',j===i));
   const st=ST[i];
   document.getElementById('study-info').textContent=
     st.lb+' · n='+st.n+' · C\u0305='+(st.cm).toFixed(1)+' mm (SD='+(st.cs).toFixed(1)+') · L\u0305='+(st.lm).toFixed(1)+' mm (SD='+(st.ls).toFixed(1)+') · measurement: '+st.meas+' · \u03c1='+st.rho+' · Cylinder model: V=\u03c0(C/2\u03c0)\u00b2L. Hover dots for details.';
@@ -314,7 +312,7 @@ function draw(st,res,uc,ul){
     <div class="tr"><span>Circumference</span><span class="tv">${st.cm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
     <div class="tr"><span>Length</span><span class="tv">${st.lm.toFixed(1)} mm</span><span class="tk">${ord(50)} pct.</span></div>
     <div class="tr"><span>Volume</span><span class="tv">${(vm_median/1000).toFixed(2)} cm³</span><span class="tk">${ord(pvm)} pct.</span></div>
-    <div class="tn">SD circ.: ${st.cs.toFixed(1)} mm · SD length: ${st.ls.toFixed(1)} mm · Vol. SD: ${(res.sd/1000).toFixed(2)} cm³ · n=${st.n}</div>`;
+    <div class="tn">SD circ.: ${st.cs.toFixed(1)} mm · SD length: ${st.ls.toFixed(1)} mm · Vol. SD: ${(res.sd/1000).toFixed(2)} cm³ · n=${st.n} · ρ=${st.rho} · measure=${st.meas}</div>`;
   const hU=`<b>Evaluated penis</b>
     <div class="tr"><span>Circumference</span><span class="tv">${uc.toFixed(0)} mm</span><span class="tk">${ord(pcu)} pct.</span></div>
     <div class="tr"><span>Length</span><span class="tv">${ul.toFixed(0)} mm</span><span class="tk">${ord(plu)} pct.</span></div>
